@@ -1,0 +1,28 @@
+.ScrollAreaViewport {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.ScrollAreaScrollbar {
+  display: flex;
+  /* ensures no selection */
+  user-select: none;
+  /* disable browser handling of all panning and zooming gestures on touch devices */
+  touch-action: none;
+  padding: 2px;
+  background: gainsboro;
+}
+
+.ScrollAreaScrollbar:hover {
+  background: gray;
+}
+
+.ScrollAreaScrollbar[data-orientation='vertical'] {
+  width: var(--scrollbar-size);
+}
+
+.ScrollAreaScrollbar[data-orientation='horizontal'] {
+  flex-direction: column;
+  height: var(--scrollbar-size);
+}
