@@ -4,9 +4,9 @@ import * as Label from "@radix-ui/react-label"
 import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { styled } from '@stitches/react'
 
-import { Context, CarContainer, Foo11, Foo2, Foo3 } from './App'
+import { Context, CarContainer, Foo11, Foo2, Foo3 } from '../App'
 
-import './CarDisplay.css'
+import './Display.css'
 
 // ----
 

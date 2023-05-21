@@ -2,8 +2,12 @@ import { useReducer, createContext } from 'react'
 import { styled } from '@stitches/react'
 import { v4 as uuidv4 } from 'uuid'
 
-import CarInput from './CarInput'
-import CarDisplay from './CarDisplay'
+import CarInput from './Car/Input'
+import CarDisplay from './Car/Display'
+
+import PeopleDisplay from './People/Display'
+import PeopleInput from './People/Input'
+
 import Search from './Search'
 
 // ----
@@ -122,7 +126,7 @@ const App = () => {
         <div>
           <h1>people</h1>
 
-          {state.vertex === "READ" ? <CarDisplay /> : <CarInput />}
+          {state.vertex === "READ" ? <PeopleDisplay /> : <PeopleInput />}
         </div>
 
         <div>

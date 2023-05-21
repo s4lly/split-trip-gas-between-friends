@@ -1,8 +1,8 @@
-import { useReducer, createContext, useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 
 import * as Label from "@radix-ui/react-label"
 
-import { Context, CarContainer, CarInputControls, Foo1, Foo2, Foo3 } from './App'
+import { Context, CarContainer, CarInputControls, Foo1, Foo2, Foo3 } from '../App'
 
 const CarInput = () => {
     const [name, setName] = useState("")
