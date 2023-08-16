@@ -1,96 +1,95 @@
-import { useContext, useState } from 'react'
+import { useContext } from "react";
 
-import * as Label from "@radix-ui/react-label"
-import * as ScrollArea from '@radix-ui/react-scroll-area'
-import { styled } from '@stitches/react'
+import * as Label from "@radix-ui/react-label";
+import { styled } from "@stitches/react";
 
-import { Context, CarContainer, Foo11, Foo2, Foo3 } from '../App'
+import { Context } from "../Context";
+import ScrollableContaier from "../Shared/ScrollableContainer";
+import { ResourceDetails, ResourceDetail, ResourceDetailInput } from "../Shared/ResourceDetails";
 
-import './Display.css'
+import "./Display.css";
 
 // ----
 
-export const CarDisplayControls = styled("div", {
+const DisplayContainer = styled("div", {
+  width: "400px",
+  "> div": {
+    marginBottom: "10px",
+  },
+})
+
+const InputControlContainer = styled("div", {
   display: "flex",
-  justifyContent: "space-between"
-})
+  justifyContent: "space-between",
+});
 
-const ScrollAreaRoot = styled(ScrollArea.Root, {
-  border: "1px solid black",
-  height: 125,
-  borderRadius: 4,
-  overflow: 'hidden',
-  backgroundColor: 'white',
-})
-
+// state transitions: READ, SELECT
 const CarDisplay = () => {
-  // global state transition: READ
-  // local transition states: SELECT
+  const { state, dispatch } = useContext(Context);
 
-  const { state, dispatch } = useContext(Context)
-  const [vertex, setVertex] = useState(state.vertex)
+  console.log("state: ", state.vertices.car)
 
-  const selectedCar = state.cars.find(car => car.id === state.selectedCarId)
+  const selectedCar = state.cars.find((car) => car.id === state.selectedCarId);
 
   const handleUIChangeToSelect = () => {
-    setVertex("SELECT")
-  }
+    dispatch({
+      type: "transition:state",
+      payload: { vertex: { car: "SELECT" } },
+    });
+  };
 
   const handleCancelSelect = () => {
-    setVertex("READ")
-  }
+    dispatch({
+      type: "transition:state",
+      payload: { vertex: { car: "READ" } },
+    });
+  };
 
   const handleAddAnotherCar = () => {
-    dispatch({ type: "transition:state", payload: { vertex: "CREATE" } })
-  }
+    dispatch({
+      type: "transition:state",
+      payload: { vertex: { car: "CREATE" } },
+    });
+  };
 
   const handleSelectCar = (carId) => {
-    dispatch({ type: "car:select", payload: { carId } })
-    setVertex("READ")
-  }
+    dispatch({ type: "car:select", payload: { carId } });
+    dispatch({
+      type: "transition:state",
+      payload: { vertex: { car: "READ" } },
+    });
+  };
 
-  const content = (
-    vertex === "READ" ? (
-      <Foo11>
-        <Foo2>
-          <Label.Root htmlFor="name">
-            name:
-          </Label.Root>
-          <Foo3 type="text" id="name" disabled value={selectedCar.name}></Foo3>
-        </Foo2>
+  const content =
+    state.vertices.car === "READ" ? (
+      <ResourceDetails>
+        <ResourceDetail>
+          <Label.Root htmlFor="name">name:</Label.Root>
+          <ResourceDetailInput type="text" id="name" disabled value={selectedCar.name}></ResourceDetailInput>
+        </ResourceDetail>
 
-        <Foo2>
-          <Label.Root htmlFor="mpg">
-            mpg:
-          </Label.Root>
-          <Foo3 type="number" id="mpg" value={selectedCar.mpg} disabled></Foo3>
-        </Foo2>
-      </Foo11>
+        <ResourceDetail>
+          <Label.Root htmlFor="mpg">mpg:</Label.Root>
+          <ResourceDetailInput type="number" id="mpg" value={selectedCar.mpg} disabled></ResourceDetailInput>
+        </ResourceDetail>
+      </ResourceDetails>
     ) : (
-      <ScrollAreaRoot>
-        <ScrollArea.Viewport className='ScrollAreaViewport'>
-          <div>
-            {state.cars.map(car => (
-              <div onClick={() => handleSelectCar(car.id)} key={car.id}>{car.name}</div>
-            ))}
-          </div>
-        </ScrollArea.Viewport>
+      // controls UI: select
+      // TODO move to own module
+      <ScrollableContaier>
+        <div>
+          {state.cars.map((car) => (
+            <div onClick={() => handleSelectCar(car.id)} key={car.id}>
+              {car.name}
+            </div>
+          ))}
+        </div>
+      </ScrollableContaier>
+    );
 
-        <ScrollArea.Scrollbar className='ScrollAreaScrollbar' orientation="vertical">
-          <ScrollArea.Thumb />
-        </ScrollArea.Scrollbar>
-
-        <ScrollArea.Scrollbar className='ScrollAreaScrollbar' orientation="horizontal">
-          <ScrollArea.Thumb />
-        </ScrollArea.Scrollbar>
-
-        <ScrollArea.Corner />
-      </ScrollAreaRoot>
-    )
-  )
-
-  const controls = (
-    vertex === "READ" ? (
+  const controls =
+    state.vertices.car === "READ" ? (
+      // controls UI: read
       <>
         <div>
           <label>number of saved cars: {state.cars.length}</label>
@@ -105,6 +104,8 @@ const CarDisplay = () => {
         </div>
       </>
     ) : (
+      // controls UI: select
+      // TODO move to own module
       <>
         <div>
           <label>number of saved cars: {state.cars.length}</label>
@@ -113,18 +114,15 @@ const CarDisplay = () => {
           <button onClick={handleCancelSelect}>cancel</button>
         </div>
       </>
-    )
-  )
+    );
 
   return (
-    <CarContainer>
+    <DisplayContainer>
       {content}
 
-      <CarDisplayControls>
-        {controls}
-      </CarDisplayControls>
-    </CarContainer>
-  )
-}
+      <InputControlContainer>{controls}</InputControlContainer>
+    </DisplayContainer>
+  );
+};
 
-export default CarDisplay
+export default CarDisplay;
