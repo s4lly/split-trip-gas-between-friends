@@ -1,8 +1,17 @@
-import { useReducer, createContext, useContext, useState } from 'react'
-
+import { useContext, useState } from 'react'
+import { styled } from '@stitches/react'
 import * as Label from "@radix-ui/react-label"
 
-import { Context, CarContainer, CarInputControls, Foo1, Foo2, Foo3 } from './App'
+import { CarInputControls } from './CarInputControls'
+import { Context } from '../Context'
+import { ResourceDetail, ResourceDetails, ResourceDetailInput } from '../Shared/ResourceDetails'
+
+const InputContainer = styled("div", {
+  width: "400px",
+  "> div": {
+    marginBottom: "10px",
+  },
+})
 
 const CarInput = () => {
     const [name, setName] = useState("")
@@ -24,30 +33,37 @@ const CarInput = () => {
   
     const handleCancel = () => {
       // button only visible when have at least one car so ok to go to READ
-      dispatch({ type: "transition:state", payload: { vertex: "READ" } })
+      dispatch({
+        type: "transition:state",
+        payload: { vertex: { car: "READ" } },
+      });
     }
   
     const handleCreate = () => {
       dispatch({ type: "car:create", payload: { name, mpg } })
+      dispatch({
+        type: "transition:state",
+        payload: { vertex: { car: "READ" } },
+      });
     }
   
     return (
-      <CarContainer>
-        <Foo1>
-          <Foo2>
+      <InputContainer>
+        <ResourceDetails>
+          <ResourceDetail>
             <Label.Root htmlFor="name">
               name:
             </Label.Root>
-            <Foo3 type="text" id="name" value={name} onChange={handleChangeName}></Foo3>
-          </Foo2>
+            <ResourceDetailInput type="text" id="name" value={name} onChange={handleChangeName}></ResourceDetailInput>
+          </ResourceDetail>
   
-          <Foo2>
+          <ResourceDetail>
             <Label.Root htmlFor="mpg">
               mpg:
             </Label.Root>
-            <Foo3 type="number" id="mpg" value={mpg} onChange={handleChangeMpg}></Foo3>
-          </Foo2>
-        </Foo1>
+            <ResourceDetailInput type="number" id="mpg" value={mpg} onChange={handleChangeMpg}></ResourceDetailInput>
+          </ResourceDetail>
+        </ResourceDetails>
   
         <CarInputControls>
           {state.cars.length > 0 && (
@@ -59,7 +75,7 @@ const CarInput = () => {
             <button onClick={handleCreate}>submit</button>
           </div>
         </CarInputControls>
-      </CarContainer>
+      </InputContainer>
     )
   }
 
