@@ -3,6 +3,7 @@ import { Context } from "../Context";
 
 import CarDisplay from "./Display";
 import CarInput from "./Input";
+import CarSelect from "./Select"
 
 const Car = () => {
   const {
@@ -13,8 +14,9 @@ const Car = () => {
 
   return (
     <>
-      <h2>car</h2>
-      {(vertex === "START" || vertex === "READ" || vertex === "SELECT") && <CarDisplay />}
+      <h2>Car</h2>
+      {(vertex === "START" || vertex === "READ") && <CarDisplay />}
+      {vertex === "SELECT" && <CarSelect />}
       {vertex === "CREATE" && <CarInput />}
     </>
   );

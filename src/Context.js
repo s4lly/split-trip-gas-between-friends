@@ -94,16 +94,16 @@ const initialState = {
       }
     */
 
-    { id: "1", name: "car 1", mpg: 11 },
-    { id: "2", name: "car 2", mpg: 12 },
-    { id: "3", name: "car 3", mpg: 13 },
-    { id: "4", name: "car 4", mpg: 14 },
-    { id: "5", name: "car 5", mpg: 15 },
-    { id: "6", name: "car 6", mpg: 16 },
-    { id: "7", name: "car 7", mpg: 17 },
-    { id: "8", name: "car 8", mpg: 18 },
+    // { id: "1", name: "car 1", mpg: 11 },
+    // { id: "2", name: "car 2", mpg: 12 },
+    // { id: "3", name: "car 3", mpg: 13 },
+    // { id: "4", name: "car 4", mpg: 14 },
+    // { id: "5", name: "car 5", mpg: 15 },
+    // { id: "6", name: "car 6", mpg: 16 },
+    // { id: "7", name: "car 7", mpg: 17 },
+    // { id: "8", name: "car 8", mpg: 18 },
   ],
-  selectedCarId: '1',
+  selectedCarId: undefined, //'1',
 
   people: [
     /*
