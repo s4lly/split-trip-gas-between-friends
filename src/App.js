@@ -21,6 +21,8 @@ const App = () => {
   return (
     <StateProvider>
       <div className="App">
+        <h1>Trip: weekend in San Francisco</h1>
+
         <Car />
 
         <People />
