@@ -4,7 +4,7 @@ import StateProvider, { Context } from './Context'
 
 import Car from './Car'
 import People from './People'
-import Search from './Search'
+// import Search from './Search'
 
 export const Foo1 = styled('div', {
   display: "flex",

@@ -1,9 +1,9 @@
-import { useContext, useState } from 'react'
+// import { useContext } from 'react'
 
 import * as ScrollArea from '@radix-ui/react-scroll-area'
 import { styled } from '@stitches/react'
 
-import { Context } from '../Context'
+// import { Context } from '../Context'
 
 const ScrollAreaRoot = styled(ScrollArea.Root, {
   border: "1px solid black",
@@ -14,7 +14,7 @@ const ScrollAreaRoot = styled(ScrollArea.Root, {
 })
 
 const ScrollableContaier = ({ children }) => {
-  const { state, dispatch } = useContext(Context);
+  // const { state, dispatch } = useContext(Context);
 
   return (
     <ScrollAreaRoot>
