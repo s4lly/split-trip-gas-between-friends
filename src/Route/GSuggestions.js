@@ -19,7 +19,7 @@ const GSuggestions = () => {
     },
     debounce: 300,
   });
-  const { state, dispatch } = useContext(Context);
+  const { dispatch } = useContext(Context);
 
   const ref = useOnclickOutside(() => {
     // When user clicks outside of the component, call it to clear and reset the suggestions data
