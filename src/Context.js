@@ -74,6 +74,17 @@ const reducer = (state, action) => {
 
       break
 
+    // ----
+
+    // stops
+
+    case "stops:list:add":
+      const { payload } = action
+
+      newState = { ...state, stops: [...state.stops, payload] };
+
+      break;
+
     default:
       throw new Error()
   }
@@ -85,6 +96,7 @@ export const Context = createContext({ state: {}, dispatch: () => { } })
 
 const initialState = {
   // car
+
   cars: [
     /*
       {
@@ -105,6 +117,10 @@ const initialState = {
   ],
   selectedCarId: undefined, //'1',
 
+  // ----
+
+  // people
+
   people: [
     /*
       {
@@ -118,6 +134,20 @@ const initialState = {
    { id: "2", name: "jane", number: 444_444_4444, paymentApp: "venmo" },
   ],
   selectedPersonId: undefined,
+
+  // ----
+
+  // stops
+  stops: [
+    // {
+    //   name: "",
+    //   gMapsData: {},
+    // }
+  ],
+
+  // ----
+
+  // rest
 
   // START, CREATE, READ, SELECT
   // TODO is SELECT global or local? like do the other components need to know?

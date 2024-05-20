@@ -4,7 +4,10 @@ import StateProvider, { Context } from './Context'
 
 import Car from './Car'
 import People from './People'
-// import Search from './Search'
+
+import Search from './Route'
+import Stops from './Route/Stops'
+
 
 export const Foo1 = styled('div', {
   display: "flex",
@@ -27,16 +30,20 @@ const App = () => {
 
         <People />
 
-        {/* <div>
+        <div>
           <h1>route</h1>
+
           <Search />
+
+          <Stops />
+
         </div>
 
-        <div>
+        {/* <div>
           <h1>map</h1>
-        </div>
+        </div> */}
 
-        <div>
+        {/* <div>
           <h1>calculation</h1>
         </div> */}
       </div>
