@@ -53,15 +53,24 @@ const Input = () => {
     setPaymentApp(getStringOrEmpty(e.target?.value))
   }
 
-  const handleSave = () => {
+  const handleCreate = () => {
     dispatch({
-      type: vertex === "CREATE" ? "people:create" : "people:edit",
-      // need to pass id along with all other person props so can spread rest
-      payload: { id: selectedPersonId, name, number, paymentApp }
+      type: "people:create",
+      payload: { name, number, paymentApp }
+    })
+    dispatch({
+      type: "transition:state", payload: { vertex: { people: "READ" } }
+    })
+  }
+
+  const handleEdit = () => {
+    dispatch({
+      type: "people:edit",
+      payload: { name, number, paymentApp }
     })
     dispatch({
       type: "people:select",
-      payload: { personId: undefined },
+      payload: { personId: selectedPersonId },
     });
     dispatch({
       type: "transition:state", payload: { vertex: { people: "START" } }
@@ -71,26 +80,49 @@ const Input = () => {
   const content = (
     <ResourceDetails>
       <ResourceDetail>
-        <Label.Root htmlFor='name'>name:</Label.Root>
-        <ResourceDetailInput disabled={vertex === "READ"} type="text" id="name" value={name} onChange={handleChangeName}></ResourceDetailInput>
+        <Label.Root htmlFor="name">name:</Label.Root>
+        <ResourceDetailInput
+          disabled={vertex === "READ"}
+          type="text"
+          id="name"
+          value={name}
+          onChange={handleChangeName}
+        ></ResourceDetailInput>
       </ResourceDetail>
 
       <ResourceDetail>
-        <Label.Root htmlFor='number'>number:</Label.Root>
-        <ResourceDetailInput disabled={vertex === "READ"} type="tel" id="number" value={number} onChange={handleChangeNumber}></ResourceDetailInput>
+        <Label.Root htmlFor="number">number:</Label.Root>
+        <ResourceDetailInput
+          disabled={vertex === "READ"}
+          type="tel"
+          id="number"
+          value={number}
+          onChange={handleChangeNumber}
+        ></ResourceDetailInput>
       </ResourceDetail>
 
       <ResourceDetail>
-        <Label.Root htmlFor='payment-app'>payment app:</Label.Root>
-        <ResourceDetailInput disabled={vertex === "READ"} type="text" id="payment-app" value={paymentApp} onChange={handleChangePaymentApp}></ResourceDetailInput>
+        <Label.Root htmlFor="payment-app">payment app:</Label.Root>
+        <ResourceDetailInput
+          disabled={vertex === "READ"}
+          type="text"
+          id="payment-app"
+          value={paymentApp}
+          onChange={handleChangePaymentApp}
+        ></ResourceDetailInput>
       </ResourceDetail>
     </ResourceDetails>
-  )
+  );
 
   const handleGoBack = () => {
+    dispatch({
+      type: "transition:state",
+      payload: { vertex: { people: "START" } },
+    });
   }
   const handleGoEdit = () => {
   }
+
   const handleCancelCreate = () => {
     // TODO consider saving prev, otherwise just go back to start
     dispatch({
@@ -134,7 +166,7 @@ const Input = () => {
         </div>
         )}
         <div>
-          <button onClick={handleSave}>save</button>
+          <button onClick={handleCreate}>save</button>
         </div>
       </>
       )
@@ -147,7 +179,7 @@ const Input = () => {
           <button onClick={handleCancelEdit}>cancel</button>
         </div>
         <div>
-          <button onClick={handleSave}>save</button>
+          <button onClick={handleEdit}>save</button>
         </div>
       </>
       )

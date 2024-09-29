@@ -44,6 +44,13 @@ const Display = () => {
     });
   }
 
+  const handleDone = () => {
+    dispatch({
+      type: "transition:state",
+      payload: { vertex: { people: "READ" } },
+    });
+  }
+
   let content
   switch (vertex) {
     case "START":
@@ -77,6 +84,9 @@ const Display = () => {
         </div>
         <div>
           <button onClick={handleAddAnotherPerson}>add another person</button>
+        </div>
+        <div>
+          <button onClick={handleDone}>done</button>
         </div>
       </>
     )
