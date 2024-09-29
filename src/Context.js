@@ -32,11 +32,15 @@ const reducer = (state, action) => {
     // ----
 
     // people 
+
     case "people:create":
-      const { id, ...restNew } = action.payload
       const newPeopleId = uuidv4()
 
-      newState = { ...state, people: [...state.people, { id: newPeopleId, ...restNew }] }
+      newState = {
+        ...state,
+        selectedPersonId: newPeopleId,
+        people: [...state.people, { id: newPeopleId, ...action.payload }],
+      };
 
       break;
 
@@ -93,6 +97,8 @@ const reducer = (state, action) => {
 }
 
 export const Context = createContext({ state: {}, dispatch: () => { } })
+
+// ----
 
 const initialState = {
   // car

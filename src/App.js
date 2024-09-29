@@ -26,9 +26,9 @@ const App = () => {
       <div className="App">
         <h1>Trip: weekend in San Francisco</h1>
 
-        <Car />
-
         <People />
+
+        <Car />
 
         <div>
           <h1>route</h1>
