@@ -83,8 +83,12 @@ const reducer = (state, action) => {
     // stops
 
     case "stops:list:add":
+      // payload: { name: description, gMapsData: { place_id, lat, lng } },
       const { payload } = action
 
+      // persisted before disptach
+
+      // add to state
       newState = { ...state, stops: [...state.stops, payload] };
 
       break;
