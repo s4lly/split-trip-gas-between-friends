@@ -1,20 +1,30 @@
 {
-  "name": "split-trip-gas-between-friends",
-  "version": "0.0.1",
+  "name": "rsbuild-react-ts",
   "private": true,
-  "dependencies": {
-    "@radix-ui/react-label": "^2.0.1",
-    "@radix-ui/react-scroll-area": "^1.0.3",
-    "@stitches/react": "^1.2.8",
-    "react": "^18.2.0",
-    "react-cool-onclickoutside": "^1.7.0",
-    "react-dom": "^18.2.0",
-    "use-places-autocomplete": "^4.0.0",
-    "uuid": "^9.0.0"
-  },
+  "version": "1.0.0",
   "scripts": {
-    "start": "BROWSER=none WDS_SOCKET_PORT=0 node scripts/start.js",
-    "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "build": "rsbuild build",
+    "check": "biome check --write",
+    "dev": "rsbuild dev --open",
+    "format": "biome format --write",
+    "preview": "rsbuild preview"
+  },
+  "dependencies": {
+    "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-scroll-area": "^1.2.3",
+    "@stitches/react": "^1.2.8",
+    "react": "^19.0.0",
+    "react-cool-onclickoutside": "^1.7.0",
+    "react-dom": "^19.0.0",
+    "use-places-autocomplete": "^4.0.1",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@rsbuild/core": "^1.2.3",
+    "@rsbuild/plugin-react": "^1.1.0",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "typescript": "^5.7.3"
   }
 }
