@@ -8,6 +8,7 @@ import People from './People'
 import Search from './Route'
 import Stops from './Route/Stops'
 
+import GMap from "./Route/Map"
 
 export const Foo1 = styled('div', {
   display: "flex",
@@ -39,9 +40,11 @@ const App = () => {
 
         </div>
 
-        {/* <div>
+        <div>
           <h1>map</h1>
-        </div> */}
+
+          <GMap />
+        </div>
 
         {/* <div>
           <h1>calculation</h1>

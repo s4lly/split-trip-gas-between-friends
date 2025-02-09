@@ -15,8 +15,6 @@ const Container = ({ stops }) => {
 const Stops = () => {
   const { state } = useContext(Context);
 
-  console.log(">>>> Stops: ", state.stops);
-
   return (
     <div>
       <h2>stops</h2>
