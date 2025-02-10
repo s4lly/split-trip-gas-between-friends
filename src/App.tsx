@@ -1,34 +1,18 @@
-// @ts-ignore
-
-import { useContext } from 'react'
-import { styled } from '@stitches/react'
-import StateProvider, { Context } from './Context'
+import StateProvider from './Context'
 
 import Car from './Car'
 import People from './People'
-
 import Search from './Route'
 import Stops from './Route/Stops'
-
 import GMap from "./Route/Map"
 
-export const Foo1 = styled('div', {
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px",
-})
-
-import './App.css';
-
 const App = () => {
-  const { state } = useContext(Context)
-  console.log("app state: ", state)
-
   return (
     <div className="content">
     <StateProvider>
       <div className="App">
         <h1>Trip: weekend in San Francisco</h1>
+        <h1 className="text-3xl font-bold underline">Hello world!</h1>
 
         <People />
 
