@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { styled } from "@stitches/react";
-import * as Label from "@radix-ui/react-label";
 
 import { Context } from "../Context";
 import { ResourceDetails, ResourceDetail, ResourceDetailInput } from "../Shared/ResourceDetails";
@@ -62,12 +61,12 @@ const CarDisplay = () => {
   const content = (
     <ResourceDetails>
       <ResourceDetail>
-        <Label.Root htmlFor="name">name:</Label.Root>
+        {/* <Label.Root htmlFor="name">name:</Label.Root> */}
         <ResourceDetailInput type="text" id="name" disabled value={selectedCar.name}></ResourceDetailInput>
       </ResourceDetail>
 
       <ResourceDetail>
-        <Label.Root htmlFor="mpg">mpg:</Label.Root>
+        {/* <Label.Root htmlFor="mpg">mpg:</Label.Root> */}
         <ResourceDetailInput type="number" id="mpg" value={selectedCar.mpg} disabled></ResourceDetailInput>
       </ResourceDetail>
     </ResourceDetails>

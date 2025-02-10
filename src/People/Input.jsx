@@ -1,8 +1,6 @@
 import { useContext, useState } from 'react'
 import { styled } from '@stitches/react'
 
-import * as Label from "@radix-ui/react-label"
-
 import { Context } from '../Context'
 import { getStringOrEmpty } from '../Shared'
 import { ResourceDetails, ResourceDetail, ResourceDetailInput } from "../Shared/ResourceDetails";
@@ -80,7 +78,7 @@ const Input = () => {
   const content = (
     <ResourceDetails>
       <ResourceDetail>
-        <Label.Root htmlFor="name">name:</Label.Root>
+        {/* <Label.Root htmlFor="name">name:</Label.Root> */}
         <ResourceDetailInput
           disabled={vertex === "READ"}
           type="text"
@@ -91,7 +89,7 @@ const Input = () => {
       </ResourceDetail>
 
       <ResourceDetail>
-        <Label.Root htmlFor="number">number:</Label.Root>
+        {/* <Label.Root htmlFor="number">number:</Label.Root> */}
         <ResourceDetailInput
           disabled={vertex === "READ"}
           type="tel"
@@ -102,7 +100,7 @@ const Input = () => {
       </ResourceDetail>
 
       <ResourceDetail>
-        <Label.Root htmlFor="payment-app">payment app:</Label.Root>
+        {/* <Label.Root htmlFor="payment-app">payment app:</Label.Root> */}
         <ResourceDetailInput
           disabled={vertex === "READ"}
           type="text"

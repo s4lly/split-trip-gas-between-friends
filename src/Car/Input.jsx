@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { styled } from '@stitches/react'
-import * as Label from "@radix-ui/react-label"
+// import * as Label from "@radix-ui/react-label"
 
 import { CarInputControls } from './CarInputControls'
 import { Context } from '../Context'
@@ -51,16 +51,16 @@ const CarInput = () => {
       <InputContainer>
         <ResourceDetails>
           <ResourceDetail>
-            <Label.Root htmlFor="name">
+            {/* <Label.Root htmlFor="name">
               name:
-            </Label.Root>
+            </Label.Root> */}
             <ResourceDetailInput type="text" id="name" value={name} onChange={handleChangeName}></ResourceDetailInput>
           </ResourceDetail>
   
           <ResourceDetail>
-            <Label.Root htmlFor="mpg">
+            {/* <Label.Root htmlFor="mpg">
               mpg:
-            </Label.Root>
+            </Label.Root> */}
             <ResourceDetailInput type="number" id="mpg" value={mpg} onChange={handleChangeMpg}></ResourceDetailInput>
           </ResourceDetail>
         </ResourceDetails>
