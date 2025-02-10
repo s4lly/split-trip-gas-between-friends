@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button"
 import StateProvider from './Context'
 
 import Car from './Car'
@@ -11,6 +12,8 @@ const App = () => {
     <div className="content">
     <StateProvider>
       <div className="App">
+        <Button>Click me</Button>
+
         <h1>Trip: weekend in San Francisco</h1>
         <h1 className="text-3xl font-bold underline">Hello world!</h1>
 
