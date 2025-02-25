@@ -1,20 +1,38 @@
 import { useContext } from "react";
-import { styled } from '@stitches/react'
-
 import { Context } from "../Context";
 import ScrollableContaier from "../Shared/ScrollableContainer";
+import classNames from "classnames";
 
-const PeopleContainer = styled("div", {
-  width: "400px",
-  "> div": {
-    marginBottom: "10px",
-  },
-})
+import classes from "./List.module.css";
 
-const PeopleDisplayControls = styled("div", {
-  display: "flex",
-  justifyContent: "space-between",
-})
+/*
+
+<div
+  className={classNames(
+    classes.personListItemContainer,
+    classes.personListItemContainerHeader
+  )}
+>
+  <div>name</div>
+  <div>phone</div>
+  <div>payment app</div>
+</div>
+<div className={classes.listItemContainerBody}>
+  {people.map((person) => (
+    <div
+      tabIndex={0}
+      className={classes.personListItemContainer}
+      onClick={() => handlePeopleSelector(person.id)}
+      key={person.id}
+    >
+      <div>{person.name}</div>
+      <div>{person.number}</div>
+      <div>{person.paymentApp}</div>
+    </div>
+  ))}
+</div>
+
+*/
 
 const Display = () => {
   const {
@@ -42,67 +60,77 @@ const Display = () => {
       type: "transition:state",
       payload: { vertex: { people: "CREATE" } },
     });
-  }
+  };
 
   const handleDone = () => {
     dispatch({
       type: "transition:state",
       payload: { vertex: { people: "READ" } },
     });
-  }
+  };
 
-  let content
+  let content;
   switch (vertex) {
     case "START":
     case "READ":
       content = (
-        <ScrollableContaier>
+        <div>
           <div>
-            {people.map((person) => (
-              <div
-                onClick={() => handlePeopleSelector(person.id)}
-                key={person.id}
-              >
-                {person.name}
-              </div>
-            ))}
+            <label>number of saved people: {people.length}</label>
           </div>
-        </ScrollableContaier>
-      )
+          <table className={classes.listItemTable}>
+            {/* header */}
+            <thead>
+              <th>name</th>
+              <th>phone</th>
+              <th>payment app</th>
+            </thead>
+            {/* body */}
+            <tbody>
+              {people.map((person) => (
+                // row
+                <tr
+                  tabIndex={0}
+                  onClick={() => handlePeopleSelector(person.id)}
+                >
+                  <td>{person.name}</td>
+                  <td>{person.number}</td>
+                  <td>{person.paymentApp}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
       break;
 
     default:
-      throw new Error(`People/List -  unsupported vertex: ${vertex}`)
+      throw new Error(`People/List -  unsupported vertex: ${vertex}`);
   }
 
-    const controls = ((vertex === "START" || vertex === "READ")
-    ? (
+  const controls =
+    vertex === "START" || vertex === "READ" ? (
       // controls UI: read
-      <>
+      <div className={classes.controlsContainer}>
         <div>
-          <label>number of saved people: {people.length}</label>
+          <button onClick={handleDone}>return</button>
         </div>
         <div>
-          <button onClick={handleAddAnotherPerson}>add another person</button>
+          <button onClick={handleAddAnotherPerson}>add</button>
         </div>
-        <div>
-          <button onClick={handleDone}>done</button>
-        </div>
-      </>
-    )
-    : (
+      </div>
+    ) : (
       <p>select</p>
-    )
-    )
+    );
 
   return (
-    <PeopleContainer>
+    <div className={classes.container}>
+      <h2>list</h2>
+
       {content}
 
-      <PeopleDisplayControls>
-        {controls}
-      </PeopleDisplayControls>
-    </PeopleContainer>
+      <div className={classes.controlsContainer}>{controls}</div>
+    </div>
   );
 };
 

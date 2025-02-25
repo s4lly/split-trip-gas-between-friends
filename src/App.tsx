@@ -6,31 +6,33 @@ import Search from './Route'
 import Stops from './Route/Stops'
 import GMap from "./Route/Map"
 
+import './App.css'
+
 const App = () => {
   return (
     <div className="content">
     <StateProvider>
-      <div className="App">
-        <h1>Trip: weekend in San Francisco</h1>
+      <div className="app">
+        {/* <h1>Trip: weekend in San Francisco</h1> */}
 
         <People />
 
-        <Car />
+        {/* <Car /> */}
 
-        <div>
+        {/* <div>
           <h1>route</h1>
 
           <Search />
 
           <Stops />
 
-        </div>
+        </div> */}
 
-        <div>
+        {/* <div>
           <h1>map</h1>
 
           <GMap />
-        </div>
+        </div> */}
 
         {/* <div>
           <h1>calculation</h1>

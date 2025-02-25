@@ -1,25 +1,10 @@
-// import { useContext } from 'react'
-// import { Context } from '../Context'
+import classes from "./ScrollableContainer.module.css";
 
 const ScrollAreaRoot = ({ children }) => {
-  return (
-    <div
-      style={{
-        border: "1px solid black",
-        height: 125,
-        borderRadius: 4,
-        overflow: "hidden",
-        backgroundColor: "white",
-      }}
-    >
-      {children}
-    </div>
-  );
+  return <div className={classes.container}>{children}</div>;
 };
 
 const ScrollableContaier = ({ children }) => {
-  // const { state, dispatch } = useContext(Context);
-
   return <ScrollAreaRoot>{children}</ScrollAreaRoot>;
 };
 
