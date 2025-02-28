@@ -81,15 +81,18 @@ const Display = () => {
           <table className={classes.listItemTable}>
             {/* header */}
             <thead>
-              <th>name</th>
-              <th>phone</th>
-              <th>payment app</th>
+              <tr>
+                <th>name</th>
+                <th>phone</th>
+                <th>payment app</th>
+              </tr>
             </thead>
             {/* body */}
             <tbody>
               {people.map((person) => (
                 // row
                 <tr
+                  key={person.id}
                   tabIndex={0}
                   onClick={() => handlePeopleSelector(person.id)}
                 >
