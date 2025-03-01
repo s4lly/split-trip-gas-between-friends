@@ -9,7 +9,7 @@ import classes from "./Root.module.css";
 type Tabs = "home" | "signup" | "login";
 
 const Root = () => {
-  const [tab, setTab] = useState<Tabs>("login");
+  const [tab, setTab] = useState<Tabs>("home");
 
   return (
     <div>
@@ -28,8 +28,8 @@ const Root = () => {
       </nav>
 
       {tab === "home" && <App />}
-      {tab === "signup" && <SignUp />}
-      {tab === "login" && <LogIn />}
+      {/* {tab === "signup" && <SignUp />}
+      {tab === "login" && <LogIn />} */}
     </div>
   );
 };

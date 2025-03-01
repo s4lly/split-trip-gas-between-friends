@@ -17,32 +17,32 @@ interface Trip {
 }
 
 const App = () => {
-  const [trips, setTrips] = useState<Trip[]>([]);
+  // const [trips, setTrips] = useState<Trip[]>([]);
 
-  useEffect(() => {
-    const getTrips = async () => {
-      const { data: trips } = await supabase.from("trips").select();
+  // useEffect(() => {
+  //   const getTrips = async () => {
+  //     const { data: trips } = await supabase.from("trips").select();
 
-      if (trips?.length) {
-        setTrips(trips);
-      }
-    };
+  //     if (trips?.length) {
+  //       setTrips(trips);
+  //     }
+  //   };
 
-    getTrips();
-  }, []);
+  //   getTrips();
+  // }, []);
 
   return (
     <div className="content">
       <StateProvider>
         <div className="app">
           {/* <h1>Trip: weekend in San Francisco</h1> */}
-          <div>
+          {/* <div>
             <h2>Trips</h2>
 
             {trips.map((trip) => (
               <div key={trip.id}>{trip.name}</div>
             ))}
-          </div>
+          </div> */}
 
           <People />
 
