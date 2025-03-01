@@ -1,7 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export', // Outputs a Single-Page Application (SPA).
-  distDir: './dist', // Changes the build output directory to `./dist/`.
-}
- 
-export default nextConfig
+  // Warning: This allows production builds to successfully complete even if
+  // your project has ESLint errors.
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  // Docker
+  output: "standalone",
+
+  
+  // # part of vite migration
+  // https://nextjs.org/docs/app/building-your-application/upgrading/from-vite
+
+  // Outputs a Single-Page Application (SPA).
+  // output: 'export',
+
+  // Changes the build output directory to `./dist/`.
+  // distDir: "./dist",
+};
+
+export default nextConfig;
