@@ -3,7 +3,7 @@ import { Context } from "../Context";
 
 import CarDisplay from "./Display";
 import CarInput from "./Input";
-import CarSelect from "./Select"
+import CarSelect from "./Select";
 
 const Car = () => {
   const {

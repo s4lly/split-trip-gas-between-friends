@@ -43,7 +43,7 @@ const Suggestions = ({ suggestions, handleClearInput }) => {
           <li key={place_id} onClick={handleSelect({ description, place_id })}>
             <strong>{main_text}</strong> <small>{secondary_text}</small>
           </li>
-        )
+        ),
       )}
     </ul>
   );

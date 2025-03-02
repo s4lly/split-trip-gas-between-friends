@@ -2,5 +2,5 @@ export {
   ResourceDetails,
   ResourceDetail,
   ResourceDetailText,
-  ResourceDetailInput
+  ResourceDetailInput,
 } from "./ResourceDetails";

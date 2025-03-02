@@ -22,7 +22,7 @@ const GMap = () => {
       if (!map.current) {
         map.current = await Gmap.create(
           mapElementRef.current,
-          firstStop.gMapsData
+          firstStop.gMapsData,
         );
       }
 

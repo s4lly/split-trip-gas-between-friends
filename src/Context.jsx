@@ -1,40 +1,47 @@
-import { createContext, useReducer } from "react"
-import { v4 as uuidv4 } from 'uuid'
+import { createContext, useReducer } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const reducer = (state, action) => {
-  console.log(state)
-  console.log(action)
+  console.log(state);
+  console.log(action);
 
-  let newState
+  let newState;
 
-  switch(action.type) {
+  switch (action.type) {
     // car
     case "car:create":
-      const { payload: { name, mpg } } = action
-      const newCarId = uuidv4()
+      const {
+        payload: { name, mpg },
+      } = action;
+      const newCarId = uuidv4();
 
       newState = {
         ...state,
         cars: [...state.cars, { id: newCarId, name, mpg }],
         selectedCarId: newCarId,
-        vertex: "READ"
-      }
+        vertex: "READ",
+      };
 
-      break
+      break;
 
-    case 'car:select':
-      const selectedCar = state.cars.find(car => car.id === action.payload.carId)
+    case "car:select":
+      const selectedCar = state.cars.find(
+        (car) => car.id === action.payload.carId,
+      );
 
-      newState = { ...state, selectedCarId: selectedCar?.id ?? state.selectedCarId }
+      newState = {
+        ...state,
+        selectedCarId: selectedCar?.id ?? state.selectedCarId,
+      };
 
-      break
+      break;
 
     // ----
 
-    // people 
+    // people
 
     case "people:create":
-      const newPeopleId = uuidv4()
+      const newPeopleId = uuidv4();
 
       newState = {
         ...state,
@@ -45,26 +52,28 @@ const reducer = (state, action) => {
       break;
 
     case "people:select":
-      const selectedPerson = state.people.find(person => person.id === action.payload.personId)
+      const selectedPerson = state.people.find(
+        (person) => person.id === action.payload.personId,
+      );
 
       // TODO handle when can't find
       // TODO consider how to better "un select"
-      newState = {...state, selectedPersonId: selectedPerson?.id}
+      newState = { ...state, selectedPersonId: selectedPerson?.id };
 
       break;
 
     case "people:edit":
-      const { id: editedPersonId, ...restEdited } = action.payload
+      const { id: editedPersonId, ...restEdited } = action.payload;
 
-      const editedPeople =  state.people.map(person => {
+      const editedPeople = state.people.map((person) => {
         if (person.id !== editedPersonId) {
-          return person
+          return person;
         }
 
-        return {...person, ...restEdited}
-      })
+        return { ...person, ...restEdited };
+      });
 
-      newState = { ...state, people: editedPeople }
+      newState = { ...state, people: editedPeople };
 
       break;
 
@@ -72,11 +81,13 @@ const reducer = (state, action) => {
 
     // general
     case "transition:state":
-      const { payload: { vertex } } = action
+      const {
+        payload: { vertex },
+      } = action;
 
       newState = { ...state, vertices: { ...state.vertices, ...vertex } };
 
-      break
+      break;
 
     // ----
 
@@ -84,7 +95,7 @@ const reducer = (state, action) => {
 
     case "stops:list:add":
       // payload: { name: description, gMapsData: { place_id, lat, lng } },
-      const { payload } = action
+      const { payload } = action;
 
       // persisted before disptach
 
@@ -94,13 +105,13 @@ const reducer = (state, action) => {
       break;
 
     default:
-      throw new Error()
+      throw new Error();
   }
 
-  return newState
-}
+  return newState;
+};
 
-export const Context = createContext({ state: {}, dispatch: () => { } })
+export const Context = createContext({ state: {}, dispatch: () => {} });
 
 // ----
 
@@ -115,7 +126,6 @@ const initialState = {
         mpg: number
       }
     */
-
     // { id: "1", name: "car 1", mpg: 11 },
     // { id: "2", name: "car 2", mpg: 12 },
     // { id: "3", name: "car 3", mpg: 13 },
@@ -140,8 +150,8 @@ const initialState = {
         paymentApp: string
       }
     */
-   { id: "1", name: "john", number: 555_555_5555, paymentApp: "zelle" },
-   { id: "2", name: "jane", number: 444_444_4444, paymentApp: "venmo" },
+    { id: "1", name: "john", number: 555_555_5555, paymentApp: "zelle" },
+    { id: "2", name: "jane", number: 444_444_4444, paymentApp: "venmo" },
   ],
   selectedPersonId: undefined,
 
@@ -169,17 +179,15 @@ const initialState = {
     // maybe consider also matching state, like it is using plural
     car: "START",
     people: "START",
-  }
-}
+  },
+};
 
 const Provider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
-    <Context.Provider value={{ state, dispatch }}>
-      {children}
-    </Context.Provider>
-  )
-}
+    <Context.Provider value={{ state, dispatch }}>{children}</Context.Provider>
+  );
+};
 
-export default Provider
+export default Provider;

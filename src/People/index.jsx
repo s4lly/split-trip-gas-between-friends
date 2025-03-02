@@ -16,7 +16,9 @@ const People = () => {
     <>
       <h2>People</h2>
       {(vertex === "START" || vertex === "LIST") && <List />}
-      {(vertex === "READ" || vertex === "CREATE" || vertex === "EDIT") && <Input />}
+      {(vertex === "READ" || vertex === "CREATE" || vertex === "EDIT") && (
+        <Input />
+      )}
     </>
   );
 };

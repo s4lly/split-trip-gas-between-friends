@@ -2,7 +2,11 @@ import { useContext } from "react";
 import { styled } from "@stitches/react";
 
 import { Context } from "../Context";
-import { ResourceDetails, ResourceDetail, ResourceDetailInput } from "../Shared/ResourceDetails";
+import {
+  ResourceDetails,
+  ResourceDetail,
+  ResourceDetailInput,
+} from "../Shared/ResourceDetails";
 
 import "./Display.css";
 
@@ -13,7 +17,7 @@ const DisplayContainer = styled("div", {
   "> div": {
     marginBottom: "10px",
   },
-})
+});
 
 const InputControlContainer = styled("div", {
   display: "flex",
@@ -23,7 +27,7 @@ const InputControlContainer = styled("div", {
 const CarDisplay = () => {
   const { state, dispatch } = useContext(Context);
 
-  console.log("car state: ", state.vertices.car)
+  console.log("car state: ", state.vertices.car);
 
   const selectedCar = state.cars.find((car) => car.id === state.selectedCarId);
 
@@ -31,17 +35,16 @@ const CarDisplay = () => {
     if (state.cars.length === 0) {
       dispatch({
         type: "transition:state",
-        payload: { vertex: { car: "CREATE" } }
-      })
-    }
-    else {
+        payload: { vertex: { car: "CREATE" } },
+      });
+    } else {
       dispatch({
         type: "transition:state",
-        payload: { vertex: { car: "SELECT" } }
-      })
+        payload: { vertex: { car: "SELECT" } },
+      });
     }
 
-    return <></>
+    return <></>;
   }
 
   const handleUIChangeToSelect = () => {
@@ -62,12 +65,22 @@ const CarDisplay = () => {
     <ResourceDetails>
       <ResourceDetail>
         {/* <Label.Root htmlFor="name">name:</Label.Root> */}
-        <ResourceDetailInput type="text" id="name" disabled value={selectedCar.name}></ResourceDetailInput>
+        <ResourceDetailInput
+          type="text"
+          id="name"
+          disabled
+          value={selectedCar.name}
+        ></ResourceDetailInput>
       </ResourceDetail>
 
       <ResourceDetail>
         {/* <Label.Root htmlFor="mpg">mpg:</Label.Root> */}
-        <ResourceDetailInput type="number" id="mpg" value={selectedCar.mpg} disabled></ResourceDetailInput>
+        <ResourceDetailInput
+          type="number"
+          id="mpg"
+          value={selectedCar.mpg}
+          disabled
+        ></ResourceDetailInput>
       </ResourceDetail>
     </ResourceDetails>
   );

@@ -1,7 +1,7 @@
 export const getStringOrEmpty = (value) => {
-  return  value?.trim() ?? ""
-}
+  return value?.trim() ?? "";
+};
 
 export const isBlank = (str) => {
   return !str || /^\s*$/.test(str);
-}
+};

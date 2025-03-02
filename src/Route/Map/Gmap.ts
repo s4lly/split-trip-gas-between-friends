@@ -38,7 +38,7 @@ export default class Gmap {
           new AdvancedMarkerElement({
             map: this.#map,
             position: { lat, lng },
-          })
+          }),
         );
       }
     }
@@ -51,6 +51,6 @@ export default class Gmap {
       bounds.extend(marker.position);
     });
 
-    this.#map.fitBounds(bounds)
+    this.#map.fitBounds(bounds);
   }
 }

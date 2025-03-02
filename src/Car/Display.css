@@ -18,11 +18,11 @@
   background: gray;
 }
 
-.ScrollAreaScrollbar[data-orientation='vertical'] {
+.ScrollAreaScrollbar[data-orientation="vertical"] {
   width: var(--scrollbar-size);
 }
 
-.ScrollAreaScrollbar[data-orientation='horizontal'] {
+.ScrollAreaScrollbar[data-orientation="horizontal"] {
   flex-direction: column;
   height: var(--scrollbar-size);
 }

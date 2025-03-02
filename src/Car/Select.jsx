@@ -11,7 +11,7 @@ const DisplayContainer = styled("div", {
   "> div": {
     marginBottom: "10px",
   },
-})
+});
 
 const InputControlContainer = styled("div", {
   display: "flex",
@@ -46,7 +46,7 @@ const Select = () => {
         ))}
       </div>
     </ScrollableContaier>
-  )
+  );
 
   const controls = (
     <>
@@ -59,7 +59,7 @@ const Select = () => {
         </div>
       )}
     </>
-  )
+  );
 
   return (
     <DisplayContainer>
@@ -67,7 +67,7 @@ const Select = () => {
 
       <InputControlContainer>{controls}</InputControlContainer>
     </DisplayContainer>
-  )
-}
+  );
+};
 
 export default Select;
