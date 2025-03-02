@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   // Warning: This allows production builds to successfully complete even if
   // your project has ESLint errors.
   eslint: {
@@ -12,7 +13,6 @@ const nextConfig = {
   // Docker
   output: "standalone",
 
-  
   // # part of vite migration
   // https://nextjs.org/docs/app/building-your-application/upgrading/from-vite
 
