@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { styled } from "@stitches/react";
 
-import { Context } from "../Context";
+import { Context } from "../components/Context";
 import {
   ResourceDetails,
   ResourceDetail,

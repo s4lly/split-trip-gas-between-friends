@@ -1,14 +1,13 @@
-import StateProvider from "./Context";
-import supabase from "./utils/supabase";
+import { StateProvider } from "@/components/Context";
+// import supabase from "./utils/supabase";
 
-import Car from "./Car";
-import People from "./People";
-import Search from "./Route";
-import Stops from "./Route/Stops";
-import GMap from "./Route/Map";
+// import Car from "./Car";
+// import People from "./People";
+// import Search from "./Route";
+// import Stops from "./Route/Stops";
+// import GMap from "./Route/Map";
 
-import "./App.css";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 interface Trip {
   created_at: string;
@@ -16,7 +15,7 @@ interface Trip {
   name: string;
 }
 
-const App = () => {
+export default function Home() {
   // const [trips, setTrips] = useState<Trip[]>([]);
 
   // useEffect(() => {
@@ -32,19 +31,20 @@ const App = () => {
   // }, []);
 
   return (
-    <div className="content">
-      <StateProvider>
+    <StateProvider>
+      <div className="content">
         <div className="app">
-          {/* <h1>Trip: weekend in San Francisco</h1> */}
-          {/* <div>
-            <h2>Trips</h2>
+          <h1>Split Trip Gas Between Friends</h1>
 
-            {trips.map((trip) => (
+          <div>
+            <h2>My Trips</h2>
+
+            {/* {trips.map((trip) => (
               <div key={trip.id}>{trip.name}</div>
-            ))}
-          </div> */}
+            ))} */}
+          </div>
 
-          <People />
+          {/* <People /> */}
 
           {/* <Car /> */}
 
@@ -67,9 +67,7 @@ const App = () => {
           <h1>calculation</h1>
         </div> */}
         </div>
-      </StateProvider>
-    </div>
+      </div>
+    </StateProvider>
   );
-};
-
-export default App;
+}

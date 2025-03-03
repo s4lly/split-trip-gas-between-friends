@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Context } from "../Context";
+import { Context } from "../components/Context";
 
 import List from "./List";
 import Input from "./Input";

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { useContext, useEffect, useRef } from "react";
-import { Context } from "../../Context";
+import { Context } from "../../components/Context";
 import Gmap from "./Gmap";
 
 const GMap = () => {
@@ -22,7 +22,7 @@ const GMap = () => {
       if (!map.current) {
         map.current = await Gmap.create(
           mapElementRef.current,
-          firstStop.gMapsData,
+          firstStop.gMapsData
         );
       }
 

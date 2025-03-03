@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Context } from "../Context";
+import { Context } from "../components/Context";
 
 import CarDisplay from "./Display";
 import CarInput from "./Input";

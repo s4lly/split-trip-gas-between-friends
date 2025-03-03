@@ -4,7 +4,7 @@ import usePlacesAutocomplete, {
 } from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
 import { useContext } from "react";
-import { Context } from "../Context";
+import { Context } from "../components/Context";
 
 const Suggestions = ({ suggestions, handleClearInput }) => {
   const { dispatch } = useContext(Context);
@@ -43,7 +43,7 @@ const Suggestions = ({ suggestions, handleClearInput }) => {
           <li key={place_id} onClick={handleSelect({ description, place_id })}>
             <strong>{main_text}</strong> <small>{secondary_text}</small>
           </li>
-        ),
+        )
       )}
     </ul>
   );

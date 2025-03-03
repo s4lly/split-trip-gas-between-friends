@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Context } from "../Context";
+import { Context } from "../components/Context";
 import ScrollableContaier from "../Shared/ScrollableContainer";
 import classNames from "classnames";
 

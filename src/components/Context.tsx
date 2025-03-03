@@ -1,4 +1,6 @@
-import { createContext, useReducer } from "react";
+"use client";
+
+import { createContext, useReducer, FC, PropsWithChildren } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const reducer = (state, action) => {
@@ -26,7 +28,7 @@ const reducer = (state, action) => {
 
     case "car:select":
       const selectedCar = state.cars.find(
-        (car) => car.id === action.payload.carId,
+        (car) => car.id === action.payload.carId
       );
 
       newState = {
@@ -53,7 +55,7 @@ const reducer = (state, action) => {
 
     case "people:select":
       const selectedPerson = state.people.find(
-        (person) => person.id === action.payload.personId,
+        (person) => person.id === action.payload.personId
       );
 
       // TODO handle when can't find
@@ -111,7 +113,10 @@ const reducer = (state, action) => {
   return newState;
 };
 
-export const Context = createContext({ state: {}, dispatch: () => {} });
+export const StateContext = createContext({
+  state: {},
+  dispatch: (action: any) => {},
+});
 
 // ----
 
@@ -182,12 +187,12 @@ const initialState = {
   },
 };
 
-const Provider = ({ children }) => {
+export const StateProvider: FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   return (
-    <Context.Provider value={{ state, dispatch }}>{children}</Context.Provider>
+    <StateContext.Provider value={{ state, dispatch }}>
+      {children}
+    </StateContext.Provider>
   );
 };
-
-export default Provider;

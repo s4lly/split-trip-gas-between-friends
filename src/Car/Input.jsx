@@ -3,7 +3,7 @@ import { styled } from "@stitches/react";
 // import * as Label from "@radix-ui/react-label"
 
 import { CarInputControls } from "./CarInputControls";
-import { Context } from "../Context";
+import { Context } from "../components/Context";
 import {
   ResourceDetail,
   ResourceDetails,

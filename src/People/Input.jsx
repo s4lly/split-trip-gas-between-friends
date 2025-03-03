@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { styled } from "@stitches/react";
 
-import { Context } from "../Context";
+import { Context } from "../components/Context";
 import { getStringOrEmpty } from "../Shared";
 import {
   ResourceDetails,
@@ -34,13 +34,13 @@ const Input = () => {
   } = useContext(Context);
 
   const selectedPerson = people.find(
-    (person) => person.id === selectedPersonId,
+    (person) => person.id === selectedPersonId
   );
 
   const [name, setName] = useState(() => selectedPerson?.name ?? "");
   const [number, setNumber] = useState(() => selectedPerson?.number ?? "");
   const [paymentApp, setPaymentApp] = useState(
-    () => selectedPerson?.paymentApp ?? "",
+    () => selectedPerson?.paymentApp ?? ""
   );
 
   const handleChangeName = (e) => {
@@ -204,7 +204,7 @@ const Input = () => {
 
     default:
       throw new Error(
-        `People/Input - controls - cannot apply controls for vertex: ${vertex}`,
+        `People/Input - controls - cannot apply controls for vertex: ${vertex}`
       );
   }
 

@@ -1,10 +1,10 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Session } from "@supabase/supabase-js";
-
-import classes from "./Auth.module.css";
-
-import supabase from "./utils/supabase";
-import { isBlank } from "./Shared/Utils";
+import supabase from "@/lib/supabase";
+import { isBlank } from "@/lib/Utils";
+import classes from "@/app/auth/auth.module.css";
 
 export default function AuthApp() {
   const [email, setEmail] = useState("");
@@ -28,10 +28,11 @@ export default function AuthApp() {
 
   console.log(session);
 
-  const onEmailChange = (event) => {
+  const onEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
-  const onPasswordChange = (event) => {
+
+  const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
 
