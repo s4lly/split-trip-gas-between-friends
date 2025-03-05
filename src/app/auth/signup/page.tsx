@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Session } from "@supabase/supabase-js";
 import supabase from "@/lib/supabase";
-import { isBlank } from "@/lib/Utils";
+import { isBlank } from "@/utils/shared";
 import classes from "@/app/auth/auth.module.css";
 
 export default function AuthApp() {
