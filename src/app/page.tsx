@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
 import { StateProvider } from "@/components/Context";
-// import supabase from "./utils/supabase";
+import classes from "@/app/page.module.css";
 
 // import Car from "./Car";
 // import People from "./People";
@@ -44,10 +44,11 @@ export default async function Home() {
     <StateProvider>
       <div className="content">
         <div className="app">
-          <p>Hello {data.user.email}</p>
-
           <div>
-            <h2>My Trips</h2>
+            <div className={classes.tripsHeader}>
+              <h2>My Trips</h2>
+              <button>new</button>
+            </div>
           </div>
 
           {/* <People /> */}
