@@ -1,3 +1,6 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+
 import { StateProvider } from "@/components/Context";
 // import supabase from "./utils/supabase";
 
@@ -15,7 +18,7 @@ interface Trip {
   name: string;
 }
 
-export default function Home() {
+export default async function Home() {
   // const [trips, setTrips] = useState<Trip[]>([]);
 
   // useEffect(() => {
@@ -30,18 +33,21 @@ export default function Home() {
   //   getTrips();
   // }, []);
 
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
+    redirect("/login");
+  }
+
   return (
     <StateProvider>
       <div className="content">
         <div className="app">
-          <h1>Split Trip Gas Between Friends</h1>
+          <p>Hello {data.user.email}</p>
 
           <div>
             <h2>My Trips</h2>
-
-            {/* {trips.map((trip) => (
-              <div key={trip.id}>{trip.name}</div>
-            ))} */}
           </div>
 
           {/* <People /> */}
