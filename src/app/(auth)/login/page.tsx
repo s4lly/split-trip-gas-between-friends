@@ -1,5 +1,5 @@
 import { login, signup } from "./actions";
-import classes from "@/app/login/login.module.css";
+import classes from "@/app/(auth)/login/login.module.css";
 
 export default function LoginPage() {
   return (

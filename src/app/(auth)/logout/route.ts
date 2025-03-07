@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function GET() {
@@ -10,5 +11,6 @@ export async function GET() {
     redirect("/error");
   }
 
+  revalidatePath("/", "layout");
   redirect("/");
 }
