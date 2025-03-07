@@ -12,12 +12,6 @@ import classes from "@/app/page.module.css";
 
 // import { useEffect, useState } from "react";
 
-interface Trip {
-  created_at: string;
-  id: number;
-  name: string;
-}
-
 export default async function Home() {
   // const [trips, setTrips] = useState<Trip[]>([]);
 
@@ -40,6 +34,11 @@ export default async function Home() {
     redirect("/login");
   }
 
+  const { data: trips } = await supabase
+    .from("trips")
+    .select("*")
+    .eq("user", data.user.id);
+
   return (
     <StateProvider>
       <div className="content">
@@ -48,6 +47,16 @@ export default async function Home() {
             <div className={classes.tripsHeader}>
               <h2>My Trips</h2>
               <button>new</button>
+            </div>
+
+            <div>
+              {trips?.length && (
+                <ul>
+                  {trips.map((trip) => (
+                    <li key={trip.id}>{trip.name}</li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
 
