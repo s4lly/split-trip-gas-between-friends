@@ -1,8 +1,19 @@
-// import { createClient } from "@/utils/supabase/server";
+import { createTrip } from "./actions";
+import classes from "./new.module.css";
 
 export default function TripsNew() {
-  // const supabase = await createClient();
-  // supabase.from("trips").
+  return (
+    <div>
+      <h2>trips - new</h2>
 
-  return <h2>trips - new</h2>;
+      <form className={classes.inputContainer}>
+        <div className={classes.input}>
+          <label htmlFor="name">Name:</label>
+          <input id="name" name="name" type="text" required />
+        </div>
+
+        <button formAction={createTrip}>Create</button>
+      </form>
+    </div>
+  );
 }

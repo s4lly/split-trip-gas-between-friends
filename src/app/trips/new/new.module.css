@@ -1,0 +1,15 @@
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputLabel::after {
+  content: ":";
+}

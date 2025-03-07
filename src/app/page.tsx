@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 
 import { StateProvider } from "@/components/Context";
 import classes from "@/app/page.module.css";
+import Link from "next/link";
 
 // import Car from "./Car";
 // import People from "./People";
@@ -46,7 +47,7 @@ export default async function Home() {
           <div>
             <div className={classes.tripsHeader}>
               <h2>My Trips</h2>
-              <button>new</button>
+              <Link href="/trips/new">new</Link>
             </div>
 
             <div>
