@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
+import { Database } from "@/utils/supabase/database.types";
+type Trip = Database["public"]["Tables"]["trips"]["Row"];
+
 import { StateProvider } from "@/components/Context";
 import classes from "@/app/page.module.css";
 import Link from "next/link";
@@ -14,52 +17,52 @@ import Link from "next/link";
 // import { useEffect, useState } from "react";
 
 export default async function Home() {
-  // const [trips, setTrips] = useState<Trip[]>([]);
-
-  // useEffect(() => {
-  //   const getTrips = async () => {
-  //     const { data: trips } = await supabase.from("trips").select();
-
-  //     if (trips?.length) {
-  //       setTrips(trips);
-  //     }
-  //   };
-
-  //   getTrips();
-  // }, []);
-
   const supabase = await createClient();
+  const { data: auth, error } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data?.user) {
-    redirect("/login");
+  if (error) {
+    // TODO can get here if user is not logged in
+    console.log(error);
   }
 
-  const { data: trips } = await supabase
-    .from("trips")
-    .select("*")
-    .eq("user", data.user.id);
+  let trips: Trip[] = [];
+  const isUserLoggedIn = auth?.user;
+
+  if (isUserLoggedIn) {
+    const { data, error } = await supabase
+      .from("trips")
+      .select("*")
+      .eq("user", auth.user.id);
+
+    if (error) {
+      redirect("/error");
+    }
+
+    trips = data;
+  }
 
   return (
     <StateProvider>
       <div className="content">
         <div className="app">
-          <div>
-            <div className={classes.tripsHeader}>
-              <h2>My Trips</h2>
-              <Link href="/trips/new">new</Link>
-            </div>
-
+          {isUserLoggedIn && (
             <div>
-              {trips?.length && (
-                <ul>
-                  {trips.map((trip) => (
-                    <li key={trip.id}>{trip.name}</li>
-                  ))}
-                </ul>
-              )}
+              <div className={classes.tripsHeader}>
+                <h2>My Trips</h2>
+                <Link href="/trips/new">new</Link>
+              </div>
+
+              <div>
+                {trips.length > 0 && (
+                  <ul>
+                    {trips.map((trip) => (
+                      <li key={trip.id}>{trip.name}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* <People /> */}
 

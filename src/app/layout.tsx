@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import clsx from "clsx";
 
 import { createClient } from "@/utils/supabase/server";
 
@@ -17,23 +18,22 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  let isLoggedIn = false;
-  if (!error && data?.user) {
-    isLoggedIn = true;
-  }
+  const { data } = await supabase.auth.getUser();
 
   return (
     <html lang="en">
       <body>
         <div className={classes.layoutContainer}>
-          <div>
+          <header>
             <Link href="/">
               <h1>split trip gas</h1>
             </Link>
-            <div className={classes.subHeader}>
+
+            <div
+              className={clsx(classes.subHeader, !data.user && classes.login)}
+            >
               {data.user && <div>{data.user.email}</div>}
+
               <nav>
                 <ul className={classes.nav}>
                   {data.user ? (
@@ -44,7 +44,8 @@ export default async function RootLayout({
                 </ul>
               </nav>
             </div>
-          </div>
+          </header>
+
           <div id="root">{children}</div>
         </div>
       </body>

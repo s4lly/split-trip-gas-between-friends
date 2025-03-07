@@ -16,3 +16,7 @@
 .layoutContainer {
   padding: 1rem;
 }
+
+.login {
+  flex-direction: row-reverse;
+}
