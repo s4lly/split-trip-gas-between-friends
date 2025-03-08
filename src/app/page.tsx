@@ -1,8 +1,12 @@
 import { createClient } from "@/utils/supabase/server";
 import { StateProvider } from "@/components/Context";
 
-import MyTrips from "@/components/MyTrips/MyTrips";
 import { getTrips } from "./actions";
+import { Suspense } from "react";
+import Link from "next/link";
+
+import classes from "@/app/page.module.css";
+import MyTrips from "@/components/MyTrips/MyTrips";
 
 // import Car from "./Car";
 // import People from "./People";
@@ -22,7 +26,17 @@ export default async function Home() {
     <StateProvider>
       <div className="content">
         <div className="app">
-          {isUserLoggedIn && <MyTrips trips={trips} />}
+          {isUserLoggedIn && (
+            <div>
+              <div className={classes.tripsHeader}>
+                <h2>My Trips</h2>
+                <Link href="/trips/new">new</Link>
+              </div>
+              <Suspense fallback={<div>Loading...</div>}>
+                <MyTrips trips={trips} />
+              </Suspense>
+            </div>
+          )}
 
           {/* <People /> */}
 
