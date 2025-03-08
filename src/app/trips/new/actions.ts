@@ -14,10 +14,10 @@ export async function createTrip(formData: FormData) {
     redirect("/login");
   }
 
-  const { error: tripsInsertError } = await supabase.from("trips").insert([
+  const { error: tripsInsertError } = await supabase.from("trip").insert([
     {
       name: formData.get("name") as string,
-      user: authUserData.user?.id,
+      owner_id: authUserData.user?.id,
     },
   ]);
 

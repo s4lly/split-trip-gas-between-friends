@@ -34,24 +34,166 @@ export type Database = {
   }
   public: {
     Tables: {
-      trips: {
+      destination: {
+        Row: {
+          created_at: string
+          id: number
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string | null
+        }
+        Relationships: []
+      }
+      route: {
+        Row: {
+          created_at: string
+          driver_id: string | null
+          end: number | null
+          id: number
+          order: number
+          start: number | null
+          trip_id: number | null
+          vehicle_id: number | null
+        }
+        Insert: {
+          created_at?: string
+          driver_id?: string | null
+          end?: number | null
+          id?: number
+          order: number
+          start?: number | null
+          trip_id?: number | null
+          vehicle_id?: number | null
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string | null
+          end?: number | null
+          id?: number
+          order?: number
+          start?: number | null
+          trip_id?: number | null
+          vehicle_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_end_fkey"
+            columns: ["end"]
+            isOneToOne: false
+            referencedRelation: "destination"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_start_fkey"
+            columns: ["start"]
+            isOneToOne: false
+            referencedRelation: "destination"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      route_user: {
+        Row: {
+          created_at: string
+          id: number
+          route_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          route_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          route_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_user_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "route"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip: {
         Row: {
           created_at: string
           id: number
           name: string
-          user: string
+          owner_id: string
         }
         Insert: {
           created_at?: string
           id?: number
           name?: string
-          user?: string
+          owner_id?: string
         }
         Update: {
           created_at?: string
           id?: number
           name?: string
-          user?: string
+          owner_id?: string
+        }
+        Relationships: []
+      }
+      vehicle: {
+        Row: {
+          created_at: string
+          id: number
+          make: string | null
+          model: string | null
+          mpg: number | null
+          name: string | null
+          owner_id: string | null
+          year: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          make?: string | null
+          model?: string | null
+          mpg?: number | null
+          name?: string | null
+          owner_id?: string | null
+          year?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          make?: string | null
+          model?: string | null
+          mpg?: number | null
+          name?: string | null
+          owner_id?: string | null
+          year?: number | null
         }
         Relationships: []
       }
