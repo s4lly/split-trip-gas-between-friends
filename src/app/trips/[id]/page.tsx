@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getTrip } from "@/app/actions";
+import { getTrip, getTripRoutes } from "@/app/actions";
 import RouteCard from "@/components/route-card/route-card";
 
 import classes from "./trips.module.css";
@@ -12,7 +12,13 @@ export default async function TripPage({
 }) {
   const { id } = await params;
 
-  const trip = await getTrip(parseInt(id, 10));
+  const trip = await getTrip(id);
+  const tripRoutes = await getTripRoutes(id);
+  console.log(tripRoutes);
+
+  if (trip == null) {
+    return <div>Invalid trip id</div>;
+  }
 
   return (
     <div>
@@ -30,8 +36,9 @@ export default async function TripPage({
       <section className={classes.routeContainer}>
         <h2>routes</h2>
 
-        <RouteCard start={"location a"} end={"location b"} />
-        <RouteCard start={"location b"} end={"location c"} />
+        {tripRoutes.map((route) => (
+          <RouteCard key={route.id} start={route.start} end={route.end} />
+        ))}
 
         <Link href={`/trips/${id}/routes/new`}>Add</Link>
       </section>

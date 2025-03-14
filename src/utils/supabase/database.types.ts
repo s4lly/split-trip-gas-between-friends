@@ -7,97 +7,40 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
-      destination: {
-        Row: {
-          created_at: string
-          id: number
-          name: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          name?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          name?: string | null
-        }
-        Relationships: []
-      }
       route: {
         Row: {
           created_at: string
           driver_id: string | null
-          end: number | null
+          end: string | null
           id: number
           order: number
-          start: number | null
+          start: string | null
           trip_id: number | null
           vehicle_id: number | null
         }
         Insert: {
           created_at?: string
           driver_id?: string | null
-          end?: number | null
+          end?: string | null
           id?: number
           order: number
-          start?: number | null
+          start?: string | null
           trip_id?: number | null
           vehicle_id?: number | null
         }
         Update: {
           created_at?: string
           driver_id?: string | null
-          end?: number | null
+          end?: string | null
           id?: number
           order?: number
-          start?: number | null
+          start?: string | null
           trip_id?: number | null
           vehicle_id?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "route_end_fkey"
-            columns: ["end"]
-            isOneToOne: false
-            referencedRelation: "destination"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "route_start_fkey"
-            columns: ["start"]
-            isOneToOne: false
-            referencedRelation: "destination"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "route_trip_id_fkey"
             columns: ["trip_id"]

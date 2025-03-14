@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { Trip } from "@/lib/types";
+import { Route, Trip } from "@/lib/types";
 
 export async function getTrips(): Promise<Trip[]> {
   const supabase = await createClient();
@@ -28,14 +28,20 @@ export async function getTrips(): Promise<Trip[]> {
   return [];
 }
 
-export async function getTrip(tripId: number): Promise<Trip> {
+export async function getTrip(tripIdParam: string): Promise<Trip | null> {
+  const tripId = parseInt(tripIdParam, 10);
+
+  if (isNaN(tripId)) {
+    return null;
+  }
+
   const supabase = await createClient();
 
   const { data: auth, error: authError } = await supabase.auth.getUser();
 
   if (authError) {
     console.log(authError);
-    return {} as Trip;
+    return null;
   }
 
   if (auth.user) {
@@ -48,11 +54,45 @@ export async function getTrip(tripId: number): Promise<Trip> {
 
     if (tripError) {
       console.log(tripError);
-      return {} as Trip;
+      return null;
     }
 
     return trip;
   }
 
-  return {} as Trip;
+  return null;
+}
+
+export async function getTripRoutes(tripIdParam: string): Promise<Route[]> {
+  const tripId = parseInt(tripIdParam, 10);
+
+  if (isNaN(tripId)) {
+    return [];
+  }
+
+  const supabase = await createClient();
+
+  const { data: auth, error: authError } = await supabase.auth.getUser();
+
+  if (authError) {
+    console.log(authError);
+    return [];
+  }
+
+  if (auth.user) {
+    const { data: route, error: routeError } = await supabase
+      .from("route")
+      .select("*")
+      .eq("trip_id", tripId)
+      .select();
+
+    if (routeError) {
+      console.log(routeError);
+      return [];
+    }
+
+    return route;
+  }
+
+  return [];
 }

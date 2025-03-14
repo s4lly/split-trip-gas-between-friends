@@ -1,5 +1,4 @@
-import { Database } from "@/utils/supabase/database.types";
-export type Trip = Database["public"]["Tables"]["trip"]["Row"];
-export type Route = Database["public"]["Tables"]["route"]["Row"];
-export type Destination = Database["public"]["Tables"]["destination"]["Row"];
-export type Vehicle = Database["public"]["Tables"]["vehicle"]["Row"];
+import { Tables } from "@/utils/supabase/database.types";
+export type Trip = Tables<"trip">
+export type Route = Tables<"route">
+export type Vehicle = Tables<"vehicle">

@@ -1,16 +1,10 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { Destination } from "@/lib/types";
+import { redirect } from "next/navigation";
 
 export const createTripRoute = async (tripId: number, formData: FormData) => {
   const supabase = await createClient();
-
-  const [start, end] = await createDestination(formData);
-
-  if (start == null || end == null) {
-    return;
-  }
 
   const { count: routeCount } = await supabase
     .from("route")
@@ -18,11 +12,9 @@ export const createTripRoute = async (tripId: number, formData: FormData) => {
     .eq("trip_id", tripId)
     .select();
 
-  console.log("routeCount:", routeCount);
-
   if (routeCount == null) {
-    console.log("routeCount is null");
-    return;
+    console.log("Error getting route count: ", routeCount);
+    redirect("/error");
   }
 
   const { data, error } = await supabase
@@ -30,8 +22,8 @@ export const createTripRoute = async (tripId: number, formData: FormData) => {
     .insert([
       {
         trip_id: tripId,
-        start: start.id,
-        end: end.id,
+        start: formData.get("from") as string,
+        end: formData.get("to") as string,
         order: routeCount,
       },
     ])
@@ -39,35 +31,9 @@ export const createTripRoute = async (tripId: number, formData: FormData) => {
 
   if (error) {
     console.log(error);
-    return;
+    redirect("/error");
   }
 
-  console.log(data);
-};
-
-export const createDestination = async (
-  formData: FormData
-): Promise<[Destination, Destination] | []> => {
-  const supabase = await createClient();
-
-  const from = {
-    name: formData.get("from") as string,
-  };
-  const to = {
-    name: formData.get("to") as string,
-  };
-
-  const { data, error } = await supabase
-    .from("destination")
-    .insert([from, to])
-    .select();
-
-  if (error) {
-    console.log(error);
-    return [];
-  }
-
-  const [fromData, toData] = data;
-
-  return [fromData, toData];
+  console.log("created trip route: ", data);
+  redirect(`/trips/${tripId}`);
 };
