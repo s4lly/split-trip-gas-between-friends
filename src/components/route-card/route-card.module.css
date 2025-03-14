@@ -1,0 +1,10 @@
+.route {
+  border: 1px solid blue;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+
+.route div:first-child {
+  grid-row: span 2;
+  align-self: center;
+}

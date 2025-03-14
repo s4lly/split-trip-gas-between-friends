@@ -1,8 +1,7 @@
 import { use } from "react";
 import Link from "next/link";
 
-import { Database } from "@/utils/supabase/database.types";
-type Trip = Database["public"]["Tables"]["trip"]["Row"];
+import { Trip } from "@/lib/types";
 
 export default function MyTrips({ trips }: { trips: Promise<Trip[]> }) {
   const allTrips = use(trips);

@@ -1,0 +1,16 @@
+.detailsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.mapContainer {
+  border: 2px dashed green;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.routeContainer {
+  border: 1px solid red;
+}

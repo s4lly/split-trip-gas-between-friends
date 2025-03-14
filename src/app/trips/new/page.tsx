@@ -1,19 +1,15 @@
+import { Form, FormInputText } from "@/components/form/form";
 import { createTrip } from "./actions";
-import classes from "./new.module.css";
 
 export default function TripsNew() {
   return (
     <div>
       <h2>trips - new</h2>
 
-      <form className={classes.inputContainer}>
-        <div className={classes.input}>
-          <label htmlFor="name">Name:</label>
-          <input id="name" name="name" type="text" required />
-        </div>
-
+      <Form>
+        <FormInputText label="Name" identifier="name" />
         <button formAction={createTrip}>Create</button>
-      </form>
+      </Form>
     </div>
   );
 }

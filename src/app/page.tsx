@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 
 import classes from "@/app/page.module.css";
-import MyTrips from "@/components/MyTrips/MyTrips";
+import MyTrips from "@/components/my-trips/my-trips";
 
 // import Car from "./Car";
 // import People from "./People";
