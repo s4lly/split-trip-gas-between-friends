@@ -1,9 +1,12 @@
 import Link from "next/link";
 
-import { getTrip, getTripRoutes } from "@/app/actions";
+import { getTripRoutes } from "@/app/actions";
 import RouteCard from "@/components/route-card/route-card";
 
 import classes from "./trips.module.css";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import { QueryData } from "@supabase/supabase-js";
 
 export default async function TripPage({
   params,
@@ -12,9 +15,36 @@ export default async function TripPage({
 }) {
   const { id } = await params;
 
-  const trip = await getTrip(id);
+  const tripId = parseInt(id, 10);
+  if (isNaN(tripId)) {
+    return <div>Invalid trip id</div>;
+  }
+
+  const supabase = await createClient();
+
+  const profilesWithinTripQuery = supabase
+    .from("trip")
+    .select(
+      `
+        *,
+        profile (
+          *
+        )
+        `
+    )
+    .eq("id", tripId)
+    .single();
+
+  const { data, error: tripError } = await profilesWithinTripQuery;
+  if (tripError) {
+    console.log(tripError);
+    redirect("/error");
+  }
+
+  type ProfilesWithinTripQuery = QueryData<typeof profilesWithinTripQuery>;
+  const trip: ProfilesWithinTripQuery = data;
+
   const tripRoutes = await getTripRoutes(id);
-  console.log(tripRoutes);
 
   if (trip == null) {
     return <div>Invalid trip id</div>;
@@ -27,6 +57,9 @@ export default async function TripPage({
       <section className={classes.detailsContainer}>
         <section>
           <h2>people</h2>
+          {trip.profile.map((person) => (
+            <p key={person.id}>{person.email}</p>
+          ))}
         </section>
         <section className={classes.mapContainer}>
           <p>map</p>

@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      profile: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
       route: {
         Row: {
           created_at: string
@@ -110,21 +131,18 @@ export type Database = {
       trip_user: {
         Row: {
           created_at: string
-          id: number
-          trip_id: number | null
-          user_id: string | null
+          trip_id: number
+          user_id: string
         }
         Insert: {
           created_at?: string
-          id?: number
-          trip_id?: number | null
-          user_id?: string | null
+          trip_id: number
+          user_id: string
         }
         Update: {
           created_at?: string
-          id?: number
-          trip_id?: number | null
-          user_id?: string | null
+          trip_id?: number
+          user_id?: string
         }
         Relationships: [
           {
@@ -132,6 +150,13 @@ export type Database = {
             columns: ["trip_id"]
             isOneToOne: false
             referencedRelation: "trip"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_user_user_id_fkey1"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
             referencedColumns: ["id"]
           },
         ]
