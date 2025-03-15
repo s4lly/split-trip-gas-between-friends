@@ -107,6 +107,35 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_user: {
+        Row: {
+          created_at: string
+          id: number
+          trip_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          trip_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          trip_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_user_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trip"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vehicle: {
         Row: {
           created_at: string
