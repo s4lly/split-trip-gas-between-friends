@@ -1,12 +1,14 @@
-import { Form, FormInputText } from "@/components/form/form";
+import { use } from "react";
 import { createTripRoute } from "./actions";
+import { Form, FormInputText } from "@/components/form/form";
+import { PlacesAutoComplete } from "@/components/places-auto-complete/places-auto-complete";
 
 type NewRoutePageProps = {
   params: Promise<{ id: string }>;
 };
 
-export default async function NewRoutePage({ params }: NewRoutePageProps) {
-  const { id } = await params;
+export default function NewRoutePage({ params }: NewRoutePageProps) {
+  const { id } = use(params);
   const tripId = parseInt(id, 10);
 
   if (isNaN(tripId)) {
@@ -16,16 +18,18 @@ export default async function NewRoutePage({ params }: NewRoutePageProps) {
   const boundCreateTripRoute = createTripRoute.bind(null, tripId);
 
   return (
-    <div>
+    <>
       <h1>Create New Route</h1>
-      // TODO auto fill with car and person
+
+      <PlacesAutoComplete>From</PlacesAutoComplete>
+
       <Form>
-        <FormInputText label="From" identifier="from" />
+        {/* // TODO auto fill with car and person */}
         <FormInputText label="To" identifier="to" />
         <button formAction={boundCreateTripRoute} type="submit">
           Submit
         </button>
       </Form>
-    </div>
+    </>
   );
 }

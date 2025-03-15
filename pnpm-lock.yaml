@@ -41,6 +41,9 @@ importers:
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
+      valibot:
+        specifier: 1.0.0-rc.4
+        version: 1.0.0-rc.4(typescript@5.7.3)
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.0
@@ -1822,6 +1825,14 @@ packages:
   uuid@11.1.0:
     resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
+
+  valibot@1.0.0-rc.4:
+    resolution: {integrity: sha512-VRaChgFv7Ab0P54AMLu7+GqoexdTPQ54Plj59X9qV0AFozI3j9CGH43skg+TqgMpXnrW8jxlJ2TTHAtAD3t4qA==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
@@ -3851,6 +3862,10 @@ snapshots:
       react: 19.0.0
 
   uuid@11.1.0: {}
+
+  valibot@1.0.0-rc.4(typescript@5.7.3):
+    optionalDependencies:
+      typescript: 5.7.3
 
   web-streams-polyfill@3.3.3: {}
 
