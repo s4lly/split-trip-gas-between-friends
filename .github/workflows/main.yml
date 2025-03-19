@@ -24,3 +24,4 @@ jobs:
           acrName: rsplittripgas
           containerAppName: ca-split-trip-gas
           resourceGroup: rg-split-trip-gas
+          environmentVariables: NEXT_PUBLIC_SUPABASE_URL=${{ env.NEXT_PUBLIC_SUPABASE_URL }} NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ env.NEXT_PUBLIC_SUPABASE_ANON_KEY }} NEXT_PUBLIC_GOOGLE_API_KEY=${{ env.NEXT_PUBLIC_GOOGLE_API_KEY }}
