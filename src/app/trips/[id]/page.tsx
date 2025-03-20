@@ -52,8 +52,6 @@ export default async function TripPage({
 
   return (
     <div>
-      <h1>{trip.name}</h1>
-
       <section className={classes.detailsContainer}>
         <section>
           <h2>people</h2>

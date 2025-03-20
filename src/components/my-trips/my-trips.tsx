@@ -9,7 +9,7 @@ export default function MyTrips({ trips }: { trips: Promise<Trip[]> }) {
   return (
     <div>
       {allTrips.length > 0 && (
-        <ul>
+        <ul className="list-disc list-inside">
           {allTrips.map((trip) => (
             <li key={trip.id}>
               <Link href={`/trips/${trip.id}`}>{trip.name}</Link>
