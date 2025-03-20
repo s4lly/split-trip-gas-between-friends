@@ -26,9 +26,10 @@ export default async function TripPage({
     .from("trip")
     .select(
       `
-        *,
+        name,
         profile (
-          *
+          id,
+          email
         )
         `
     )
@@ -52,16 +53,17 @@ export default async function TripPage({
 
   return (
     <div>
-      <section className={classes.detailsContainer}>
-        <section>
+      <div className="grid grid-cols-2 gap-2">
+        <section className="border rounded-md p-1">
           <h2>people</h2>
-          {trip.profile.map((person) => (
-            <p key={person.id}>{person.email}</p>
-          ))}
         </section>
-        <section className={classes.mapContainer}>
-          <p>map</p>
+        <section className="border rounded-md">
+          <h2>cars</h2>
         </section>
+      </div>
+
+      <section className={classes.mapContainer}>
+        <p>map</p>
       </section>
 
       <section className={classes.routeContainer}>
