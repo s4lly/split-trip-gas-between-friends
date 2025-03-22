@@ -4,7 +4,7 @@ import usePlacesAutocomplete, {
 } from "use-places-autocomplete";
 import useOnclickOutside from "react-cool-onclickoutside";
 import { useContext } from "react";
-import { Context } from "../components/Context";
+import { Context } from "../../components/Context";
 
 const Suggestions = ({ suggestions, handleClearInput }) => {
   const { dispatch } = useContext(Context);

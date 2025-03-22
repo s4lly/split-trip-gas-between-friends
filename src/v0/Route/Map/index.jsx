@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { useContext, useEffect, useRef } from "react";
-import { Context } from "../../components/Context";
+import { Context } from "../../../components/Context";
 import Gmap from "./Gmap";
 
 const GMap = () => {
