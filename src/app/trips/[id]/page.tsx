@@ -55,11 +55,14 @@ export default async function TripPage({
   return (
     <div className="space-y-4 mt-2">
       <div className="grid grid-cols-2 gap-2">
-        <section className="flex items-center px-1 py-1.5 border rounded-md">
+        <Link
+          href={`/trips/${id}/people`}
+          className="flex items-center px-1 py-1.5 border rounded-md"
+        >
           <p>
             people: <span>{data.profile.length}</span>
           </p>
-        </section>
+        </Link>
         <section className="flex items-center px-1 py-1.5 border rounded-md">
           <p>cars</p>
         </section>
