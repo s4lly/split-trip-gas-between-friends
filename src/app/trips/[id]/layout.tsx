@@ -45,13 +45,17 @@ export default async function Layout({
   return (
     <div>
       <div className="flex justify-between items-center">
-        <div className="flex items-center">
+        <div className="flex items-center gap-1">
           <Link href="/">
             <House className="size-6" />
           </Link>
-          <h1 className="flex items-center text-xl gap-1">{trip.name}</h1>
+          <span className="text-xl font-extrabold">/</span>
+          <h1 className="text-xl font-extrabold">{trip.name}</h1>
         </div>
-        <List className="stroke-black size-6" />
+
+        <Link className="self-start" href={`/user/${123}`}>
+          <List className="stroke-black size-6" />
+        </Link>
       </div>
       {children}
     </div>

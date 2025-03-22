@@ -1,7 +1,7 @@
 import { StateProvider } from "@/components/Context";
 import Link from "next/link";
 import MyTrips from "@/components/my-trips/my-trips";
-import AuthenticationHeader from "@/components/authentication-header";
+import { User, List } from "@phosphor-icons/react/dist/ssr";
 
 // import Car from "./Car";
 // import People from "./People";
@@ -13,11 +13,17 @@ export default async function Home() {
   return (
     <StateProvider>
       <header>
-        <Link href="/">
-          <h1 className="mb-4 text-4xl hover:underline">split trip gas</h1>
-        </Link>
+        <nav className="flex justify-between items-center">
+          <div>
+            <Link href="/">
+              <h1 className="text-4xl font-extrabold">split trip gas</h1>
+            </Link>
+          </div>
 
-        <AuthenticationHeader />
+          <Link className="self-start" href={`/user/${123}`}>
+            <List className="stroke-black size-6" />
+          </Link>
+        </nav>
       </header>
       <section>
         <MyTrips />
