@@ -1,38 +1,44 @@
 "use client";
 
-import { GoogleMap } from "@react-google-maps/api";
-
-export const defaultMapContainerStyle = {
-  width: "200px",
-  height: "200px",
-};
-
-//K2's coordinates
-const defaultMapCenter = {
-  lat: 35.8799866,
-  lng: 76.5048004,
-};
-
-//Default zoom level, can be adjusted
-const defaultMapZoom = 18;
-
-//Map options
-const defaultMapOptions = {
-  zoomControl: true,
-  tilt: 0,
-  gestureHandling: "auto",
-  mapTypeId: "satellite",
-};
+import { Loader } from "@googlemaps/js-api-loader";
+import { useEffect, useRef } from "react";
 
 export const Map = () => {
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const loader = new Loader({
+      apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string,
+      version: "weekly",
+    });
+
+    loader
+      .importLibrary("maps")
+      .then(({ Map }) => {
+        if (!mapRef.current) {
+          console.log("cannot find element to attach map");
+          return;
+        }
+
+        new Map(mapRef.current, mapOptions);
+      })
+      .catch((e) => {
+        console.log("error loading maps library: ", e);
+      });
+  }, []);
+
+  const mapOptions = {
+    center: {
+      lat: 0,
+      lng: 0,
+    },
+    zoom: 4,
+    mapId: "DEMO_MAP_ID",
+  };
+
   return (
-    <div className="w-full">
-      <GoogleMap
-        mapContainerStyle={defaultMapContainerStyle}
-        center={defaultMapCenter}
-        zoom={defaultMapZoom}
-        options={defaultMapOptions}
-      ></GoogleMap>
+    <div className="h-full w-full" ref={mapRef}>
+      <p>Loading...</p>
     </div>
   );
 };
