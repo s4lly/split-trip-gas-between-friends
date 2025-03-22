@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { QueryData } from "@supabase/supabase-js";
 import { Plus } from "@phosphor-icons/react/dist/ssr";
+import { Map } from "@/components/map";
 
 export default async function TripPage({
   params,
@@ -69,7 +70,7 @@ export default async function TripPage({
       </div>
 
       <section className={classes.mapContainer}>
-        <p>map</p>
+        <Map />
       </section>
 
       <section className={classes.routeContainer}>

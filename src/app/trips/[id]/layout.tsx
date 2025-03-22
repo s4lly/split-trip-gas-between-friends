@@ -3,6 +3,7 @@ import { House, List } from "@phosphor-icons/react/dist/ssr";
 import { QueryData } from "@supabase/supabase-js";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { MapProvider } from "@/providers/map-provider";
 
 export default async function Layout({
   children,
@@ -43,21 +44,23 @@ export default async function Layout({
   const trip: ProfilesWithinTripQuery = data;
 
   return (
-    <div>
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-1">
-          <Link href="/">
-            <House className="size-6" />
+    <MapProvider>
+      <div>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-1">
+            <Link href="/">
+              <House className="size-6" />
+            </Link>
+
+            <h1 className="text-2xl font-extrabold">{trip.name}</h1>
+          </div>
+
+          <Link className="self-start" href={`/user/${123}`}>
+            <List className="stroke-black size-6" />
           </Link>
-
-          <h1 className="text-2xl font-extrabold">{trip.name}</h1>
         </div>
-
-        <Link className="self-start" href={`/user/${123}`}>
-          <List className="stroke-black size-6" />
-        </Link>
+        {children}
       </div>
-      {children}
-    </div>
+    </MapProvider>
   );
 }
