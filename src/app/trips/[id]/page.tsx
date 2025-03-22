@@ -7,6 +7,7 @@ import classes from "./trips.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { QueryData } from "@supabase/supabase-js";
+import { Plus } from "@phosphor-icons/react/dist/ssr";
 
 export default async function TripPage({
   params,
@@ -52,13 +53,15 @@ export default async function TripPage({
   }
 
   return (
-    <div>
+    <div className="space-y-4 mt-2">
       <div className="grid grid-cols-2 gap-2">
-        <section className="border rounded-md p-1">
-          <h2>people</h2>
+        <section className="flex items-center px-1 py-1.5 border rounded-md">
+          <p>
+            people: <span>{data.profile.length}</span>
+          </p>
         </section>
-        <section className="border rounded-md">
-          <h2>cars</h2>
+        <section className="flex items-center px-1 py-1.5 border rounded-md">
+          <p>cars</p>
         </section>
       </div>
 
@@ -68,12 +71,20 @@ export default async function TripPage({
 
       <section className={classes.routeContainer}>
         <h2>routes</h2>
-
-        {tripRoutes.map((route) => (
-          <RouteCard key={route.id} start={route.start} end={route.end} />
-        ))}
-
-        <Link href={`/trips/${id}/routes/new`}>Add</Link>
+        <Link
+          className="flex items-center px-4 w-full text-white bg-green-400 hover:bg-green-500 font-medium rounded-t-lg text-sm p-2 text-center"
+          href={`/trips/${id}/routes/new`}
+        >
+          <Plus />
+          <p>Add</p>
+        </Link>
+        {tripRoutes.length > 0 && (
+          <ul className="text-sm font-medium text-gray-900 bg-white border border-gray-200 divide-y rounded-b-lg">
+            {tripRoutes.map((route) => (
+              <RouteCard key={route.id} start={route.start} end={route.end} />
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );

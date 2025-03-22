@@ -49,8 +49,8 @@ export default async function Layout({
           <Link href="/">
             <House className="size-6" />
           </Link>
-          <span className="text-xl font-extrabold">/</span>
-          <h1 className="text-xl font-extrabold">{trip.name}</h1>
+
+          <h1 className="text-2xl font-extrabold">{trip.name}</h1>
         </div>
 
         <Link className="self-start" href={`/user/${123}`}>
