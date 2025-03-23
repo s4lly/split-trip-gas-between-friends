@@ -46,7 +46,7 @@ export default async function TripPage({
   type ProfilesWithinTripQuery = QueryData<typeof profilesWithinTripQuery>;
   const trip: ProfilesWithinTripQuery = data;
 
-  const tripRoutes = await getTripRoutes(id);
+  const routes = await getTripRoutes(id);
 
   if (trip == null) {
     return <div>Invalid trip id</div>;
@@ -69,7 +69,7 @@ export default async function TripPage({
       </div>
 
       <section className={classes.mapContainer}>
-        <Map />
+        <Map routes={routes} />
       </section>
 
       <section className="space-y-2">
@@ -79,9 +79,9 @@ export default async function TripPage({
         >
           <p className="block">Add Route</p>
         </Link>
-        {tripRoutes.length > 0 && (
+        {routes.length > 0 && (
           <ul className="divide-y rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-900">
-            {tripRoutes.map((route) => (
+            {routes.map((route) => (
               <RouteCard key={route.id} route={route} />
             ))}
           </ul>

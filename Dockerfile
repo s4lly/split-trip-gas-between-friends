@@ -5,6 +5,7 @@ FROM node:18-alpine AS base
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ARG NEXT_PUBLIC_GOOGLE_API_KEY
+ARG NEXT_PUBLIC_MAIN_MAP_ID
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -67,6 +68,7 @@ ENV PORT=3000
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_PUBLIC_GOOGLE_API_KEY=$NEXT_PUBLIC_GOOGLE_API_KEY
+ENV NEXT_PUBLIC_MAIN_MAP_ID=$NEXT_PUBLIC_MAIN_MAP_ID
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
