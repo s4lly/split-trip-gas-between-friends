@@ -9,15 +9,11 @@ type RouteCardProps = {
 };
 
 const RouteCard: FC<RouteCardProps> = ({ route }) => {
-  let startText: string | null = "";
-  let endText: string | null = "";
+  let placeText: string | null = "";
 
   try {
-    const startPlacePrediction = parse(PlacePredictionSchema, route.start);
-    startText = startPlacePrediction.structuredFormat.mainText.text;
-
-    const endPlacePrediction = parse(PlacePredictionSchema, route.end);
-    endText = endPlacePrediction.structuredFormat.mainText.text;
+    const place = parse(PlacePredictionSchema, route.place);
+    placeText = place.structuredFormat.mainText.text;
   } catch (error) {
     if (error instanceof ValiError) {
       console.error("Validation failed:", error.issues);
@@ -32,8 +28,7 @@ const RouteCard: FC<RouteCardProps> = ({ route }) => {
         <DotsSixVertical />
       </div>
       <div className="grow-1">
-        <div>from: {startText ?? "no start"}</div>
-        <div>to: {endText ?? "no end"}</div>
+        <div>{placeText}</div>
       </div>
     </li>
   );

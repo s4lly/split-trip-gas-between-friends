@@ -32,4 +32,4 @@ export const PlaceSuggestionsSchema = object({
 });
 
 export type PlaceSuggestions = InferOutput<typeof PlaceSuggestionsSchema>;
-export type PlacePredication = InferOutput<typeof PlacePredictionSchema>;
+export type PlacePrediction = InferOutput<typeof PlacePredictionSchema>;

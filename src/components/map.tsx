@@ -56,16 +56,8 @@ export const Map = ({ routes }: MapProps) => {
       const placeIds = [];
       for (const route of routes) {
         try {
-          const startPlacePrediction = parse(
-            PlacePredictionSchema,
-            route.start,
-          );
-          const endPlacePrediction = parse(PlacePredictionSchema, route.end);
-
-          placeIds.push(
-            startPlacePrediction.placeId,
-            endPlacePrediction.placeId,
-          );
+          const placePrediction = parse(PlacePredictionSchema, route.place);
+          placeIds.push(placePrediction.placeId);
         } catch (error) {
           if (error instanceof ValiError) {
             console.error("Validation failed:", error.issues);

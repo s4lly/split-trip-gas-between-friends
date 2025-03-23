@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { PlacePredication } from "@/utils/valibot/places-auto-complete-schema";
+import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 import { redirect } from "next/navigation";
 
 export const searchPlaces = async (query: string) => {
@@ -16,7 +16,7 @@ export const searchPlaces = async (query: string) => {
       body: JSON.stringify({
         input: query,
       }),
-    }
+    },
   );
 
   const json = await response.json();
@@ -26,8 +26,7 @@ export const searchPlaces = async (query: string) => {
 
 export const createTripRoute = async (
   tripId: number,
-  from: PlacePredication,
-  to: PlacePredication
+  placePrediction: PlacePrediction,
 ) => {
   const supabase = await createClient();
 
@@ -47,8 +46,7 @@ export const createTripRoute = async (
     .insert([
       {
         trip_id: tripId,
-        start: from,
-        end: to,
+        place: placePrediction,
         order: routeCount,
       },
     ])

@@ -34,30 +34,27 @@ export type Database = {
         Row: {
           created_at: string
           driver_id: string | null
-          end: Json | null
           id: number
           order: number
-          start: Json | null
+          place: Json | null
           trip_id: number | null
           vehicle_id: number | null
         }
         Insert: {
           created_at?: string
           driver_id?: string | null
-          end?: Json | null
           id?: number
           order: number
-          start?: Json | null
+          place?: Json | null
           trip_id?: number | null
           vehicle_id?: number | null
         }
         Update: {
           created_at?: string
           driver_id?: string | null
-          end?: Json | null
           id?: number
           order?: number
-          start?: Json | null
+          place?: Json | null
           trip_id?: number | null
           vehicle_id?: number | null
         }
