@@ -1,18 +1,33 @@
 "use client";
 
-import { FC, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { parse } from "valibot";
 import { searchPlaces } from "@/app/trips/[id]/routes/new/actions";
-import { isBlank } from "@/utils/shared";
-import PlaceSuggestionsSchema, {
+import { createFormTitle, isBlank } from "@/utils/shared";
+import {
+  PlacePredication,
   PlaceSuggestions,
+  PlaceSuggestionsSchema,
 } from "@/utils/valibot/places-auto-complete-schema";
 
 type AutoCompleteInputProps = {
   children: string;
+  setPlacePrediction: Dispatch<SetStateAction<PlacePredication | undefined>>;
 };
 
-export const AutoCompleteInput: FC<AutoCompleteInputProps> = ({ children }) => {
+export const AutoCompleteInput: FC<AutoCompleteInputProps> = ({
+  children,
+  setPlacePrediction,
+}) => {
+  const formTitle = createFormTitle(children);
+
   const [value, setValue] = useState("");
   const [placeSuggestion, setPlaceSuggestion] = useState<PlaceSuggestions>();
   const isValueSelected = useRef(false);
@@ -24,14 +39,10 @@ export const AutoCompleteInput: FC<AutoCompleteInputProps> = ({ children }) => {
       return { suggestions: [] };
     }
 
-    // console.log(">>>> searchPlaces: ", query);
-    // return { suggestions: [] };
-
     const data = await searchPlaces(query);
 
     try {
       const placeSuggestion = parse(PlaceSuggestionsSchema, data);
-      console.log(placeSuggestion);
       return placeSuggestion;
     } catch (error) {
       console.error(error);
@@ -39,10 +50,13 @@ export const AutoCompleteInput: FC<AutoCompleteInputProps> = ({ children }) => {
     }
   };
 
-  const handleClickSuggestion = (suggestionText: string) => {
+  const handleClickSuggestion = (placePrediction: PlacePredication) => {
     isValueSelected.current = true;
-    setValue(suggestionText);
+
+    setValue(placePrediction.structuredFormat.mainText.text);
     setPlaceSuggestion({ suggestions: [] });
+
+    setPlacePrediction(placePrediction);
   };
 
   useEffect(() => {
@@ -71,14 +85,14 @@ export const AutoCompleteInput: FC<AutoCompleteInputProps> = ({ children }) => {
       }}
     >
       <label
-        htmlFor={children.toLowerCase()}
+        htmlFor={formTitle}
         className="block mb-2 text-sm font-medium text-gray-900"
       >
         {children}
       </label>
       <input
-        id={children.toLocaleLowerCase()}
-        name={children.toLocaleLowerCase()}
+        id={formTitle}
+        name={formTitle}
         type="text"
         value={value}
         onChange={handleChange}
@@ -94,11 +108,7 @@ export const AutoCompleteInput: FC<AutoCompleteInputProps> = ({ children }) => {
               margin: "4px 0",
               cursor: "pointer",
             }}
-            onClick={() =>
-              handleClickSuggestion(
-                suggestion.placePrediction.structuredFormat.mainText.text
-              )
-            }
+            onClick={() => handleClickSuggestion(suggestion.placePrediction)}
           >
             {suggestion.placePrediction.structuredFormat.mainText.text}
           </div>

@@ -19,7 +19,7 @@ const StructuredFormatSchema = object({
 });
 
 // Define the place prediction schema
-const PlacePredictionSchema = object({
+export const PlacePredictionSchema = object({
   place: string(),
   placeId: string(),
   text: TextSchema,
@@ -33,12 +33,13 @@ const SuggestionSchema = object({
 });
 
 // Define the root schema
-const PlaceSuggestionsSchema = object({
+export const PlaceSuggestionsSchema = object({
   suggestions: array(SuggestionSchema),
 });
 
 // Type for the validated output
 export type PlaceSuggestions = InferOutput<typeof PlaceSuggestionsSchema>;
+export type PlacePredication = InferOutput<typeof PlacePredictionSchema>;
 
 // Example usage:
 // try {
@@ -51,5 +52,3 @@ export type PlaceSuggestions = InferOutput<typeof PlaceSuggestionsSchema>;
 //     console.error('Unexpected error:', error);
 //   }
 // }
-
-export default PlaceSuggestionsSchema;

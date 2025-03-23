@@ -85,7 +85,7 @@ export default async function TripPage({
         {tripRoutes.length > 0 && (
           <ul className="text-sm font-medium text-gray-900 bg-white border border-gray-200 divide-y rounded-b-lg">
             {tripRoutes.map((route) => (
-              <RouteCard key={route.id} start={route.start} end={route.end} />
+              <RouteCard key={route.id} route={route} />
             ))}
           </ul>
         )}
