@@ -1,5 +1,6 @@
 import { Route } from "@/lib/types";
 import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
+import { DotsSixVertical } from "@phosphor-icons/react/dist/ssr";
 import { FC } from "react";
 import { parse, ValiError } from "valibot";
 
@@ -26,10 +27,14 @@ const RouteCard: FC<RouteCardProps> = ({ route }) => {
   }
 
   return (
-    <li className="grid grid-cols-[1fr_3fr] w-full px-4 py-2 border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700">
-      <div className="row-span-2">drag</div>
-      <div>from: {startText ?? "no start"}</div>
-      <div>to: {endText ?? "no end"}</div>
+    <li className="flex cursor-pointer gap-2 border-gray-200 p-2 hover:bg-gray-100 hover:text-blue-700">
+      <div className="flex shrink-0 items-center justify-center">
+        <DotsSixVertical />
+      </div>
+      <div className="grow-1">
+        <div>from: {startText ?? "no start"}</div>
+        <div>to: {endText ?? "no end"}</div>
+      </div>
     </li>
   );
 };

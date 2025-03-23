@@ -7,7 +7,6 @@ import classes from "./trips.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { QueryData } from "@supabase/supabase-js";
-import { Plus } from "@phosphor-icons/react/dist/ssr";
 import { Map } from "@/components/map";
 
 export default async function TripPage({
@@ -33,7 +32,7 @@ export default async function TripPage({
           id,
           email
         )
-        `
+        `,
     )
     .eq("id", tripId)
     .single();
@@ -54,17 +53,17 @@ export default async function TripPage({
   }
 
   return (
-    <div className="space-y-4 mt-2">
+    <div className="mt-2 space-y-4">
       <div className="grid grid-cols-2 gap-2">
         <Link
           href={`/trips/${id}/people`}
-          className="flex items-center px-1 py-1.5 border rounded-md"
+          className="flex items-center rounded-md border px-1 py-1.5"
         >
           <p>
             people: <span>{data.profile.length}</span>
           </p>
         </Link>
-        <section className="flex items-center px-1 py-1.5 border rounded-md">
+        <section className="flex items-center rounded-md border px-1 py-1.5">
           <p>cars</p>
         </section>
       </div>
@@ -73,17 +72,15 @@ export default async function TripPage({
         <Map />
       </section>
 
-      <section className={classes.routeContainer}>
-        <h2>routes</h2>
+      <section className="space-y-2">
         <Link
-          className="flex items-center px-4 w-full text-white bg-green-400 hover:bg-green-500 font-medium rounded-t-lg text-sm p-2 text-center"
+          className="flex w-full items-center justify-center rounded-lg bg-blue-100 p-2 px-4 text-center text-sm font-extrabold text-blue-500 outline-2 outline-blue-200"
           href={`/trips/${id}/routes/new`}
         >
-          <Plus />
-          <p>Add</p>
+          <p className="block">Add Route</p>
         </Link>
         {tripRoutes.length > 0 && (
-          <ul className="text-sm font-medium text-gray-900 bg-white border border-gray-200 divide-y rounded-b-lg">
+          <ul className="divide-y rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-900">
             {tripRoutes.map((route) => (
               <RouteCard key={route.id} route={route} />
             ))}
