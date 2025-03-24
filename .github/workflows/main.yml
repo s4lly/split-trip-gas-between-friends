@@ -24,5 +24,7 @@ jobs:
           acrName: rsplittripgas
           containerAppName: ca-split-trip-gas
           resourceGroup: rg-split-trip-gas
-          buildArguments: "NEXT_PUBLIC_GOOGLE_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_API_KEY }} NEXT_PUBLIC_MAIN_MAP_ID=${{ secrets.NEXT_PUBLIC_MAIN_MAP_ID }}"
-          environmentVariables: "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}"
+          buildArguments: |
+            "NEXT_PUBLIC_GOOGLE_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_API_KEY }}" "NEXT_PUBLIC_MAIN_MAP_ID=${{ secrets.NEXT_PUBLIC_MAIN_MAP_ID }}"
+          environmentVariables: |
+            "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}"
