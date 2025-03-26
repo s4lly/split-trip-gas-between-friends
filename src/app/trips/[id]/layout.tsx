@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { List } from "@phosphor-icons/react/dist/ssr";
+import { House, List } from "@phosphor-icons/react/dist/ssr";
 import { QueryData } from "@supabase/supabase-js";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -24,6 +24,12 @@ export default async function Layout({
 }) {
   const supabase = await createClient();
   const { id } = await params;
+
+  const { data: auth, error: authError } = await supabase.auth.getUser();
+  if (authError) {
+    console.log("authError: ", authError);
+    redirect("/error");
+  }
 
   const tripId = parseInt(id, 10);
   if (isNaN(tripId)) {
@@ -69,11 +75,16 @@ export default async function Layout({
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-              <DrawerDescription>
-                This action cannot be undone.
-              </DrawerDescription>
+              <DrawerTitle>{auth?.user?.email}</DrawerTitle>
+              <DrawerDescription></DrawerDescription>
             </DrawerHeader>
+            <div className="flex basis-full flex-col justify-between">
+              <Link className="flex items-center gap-1" href={"/"}>
+                <House />
+                Home
+              </Link>
+              <Link href={"/logout"}>Logout</Link>
+            </div>
             <DrawerFooter>
               <DrawerClose>Close</DrawerClose>
             </DrawerFooter>
