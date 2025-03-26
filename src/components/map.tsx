@@ -84,13 +84,18 @@ export const Map = ({ routes }: MapProps) => {
       // @ts-ignore: maps api types not updated
       const { AdvancedMarkerElement } =
         await google.maps.importLibrary("marker");
+      const bounds = new google.maps.LatLngBounds();
 
       for (const coordinate of coordinates) {
-        new AdvancedMarkerElement({
+        const marker = new AdvancedMarkerElement({
           map,
           position: { lat: coordinate.latitude, lng: coordinate.longitude },
         });
+
+        bounds.extend(marker.position);
       }
+
+      map.fitBounds(bounds);
     };
 
     addMarkers();
