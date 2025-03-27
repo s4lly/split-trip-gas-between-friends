@@ -1,14 +1,17 @@
 import { Route } from "@/lib/types";
 import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 import { DotsSixVertical } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
 import { FC } from "react";
 import { parse, ValiError } from "valibot";
 
 type RouteCardProps = {
   route: Route;
+  tripId: number;
 };
 
-const RouteCard: FC<RouteCardProps> = ({ route }) => {
+const RouteCard: FC<RouteCardProps> = async ({ route, tripId }) => {
+  console.log("tripId: ", tripId);
   let placeText: string | null = "";
 
   try {
@@ -28,7 +31,9 @@ const RouteCard: FC<RouteCardProps> = ({ route }) => {
         <DotsSixVertical />
       </div>
       <div className="grow-1">
-        <div>{placeText}</div>
+        <div>
+          <Link href={`/trips/${tripId}/routes/${route.id}`}>{placeText}</Link>
+        </div>
       </div>
     </li>
   );
