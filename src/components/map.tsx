@@ -24,11 +24,13 @@ export const Map = ({ routes }: MapProps) => {
         lng: -122.40505665414587,
       },
       zoom: 8,
-      mapId: process.env.NEXT_PUBLIC_MAIN_MAP_ID as string,
+      // TODO remove and regenerate if repo public
+      mapId: "6bddb037afab2ce9",
     };
 
     const loader = new Loader({
-      apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string,
+      // TODO remove and regenerate if repo public
+      apiKey: "AIzaSyCS_NtCeqwe6chb3HQzXKH63L-o1whkB1U",
       version: "weekly",
     });
 
