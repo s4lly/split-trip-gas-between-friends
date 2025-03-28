@@ -1,19 +1,7 @@
+import LayoutDrawer from "@/components/layout-drawer";
 import { createClient } from "@/utils/supabase/server";
-import { House, List } from "@phosphor-icons/react/dist/ssr";
 import { QueryData } from "@supabase/supabase-js";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 
 export default async function Layout({
   children,
@@ -22,14 +10,9 @@ export default async function Layout({
   children: React.ReactNode;
   params: Promise<{ id: string }>;
 }) {
-  const supabase = await createClient();
   const { id } = await params;
 
-  const { data: auth, error: authError } = await supabase.auth.getUser();
-  if (authError) {
-    console.log("authError: ", authError);
-    redirect("/error");
-  }
+  const supabase = await createClient();
 
   const tripId = parseInt(id, 10);
   if (isNaN(tripId)) {
@@ -65,31 +48,7 @@ export default async function Layout({
         <div className="flex items-center gap-1">
           <h1 className="text-2xl font-extrabold">{trip.name}</h1>
         </div>
-
-        {/* <Link className="self-start" href={`/user/${123}`}>
-        </Link> */}
-
-        <Drawer direction="right">
-          <DrawerTrigger className="self-start">
-            <List className="size-6 stroke-black" />
-          </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>{auth?.user?.email}</DrawerTitle>
-              <DrawerDescription></DrawerDescription>
-            </DrawerHeader>
-            <div className="flex basis-full flex-col justify-between">
-              <Link className="flex items-center gap-1" href={"/"}>
-                <House />
-                Home
-              </Link>
-              <Link href={"/logout"}>Logout</Link>
-            </div>
-            <DrawerFooter>
-              <DrawerClose>Close</DrawerClose>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
+        <LayoutDrawer />
       </div>
       {children}
     </div>

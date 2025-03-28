@@ -5,9 +5,9 @@ import { QueryData } from "@supabase/supabase-js";
 export default async function PeoplePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params;
 
   const tripId = parseInt(id, 10);
   if (isNaN(tripId)) {
@@ -25,7 +25,7 @@ export default async function PeoplePage({
           id,
           email
         )
-        `
+        `,
     )
     .eq("id", tripId)
     .single();
@@ -44,7 +44,7 @@ export default async function PeoplePage({
   }
 
   return (
-    <div className="space-y-4 mt-2">
+    <div className="mt-2 space-y-4">
       <h1 className="text-lg font-bold">People in this trip</h1>
       <ul className="list-disc pl-5">
         {trip.profile.map((person) => (

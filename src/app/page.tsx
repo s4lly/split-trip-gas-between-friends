@@ -1,7 +1,7 @@
 import { StateProvider } from "@/components/Context";
 import Link from "next/link";
 import MyTrips from "@/components/my-trips/my-trips";
-import { User, List } from "@phosphor-icons/react/dist/ssr";
+import LayoutDrawer from "@/components/layout-drawer";
 
 // import Car from "./Car";
 // import People from "./People";
@@ -13,16 +13,14 @@ export default async function Home() {
   return (
     <StateProvider>
       <header>
-        <nav className="flex justify-between items-center">
+        <nav className="flex items-center justify-between">
           <div>
             <Link href="/">
               <h1 className="text-4xl font-extrabold">split trip gas</h1>
             </Link>
           </div>
 
-          <Link className="self-start" href={`/user/${123}`}>
-            <List className="stroke-black size-6" />
-          </Link>
+          <LayoutDrawer />
         </nav>
       </header>
       <section>
