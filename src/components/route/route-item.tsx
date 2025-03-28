@@ -1,3 +1,5 @@
+"use client";
+
 import { Route } from "@/lib/types";
 import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 import { DotsSixVertical } from "@phosphor-icons/react/dist/ssr";
@@ -10,8 +12,7 @@ type RouteCardProps = {
   tripId: number;
 };
 
-const RouteCard: FC<RouteCardProps> = async ({ route, tripId }) => {
-  console.log("tripId: ", tripId);
+const RouteItem: FC<RouteCardProps> = ({ route, tripId }) => {
   let placeText: string | null = "";
 
   try {
@@ -39,4 +40,4 @@ const RouteCard: FC<RouteCardProps> = async ({ route, tripId }) => {
   );
 };
 
-export default RouteCard;
+export default RouteItem;

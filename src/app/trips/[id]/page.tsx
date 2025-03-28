@@ -1,13 +1,11 @@
 import Link from "next/link";
-
 import { getTripRoutes } from "@/app/actions";
-import RouteCard from "@/components/route-card/route-card";
-
 import classes from "./trips.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { QueryData } from "@supabase/supabase-js";
 import { Map } from "@/components/map";
+import RouteList from "@/components/route/route-list";
 
 export default async function TripPage({
   params,
@@ -79,13 +77,7 @@ export default async function TripPage({
         >
           <p className="block">Add Route</p>
         </Link>
-        {routes.length > 0 && (
-          <ul className="divide-y rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-900">
-            {routes.map((route) => (
-              <RouteCard key={route.id} route={route} tripId={tripId} />
-            ))}
-          </ul>
-        )}
+        <RouteList routes={routes} tripId={tripId} />
       </section>
     </div>
   );
