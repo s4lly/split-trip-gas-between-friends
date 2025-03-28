@@ -11,7 +11,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { createClient } from "@/utils/supabase/server";
-import { House, List } from "@phosphor-icons/react/dist/ssr";
+import { House, List, User } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -31,14 +31,30 @@ export default async function LayoutDrawer() {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{auth?.user?.email}</DrawerTitle>
+          <DrawerTitle>
+            <div className="flex items-center justify-between">
+              <div>{auth.user.email}</div>
+              {/* <div className="rounded-full bg-green-200 p-1.5">
+                <User className="" />
+              </div> */}
+            </div>
+          </DrawerTitle>
           <DrawerDescription></DrawerDescription>
         </DrawerHeader>
-        <div className="flex basis-full flex-col justify-between">
-          <Link className="flex items-center gap-1" href={"/"}>
-            <House />
-            Home
-          </Link>
+        <div className="flex basis-full flex-col justify-between p-4">
+          <div>
+            <Link className="flex items-center gap-1" href={"/"}>
+              <House />
+              Home
+            </Link>
+            <Link
+              className="flex items-center gap-1"
+              href={`/users/${auth.user.id}`}
+            >
+              <User />
+              Profile
+            </Link>
+          </div>
           <Link href={"/logout"}>Logout</Link>
         </div>
         <DrawerFooter>
