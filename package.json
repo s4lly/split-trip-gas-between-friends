@@ -7,7 +7,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "fix-lint": "next lint --fix"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
@@ -33,15 +34,16 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.0.14",
     "@types/google.maps": "^3.58.1",
     "@types/node": "^22.13.10",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
-    "eslint": "^9.22.0",
-    "eslint-config-next": "^15.2.2",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.4",
     "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
