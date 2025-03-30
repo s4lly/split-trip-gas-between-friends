@@ -1,8 +1,8 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import { QueryData } from "@supabase/supabase-js";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
-export default async function PeoplePage({
+export default async function DetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>;

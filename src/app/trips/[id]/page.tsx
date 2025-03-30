@@ -74,18 +74,15 @@ export default async function TripPage({
 
   return (
     <div className="mt-2 space-y-4">
-      <div className="grid grid-cols-2 gap-2">
+      <div className="">
         <Link
-          href={`/trips/${id}/people`}
+          href={`/trips/${id}/details`}
           className="flex items-center rounded-md border px-1 py-1.5"
         >
           <p>
-            people: <span>{data.profile.length}</span>
+            People: <span>{data.profile.length}</span> Cars: 1
           </p>
         </Link>
-        <section className="flex items-center rounded-md border px-1 py-1.5">
-          <p>cars</p>
-        </section>
       </div>
 
       <section className={classes.mapContainer}>
@@ -97,12 +94,20 @@ export default async function TripPage({
       </section>
 
       <section className="space-y-2">
-        <Link
-          className="flex w-full items-center justify-center rounded-lg bg-blue-100 p-2 px-4 text-center text-sm font-extrabold text-blue-500 outline-2 outline-blue-200"
-          href={`/trips/${id}/routes/new`}
-        >
-          <p className="block">Add Route</p>
-        </Link>
+        <div className="flex justify-between gap-2">
+          <Link
+            className="flex grow items-center justify-center rounded-lg bg-blue-100 px-4 py-2 text-center text-sm font-extrabold text-blue-500 outline-2 outline-blue-200"
+            href={`/trips/${id}/routes/new`}
+          >
+            <p className="block">Add Route</p>
+          </Link>
+          <Link
+            className="flex grow items-center justify-center rounded-lg bg-green-100 px-4 py-2 text-center text-sm font-extrabold text-green-500 outline-2 outline-green-200"
+            href={`/trips/${id}/report`}
+          >
+            <p className="block">View Report</p>
+          </Link>
+        </div>
         <RouteList routes={placePredictions} tripId={tripId} />
       </section>
     </div>

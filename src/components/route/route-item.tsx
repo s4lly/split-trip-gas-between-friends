@@ -1,11 +1,11 @@
 "use client";
 
-import { Route } from "@/lib/types";
-import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 import { DotsSixVertical } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { FC } from "react";
 import { parse, ValiError } from "valibot";
+import { Route } from "@/lib/types";
+import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 
 type RouteCardProps = {
   route: Route;
@@ -31,11 +31,10 @@ const RouteItem: FC<RouteCardProps> = ({ route, tripId }) => {
       <div className="flex shrink-0 items-center justify-center">
         <DotsSixVertical />
       </div>
-      <div className="grow-1">
-        <div>
-          <Link href={`/trips/${tripId}/routes/${route.id}`}>{placeText}</Link>
-        </div>
-      </div>
+
+      <Link className="grow-1" href={`/trips/${tripId}/routes/${route.id}`}>
+        {placeText}
+      </Link>
     </li>
   );
 };
