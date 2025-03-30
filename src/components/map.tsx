@@ -1,20 +1,23 @@
 "use client";
 
-import { getCoordinates } from "@/app/trips/[id]/actions";
-import { Route } from "@/lib/types";
-import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
-import { Location } from "@/utils/valibot/place-details";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useEffect, useRef, useState } from "react";
-import { parse, ValiError } from "valibot";
+import { Route } from "@/lib/types";
+import { Location } from "@/utils/valibot/place-details";
+import { RoutesResponse } from "@/utils/valibot/poly-line-schema";
 
 type MapProps = {
-  routes: Route[];
+  placePredictions: Route[];
+  coordinates: Location[];
+  routePolyLines: RoutesResponse[];
 };
 
-export const Map = ({ routes }: MapProps) => {
+export const Map = ({
+  // placePredictions,
+  coordinates,
+  routePolyLines,
+}: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [coordinates, setCoordinates] = useState<Location[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,40 +53,32 @@ export const Map = ({ routes }: MapProps) => {
   }, []);
 
   useEffect(() => {
-    const addMarkers = async () => {
+    const addToMap = async () => {
       if (map == null) {
         return;
       }
 
-      const placeIds = [];
-      for (const route of routes) {
-        try {
-          const placePrediction = parse(PlacePredictionSchema, route.place);
-          placeIds.push(placePrediction.placeId);
-        } catch (error) {
-          if (error instanceof ValiError) {
-            console.error("Validation failed:", error.issues);
-          } else {
-            console.error("Unexpected error:", error);
-          }
-        }
+      for (const routePolyLine of routePolyLines) {
+        const {
+          routes: [route],
+        } = routePolyLine;
+
+        // @ts-expect-error: maps api types not updated
+        const { encoding } = await google.maps.importLibrary("geometry");
+        const decodedPath = encoding.decodePath(route.polyline.encodedPolyline);
+
+        const gRoutePolyLine = new google.maps.Polyline({
+          path: decodedPath,
+          geodesic: true,
+          strokeColor: "#FF0000",
+          strokeOpacity: 1.0,
+          strokeWeight: 3,
+        });
+
+        gRoutePolyLine.setMap(map);
       }
 
-      const coordinates = await getCoordinates(placeIds);
-      console.log(coordinates);
-      setCoordinates(coordinates);
-    };
-
-    addMarkers();
-  }, [map, routes]);
-
-  useEffect(() => {
-    const addMarkers = async () => {
-      if (map == null) {
-        return;
-      }
-
-      // @ts-ignore: maps api types not updated
+      // @ts-expect-error: maps api types not updated
       const { AdvancedMarkerElement } =
         await google.maps.importLibrary("marker");
       const bounds = new google.maps.LatLngBounds();
@@ -100,8 +95,8 @@ export const Map = ({ routes }: MapProps) => {
       map.fitBounds(bounds);
     };
 
-    addMarkers();
-  }, [map, coordinates]);
+    addToMap();
+  }, [map, coordinates, routePolyLines]);
 
   return (
     <div className="h-full w-full" ref={mapRef}>

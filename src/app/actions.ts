@@ -1,5 +1,5 @@
-import { createClient } from "@/utils/supabase/server";
 import { Route, Trip } from "@/lib/types";
+import { createClient } from "@/utils/supabase/server";
 
 export async function getTrips(): Promise<Trip[]> {
   const supabase = await createClient();
@@ -28,7 +28,9 @@ export async function getTrips(): Promise<Trip[]> {
   return [];
 }
 
-export async function getTripRoutes(tripIdParam: string): Promise<Route[]> {
+export async function getTripPlacePredictions(
+  tripIdParam: string,
+): Promise<Route[]> {
   const tripId = parseInt(tripIdParam, 10);
 
   if (isNaN(tripId)) {

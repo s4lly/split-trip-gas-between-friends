@@ -1,7 +1,11 @@
 "use server";
 
-import { Location, PlaceDetailsSchema } from "@/utils/valibot/place-details";
 import { parse, ValiError } from "valibot";
+import { Location, PlaceDetailsSchema } from "@/utils/valibot/place-details";
+import {
+  RoutesResponse,
+  RoutesResponseSchema,
+} from "@/utils/valibot/poly-line-schema";
 
 export const getCoordinates = async (
   placeIds: string[],
@@ -42,3 +46,60 @@ export const getCoordinates = async (
 
   return coordinates;
 };
+
+export async function getRoutePolyLines(
+  routes: [Location, Location][],
+): Promise<RoutesResponse[]> {
+  const routePolyLines = [];
+
+  for (const route of routes) {
+    const [origin, destination] = route;
+
+    const response = await fetch(
+      "https://routes.googleapis.com/directions/v2:computeRoutes",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string,
+          "X-Goog-FieldMask":
+            "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
+        },
+        body: JSON.stringify({
+          origin: {
+            location: {
+              latLng: {
+                latitude: origin.latitude,
+                longitude: origin.longitude,
+              },
+            },
+          },
+          destination: {
+            location: {
+              latLng: {
+                latitude: destination.latitude,
+                longitude: destination.longitude,
+              },
+            },
+          },
+          travelMode: "DRIVE",
+          computeAlternativeRoutes: false,
+          routeModifiers: {
+            avoidTolls: false,
+            avoidHighways: false,
+            avoidFerries: false,
+          },
+          languageCode: "en-US",
+          units: "IMPERIAL",
+        }),
+      },
+    );
+
+    const data = await response.json();
+    const routePolyLine = parse(RoutesResponseSchema, data);
+
+    routePolyLines.push(routePolyLine);
+  }
+
+  return routePolyLines;
+}

@@ -1,11 +1,15 @@
-import Link from "next/link";
-import { getTripRoutes } from "@/app/actions";
-import classes from "./trips.module.css";
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import { QueryData } from "@supabase/supabase-js";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { parse } from "valibot";
+import { getTripPlacePredictions } from "@/app/actions";
 import { Map } from "@/components/map";
 import RouteList from "@/components/route/route-list";
+import { createClient } from "@/utils/supabase/server";
+import { Location } from "@/utils/valibot/place-details";
+import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
+import { getCoordinates, getRoutePolyLines } from "./actions";
+import classes from "./trips.module.css";
 
 export default async function TripPage({
   params,
@@ -44,11 +48,29 @@ export default async function TripPage({
   type ProfilesWithinTripQuery = QueryData<typeof profilesWithinTripQuery>;
   const trip: ProfilesWithinTripQuery = data;
 
-  const routes = await getTripRoutes(id);
-
   if (trip == null) {
     return <div>Invalid trip id</div>;
   }
+
+  const placePredictions = await getTripPlacePredictions(id);
+  const places = placePredictions.map((placePrediction) =>
+    parse(PlacePredictionSchema, placePrediction.place),
+  );
+
+  // ----
+
+  const coordinates = await getCoordinates(
+    places.map((place) => place.placeId),
+  );
+
+  // ----
+
+  const routes: [Location, Location][] = [];
+  for (let i = 1; i < coordinates.length; i++) {
+    routes.push([coordinates[i - 1], coordinates[i]]);
+  }
+
+  const routePolyLines = await getRoutePolyLines(routes);
 
   return (
     <div className="mt-2 space-y-4">
@@ -67,7 +89,11 @@ export default async function TripPage({
       </div>
 
       <section className={classes.mapContainer}>
-        <Map routes={routes} />
+        <Map
+          placePredictions={placePredictions}
+          coordinates={coordinates}
+          routePolyLines={routePolyLines}
+        />
       </section>
 
       <section className="space-y-2">
@@ -77,7 +103,7 @@ export default async function TripPage({
         >
           <p className="block">Add Route</p>
         </Link>
-        <RouteList routes={routes} tripId={tripId} />
+        <RouteList routes={placePredictions} tripId={tripId} />
       </section>
     </div>
   );
