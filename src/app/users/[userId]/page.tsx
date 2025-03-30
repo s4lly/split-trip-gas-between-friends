@@ -25,7 +25,14 @@ export default async function UserPage({
       <h2>Cars</h2>
 
       {vehicles.length > 0 ? (
-        <p>show cars</p>
+        <ul>
+          {vehicles.map((vehicle) => (
+            <li key={vehicle.id}>
+              <p>{vehicle.name}</p>
+              <p>{vehicle.mpg}</p>
+            </li>
+          ))}
+        </ul>
       ) : (
         <div className="flex w-full flex-col items-center justify-center">
           <p>no cars</p>
