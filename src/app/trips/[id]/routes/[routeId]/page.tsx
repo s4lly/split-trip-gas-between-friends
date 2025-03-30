@@ -1,19 +1,16 @@
-import { createClient } from "@/utils/supabase/server";
-import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
+import { QueryData } from "@supabase/supabase-js";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { parse } from "valibot";
+import UpdateDriverForm from "@/components/update-driver-form/update-driver-form";
+import { createClient } from "@/utils/supabase/server";
+import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// const actionFoo = async (formData: FormData) => {
+//   "use server";
+//   console.log("formData: ", formData.get("driver"));
+// };
 
 export default async function RoutePage({
   params,
@@ -51,19 +48,30 @@ export default async function RoutePage({
 
   // ----
 
-  const { data: foo, error: fooError } = await supabase.from("profile").select(`
-    *,
-    trip (
-      owner_id
+  const tripProfilesQuery = supabase
+    .from("trip")
+    .select(
+      `
+    name,
+    profile (
+      id,
+      email
   )
-  `);
+  `,
+    )
+    .eq("id", parseInt(id, 10))
+    .single();
 
-  if (fooError) {
-    console.log(fooError);
+  const { data: tripProfilesData, error: tripProfilesDataError } =
+    await tripProfilesQuery;
+  // TODO o11y
+  if (tripProfilesDataError) {
+    console.log(tripProfilesDataError);
     redirect("/error");
   }
 
-  console.log(foo);
+  type TripProfilesQuery = QueryData<typeof tripProfilesQuery>;
+  const tripProfiles: TripProfilesQuery = tripProfilesData;
 
   /*
 
@@ -91,25 +99,17 @@ export default async function RoutePage({
         </Link>
         <h1>Route Details</h1>
       </div>
-      <p>
-        <strong>ID:</strong> {route.id}
-      </p>
-      <p>
-        <strong>Destination:</strong> {place.structuredFormat.mainText.text}
-      </p>
-      <p>{route.driver_id == null ? "no driver" : "driver"}</p>
-
-      <Select>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Select a Driver" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Drivers</SelectLabel>
-            <SelectItem value="apple">Apple</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <div>
+        <p>
+          <strong>Destination:</strong> {place.structuredFormat.mainText.text}
+        </p>
+      </div>
+      <div>
+        <UpdateDriverForm
+          routeId={routeIdNum}
+          profiles={tripProfiles.profile}
+        />
+      </div>
     </div>
   );
 }
