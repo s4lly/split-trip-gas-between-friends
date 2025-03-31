@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { updateRoute } from "@/app/trips/[id]/routes/[routeId]/actions";
 import {
   Select,
@@ -13,19 +14,31 @@ import {
 import { Profile } from "@/lib/types";
 
 type UpdateDriverFormProps = {
+  tripId: number;
   routeId: number;
+  selectedId: string;
   profiles: Pick<Profile, "email" | "id">[];
 };
 
-const UpdateDriverForm = ({ routeId, profiles }: UpdateDriverFormProps) => {
-  const onDriverChange = (profileId: string) => {
-    updateRoute(routeId, { driver_id: profileId });
+const UpdateDriverForm = ({
+  tripId,
+  routeId,
+  selectedId,
+  profiles,
+}: UpdateDriverFormProps) => {
+  const [selectedDriverId, setSelectedDriverId] = useState<string>(selectedId);
+
+  const onDriverChange = async (profileId: string) => {
+    const udpatedDriverId = await updateRoute(tripId, routeId, {
+      driver_id: profileId,
+    });
+    setSelectedDriverId(udpatedDriverId);
   };
 
   return (
     <>
       {profiles.length > 0 && (
-        <Select onValueChange={onDriverChange}>
+        <Select onValueChange={onDriverChange} value={selectedDriverId}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select a Driver" />
           </SelectTrigger>

@@ -7,11 +7,6 @@ import UpdateDriverForm from "@/components/update-driver-form/update-driver-form
 import { createClient } from "@/utils/supabase/server";
 import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 
-// const actionFoo = async (formData: FormData) => {
-//   "use server";
-//   console.log("formData: ", formData.get("driver"));
-// };
-
 export default async function RoutePage({
   params,
 }: {
@@ -25,13 +20,8 @@ export default async function RoutePage({
     redirect("/error");
   }
 
-  // ----
-
   const supabase = await createClient();
 
-  // ----
-
-  // Fetch route data from Supabase
   const { data: route, error } = await supabase
     .from("route")
     .select("*")
@@ -45,8 +35,6 @@ export default async function RoutePage({
   if (!route) {
     return <div>Route not found</div>;
   }
-
-  // ----
 
   const tripProfilesQuery = supabase
     .from("trip")
@@ -64,6 +52,7 @@ export default async function RoutePage({
 
   const { data: tripProfilesData, error: tripProfilesDataError } =
     await tripProfilesQuery;
+
   // TODO o11y
   if (tripProfilesDataError) {
     console.log(tripProfilesDataError);
@@ -106,7 +95,9 @@ export default async function RoutePage({
       </div>
       <div>
         <UpdateDriverForm
+          tripId={routeIdNum}
           routeId={routeIdNum}
+          selectedId={route.driver_id ?? ""}
           profiles={tripProfiles.profile}
         />
       </div>

@@ -50,15 +50,14 @@ export async function getTripPlacePredictions(
     const { data: route, error: routeError } = await supabase
       .from("route")
       .select("*")
-      .eq("trip_id", tripId)
-      .select();
+      .eq("trip_id", tripId);
 
     if (routeError) {
       console.log(routeError);
       return [];
     }
 
-    return route;
+    return route.sort((a, b) => a.order - b.order);
   }
 
   return [];
