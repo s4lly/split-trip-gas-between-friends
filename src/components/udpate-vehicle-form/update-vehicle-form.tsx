@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { updateRoute } from "@/app/trips/[id]/routes/[routeId]/actions";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -40,25 +41,29 @@ const UpdateVehicleForm = ({
     }
   };
 
+  if (!vehicles.length) {
+    return null;
+  }
+
+  // TODO consider not showing all, maybe only for people assigned to route
   return (
     <>
-      {vehicles.length > 0 && (
-        <Select onValueChange={onVehicleChange} value={selectedVehicleId}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a Driver" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Drivers</SelectLabel>
-              {vehicles.map((vehicle) => (
-                <SelectItem key={vehicle.id} value={vehicle.id.toString()}>
-                  {vehicle.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      )}
+      <Label>Vehicle</Label>
+      <Select onValueChange={onVehicleChange} value={selectedVehicleId}>
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Select a Driver" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Vehicles</SelectLabel>
+            {vehicles.map((vehicle) => (
+              <SelectItem key={vehicle.id} value={vehicle.id.toString()}>
+                {vehicle.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </>
   );
 };

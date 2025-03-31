@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { updateRoute } from "@/app/trips/[id]/routes/[routeId]/actions";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -38,25 +39,32 @@ const UpdateDriverForm = ({
     }
   };
 
+  if (!profiles.length) {
+    return null;
+  }
+
   return (
     <>
-      {profiles.length > 0 && (
-        <Select onValueChange={onDriverChange} value={selectedDriverId}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a Driver" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Drivers</SelectLabel>
-              {profiles.map((profile) => (
-                <SelectItem key={profile.id} value={profile.id}>
-                  {profile.email}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      )}
+      <Label htmlFor="driver">Driver</Label>
+      <Select
+        name="driver"
+        onValueChange={onDriverChange}
+        value={selectedDriverId}
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Select a Driver" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Drivers</SelectLabel>
+            {profiles.map((profile) => (
+              <SelectItem key={profile.id} value={profile.id}>
+                {profile.email}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
     </>
   );
 };

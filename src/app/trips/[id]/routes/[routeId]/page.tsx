@@ -100,7 +100,7 @@ export default async function RoutePage({
   const place = parse(PlacePredictionSchema, route.place);
 
   return (
-    <div>
+    <div className="space-y-2">
       <div className="flex items-center gap-2">
         <Link href={`/trips/${id}`}>
           <ArrowLeft className="size-6 text-gray-500" />
