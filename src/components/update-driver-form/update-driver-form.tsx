@@ -29,10 +29,13 @@ const UpdateDriverForm = ({
   const [selectedDriverId, setSelectedDriverId] = useState<string>(selectedId);
 
   const onDriverChange = async (profileId: string) => {
-    const udpatedDriverId = await updateRoute(tripId, routeId, {
+    const updatedRoute = await updateRoute(tripId, routeId, {
       driver_id: profileId,
     });
-    setSelectedDriverId(udpatedDriverId);
+
+    if (updatedRoute.driver_id) {
+      setSelectedDriverId(updatedRoute.driver_id);
+    }
   };
 
   return (

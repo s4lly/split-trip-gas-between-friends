@@ -3,6 +3,7 @@ import { QueryData } from "@supabase/supabase-js";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { parse } from "valibot";
+import UpdateVehicleForm from "@/components/udpate-vehicle-form/update-vehicle-form";
 import UpdateDriverForm from "@/components/update-driver-form/update-driver-form";
 import { createClient } from "@/utils/supabase/server";
 import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
@@ -62,6 +63,24 @@ export default async function RoutePage({
   type TripProfilesQuery = QueryData<typeof tripProfilesQuery>;
   const tripProfiles: TripProfilesQuery = tripProfilesData;
 
+  const vehiclesQuery = supabase
+    .from("vehicle")
+    .select("*")
+    .in(
+      "owner_id",
+      tripProfiles.profile.map((profile) => profile.id),
+    );
+
+  const { data: vehiclesData, error: vehiclesError } = await vehiclesQuery;
+
+  if (vehiclesError) {
+    console.log(vehiclesError);
+    redirect("/error");
+  }
+
+  type VehiclesQuery = QueryData<typeof vehiclesQuery>;
+  const vehicles: VehiclesQuery = vehiclesData;
+
   /*
 
   i wanna have a list of people on this trip
@@ -99,6 +118,14 @@ export default async function RoutePage({
           routeId={routeIdNum}
           selectedId={route.driver_id ?? ""}
           profiles={tripProfiles.profile}
+        />
+      </div>
+      <div>
+        <UpdateVehicleForm
+          tripId={routeIdNum}
+          routeId={routeIdNum}
+          selectedId={route.vehicle_id}
+          vehicles={vehicles}
         />
       </div>
     </div>

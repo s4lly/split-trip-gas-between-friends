@@ -9,14 +9,14 @@ export const updateRoute = async (
   tripId: number,
   routeId: number,
   updates: Partial<Route>,
-): Promise<string> => {
+): Promise<Route> => {
   const supabase = await createClient();
 
   // console.log("tripId: ", tripId, "routeId: ", routeId, "updates: ", updates);
 
   const { data, error } = await supabase
     .from("route")
-    .update({ driver_id: updates.driver_id })
+    .update(updates)
     .eq("id", routeId)
     .select()
     .single();
@@ -34,5 +34,5 @@ export const updateRoute = async (
   console.log("updated route data: ", data);
   revalidatePath(`/trips/${tripId}`);
 
-  return data.driver_id;
+  return data;
 };
