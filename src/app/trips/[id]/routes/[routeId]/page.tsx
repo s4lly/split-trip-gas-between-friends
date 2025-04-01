@@ -1,8 +1,7 @@
-import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { QueryData } from "@supabase/supabase-js";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { parse } from "valibot";
+import TripSubPageHeader from "@/components/TripSubPageHeader";
 import UpdateVehicleForm from "@/components/udpate-vehicle-form/update-vehicle-form";
 import UpdateDriverForm from "@/components/update-driver-form/update-driver-form";
 import { createClient } from "@/utils/supabase/server";
@@ -101,12 +100,7 @@ export default async function RoutePage({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <Link href={`/trips/${id}`}>
-          <ArrowLeft className="size-6 text-gray-500" />
-        </Link>
-        <h1>Route Details</h1>
-      </div>
+      <TripSubPageHeader tripId={id} title="Route Details" />
       <div>
         <p>
           <strong>Destination:</strong> {place.structuredFormat.mainText.text}

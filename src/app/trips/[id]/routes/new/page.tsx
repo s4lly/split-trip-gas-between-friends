@@ -1,5 +1,6 @@
 import { use } from "react";
 import NewRouteForm from "@/components/new-route-form/new-route-form";
+import TripSubPageHeader from "@/components/TripSubPageHeader";
 
 type NewRoutePageProps = {
   params: Promise<{ id: string }>;
@@ -15,7 +16,7 @@ export default function NewRoutePage({ params }: NewRoutePageProps) {
 
   return (
     <>
-      <h1>Create New Route</h1>
+      <TripSubPageHeader tripId={id} title="Create Route" />
       <NewRouteForm tripId={tripId} />
     </>
   );
