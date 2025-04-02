@@ -28,9 +28,7 @@ export async function getTrips(): Promise<Trip[]> {
   return [];
 }
 
-export async function getTripPlacePredictions(
-  tripIdParam: string,
-): Promise<Route[]> {
+export async function getTripRoutes(tripIdParam: string): Promise<Route[]> {
   const tripId = parseInt(tripIdParam, 10);
 
   if (isNaN(tripId)) {
@@ -57,7 +55,8 @@ export async function getTripPlacePredictions(
       return [];
     }
 
-    return route.sort((a, b) => a.order - b.order);
+    const sortedPlacePredictions = route.sort((a, b) => a.order - b.order);
+    return sortedPlacePredictions;
   }
 
   return [];

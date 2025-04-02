@@ -2,21 +2,15 @@
 
 import { Loader } from "@googlemaps/js-api-loader";
 import { useEffect, useRef, useState } from "react";
-import { Route } from "@/lib/types";
-import { Location } from "@/utils/valibot/place-details";
-import { RoutesResponse } from "@/utils/valibot/poly-line-schema";
+import { RoutesResponse } from "@/utils/valibot/compute-route-schema";
+import { Location } from "@/utils/valibot/place-details-schema";
 
 type MapProps = {
-  placePredictions: Route[];
   coordinates: Location[];
   routePolyLines: RoutesResponse[];
 };
 
-export const Map = ({
-  // placePredictions,
-  coordinates,
-  routePolyLines,
-}: MapProps) => {
+export const Map = ({ coordinates, routePolyLines }: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
 

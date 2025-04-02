@@ -1,4 +1,4 @@
-import { object, array, string, optional, number, InferOutput } from "valibot";
+import { array, InferOutput, number, object, optional, string } from "valibot";
 
 const MatchSchema = object({
   startOffset: optional(number()),

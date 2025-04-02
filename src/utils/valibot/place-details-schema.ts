@@ -1,4 +1,4 @@
-import { object, number, InferOutput } from "valibot";
+import { InferOutput, number, object } from "valibot";
 
 export const LocationSchema = object({
   latitude: number(),

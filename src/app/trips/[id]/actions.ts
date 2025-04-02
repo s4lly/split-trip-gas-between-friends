@@ -1,15 +1,52 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { parse, ValiError } from "valibot";
-import { Location, PlaceDetailsSchema } from "@/utils/valibot/place-details";
+import { Route } from "@/lib/types";
+import { createClient } from "@/utils/supabase/server";
 import {
   RoutesResponse,
   RoutesResponseSchema,
-} from "@/utils/valibot/poly-line-schema";
+} from "@/utils/valibot/compute-route-schema";
+import {
+  Location,
+  PlaceDetailsSchema,
+} from "@/utils/valibot/place-details-schema";
+import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 
-export const getCoordinates = async (
-  placeIds: string[],
-): Promise<Location[]> => {
+export const getTripProfiles = async (tripId: number) => {
+  const supabase = await createClient();
+
+  const profilesWithinTripQuery = supabase
+    .from("trip")
+    .select(
+      `
+      name,
+      profile (
+        id,
+        email
+      )
+    `,
+    )
+    .eq("id", tripId)
+    .single();
+
+  const { data, error } = await profilesWithinTripQuery;
+  if (error) {
+    console.log(error);
+    redirect("/error");
+  }
+
+  return data;
+};
+
+export async function getCoordinates(tripRoutes: Route[]) {
+  // TODO o11y
+  const places = tripRoutes.map((tripRoute) =>
+    parse(PlacePredictionSchema, tripRoute.place),
+  );
+
+  const placeIds = places.map((place) => place.placeId);
   const coordinates: Location[] = [];
 
   for (const placeId of placeIds) {
@@ -45,11 +82,16 @@ export const getCoordinates = async (
   }
 
   return coordinates;
-};
+}
 
 export async function getRoutePolyLines(
-  routes: [Location, Location][],
+  coordinates: Location[],
 ): Promise<RoutesResponse[]> {
+  const routes: [Location, Location][] = [];
+  for (let i = 1; i < coordinates.length; i++) {
+    routes.push([coordinates[i - 1], coordinates[i]]);
+  }
+
   const routePolyLines = [];
 
   for (const route of routes) {
@@ -95,7 +137,15 @@ export async function getRoutePolyLines(
       },
     );
 
+    if (!response.ok) {
+      console.error(
+        `Failed to fetch route polyline. Status: ${response.status}, StatusText: ${response.statusText}`,
+      );
+      return [];
+    }
+
     const data = await response.json();
+    // TODO o11y
     const routePolyLine = parse(RoutesResponseSchema, data);
 
     routePolyLines.push(routePolyLine);
