@@ -18,4 +18,5 @@ export const RoutesResponseSchema = object({
 });
 
 // Type for the validated data
-export type RoutesResponse = InferOutput<typeof RoutesResponseSchema>;
+export type ComputedRoutes = InferOutput<typeof RoutesResponseSchema>;
+export type ComputedRoute = InferOutput<typeof RouteSchema>;

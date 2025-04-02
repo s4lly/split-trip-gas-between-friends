@@ -2,17 +2,16 @@
 
 import { redirect } from "next/navigation";
 import { parse, ValiError } from "valibot";
-import { Route } from "@/lib/types";
 import { createClient } from "@/utils/supabase/server";
 import {
-  RoutesResponse,
+  ComputedRoute,
   RoutesResponseSchema,
 } from "@/utils/valibot/compute-route-schema";
 import {
   Location,
   PlaceDetailsSchema,
 } from "@/utils/valibot/place-details-schema";
-import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
+import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 
 export const getTripProfiles = async (tripId: number) => {
   const supabase = await createClient();
@@ -40,14 +39,16 @@ export const getTripProfiles = async (tripId: number) => {
   return data;
 };
 
-export async function getCoordinates(tripRoutes: Route[]) {
-  // TODO o11y
-  const places = tripRoutes.map((tripRoute) =>
-    parse(PlacePredictionSchema, tripRoute.place),
-  );
+export type PlaceCoordinate = {
+  placeId: string;
+  location: Location;
+};
 
+export async function getPlaceCoordinates(
+  places: PlacePrediction[],
+): Promise<PlaceCoordinate[]> {
   const placeIds = places.map((place) => place.placeId);
-  const coordinates: Location[] = [];
+  const placeCoordinates: PlaceCoordinate[] = [];
 
   for (const placeId of placeIds) {
     const response = await fetch(
@@ -71,32 +72,44 @@ export async function getCoordinates(tripRoutes: Route[]) {
 
     try {
       const placeDetails = parse(PlaceDetailsSchema, data);
-      coordinates.push(placeDetails.location);
+      placeCoordinates.push({ placeId, location: placeDetails.location });
     } catch (error) {
       if (error instanceof ValiError) {
-        console.error("Validation failed:", error.issues);
+        console.error(
+          `Validation error for placeId: ${placeId}. Error: ${error.message}`,
+        );
       } else {
-        console.error("Unexpected error:", error);
+        console.error(
+          `Unexpected error for placeId: ${placeId}. Error: ${error}`,
+        );
       }
     }
   }
 
-  return coordinates;
+  return placeCoordinates;
 }
 
+export type RoutePolyLine = {
+  origin: {
+    placeId: string;
+  };
+  destination: {
+    placeId: string;
+  };
+  route: ComputedRoute;
+};
+
 export async function getRoutePolyLines(
-  coordinates: Location[],
-): Promise<RoutesResponse[]> {
-  const routes: [Location, Location][] = [];
-  for (let i = 1; i < coordinates.length; i++) {
-    routes.push([coordinates[i - 1], coordinates[i]]);
+  placeCoordinates: PlaceCoordinate[],
+): Promise<RoutePolyLine[]> {
+  const routes: [PlaceCoordinate, PlaceCoordinate][] = [];
+  for (let i = 1; i < placeCoordinates.length; i++) {
+    routes.push([placeCoordinates[i - 1], placeCoordinates[i]]);
   }
 
-  const routePolyLines = [];
+  const routePolyLines: RoutePolyLine[] = [];
 
-  for (const route of routes) {
-    const [origin, destination] = route;
-
+  for (const [origin, destination] of routes) {
     const response = await fetch(
       "https://routes.googleapis.com/directions/v2:computeRoutes",
       {
@@ -111,16 +124,16 @@ export async function getRoutePolyLines(
           origin: {
             location: {
               latLng: {
-                latitude: origin.latitude,
-                longitude: origin.longitude,
+                latitude: origin.location.latitude,
+                longitude: origin.location.longitude,
               },
             },
           },
           destination: {
             location: {
               latLng: {
-                latitude: destination.latitude,
-                longitude: destination.longitude,
+                latitude: destination.location.latitude,
+                longitude: destination.location.longitude,
               },
             },
           },
@@ -145,10 +158,34 @@ export async function getRoutePolyLines(
     }
 
     const data = await response.json();
-    // TODO o11y
-    const routePolyLine = parse(RoutesResponseSchema, data);
 
-    routePolyLines.push(routePolyLine);
+    try {
+      // TODO o11y
+      const routePolyLine = parse(RoutesResponseSchema, data);
+
+      // resonse is an array of routes, we need to get the first one
+      const {
+        routes: [route],
+      } = routePolyLine;
+
+      routePolyLines.push({
+        origin: {
+          placeId: origin.placeId,
+        },
+        destination: {
+          placeId: destination.placeId,
+        },
+        route,
+      });
+    } catch (error) {
+      if (error instanceof ValiError) {
+        console.error(
+          `Validation error for route polyline. Error: ${error.message}`,
+        );
+      } else {
+        console.error(`Unexpected error for route polyline. Error: ${error}`);
+      }
+    }
   }
 
   return routePolyLines;

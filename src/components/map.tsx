@@ -2,15 +2,14 @@
 
 import { Loader } from "@googlemaps/js-api-loader";
 import { useEffect, useRef, useState } from "react";
-import { RoutesResponse } from "@/utils/valibot/compute-route-schema";
-import { Location } from "@/utils/valibot/place-details-schema";
+import { PlaceCoordinate, RoutePolyLine } from "@/app/trips/[id]/actions";
 
 type MapProps = {
-  coordinates: Location[];
-  routePolyLines: RoutesResponse[];
+  placeCoordinates: PlaceCoordinate[];
+  routePolyLines: RoutePolyLine[];
 };
 
-export const Map = ({ coordinates, routePolyLines }: MapProps) => {
+export const Map = ({ placeCoordinates, routePolyLines }: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -53,13 +52,11 @@ export const Map = ({ coordinates, routePolyLines }: MapProps) => {
       }
 
       for (const routePolyLine of routePolyLines) {
-        const {
-          routes: [route],
-        } = routePolyLine;
-
         // @ts-expect-error: maps api types not updated
         const { encoding } = await google.maps.importLibrary("geometry");
-        const decodedPath = encoding.decodePath(route.polyline.encodedPolyline);
+        const decodedPath = encoding.decodePath(
+          routePolyLine.route.polyline.encodedPolyline,
+        );
 
         const gRoutePolyLine = new google.maps.Polyline({
           path: decodedPath,
@@ -77,10 +74,13 @@ export const Map = ({ coordinates, routePolyLines }: MapProps) => {
         await google.maps.importLibrary("marker");
       const bounds = new google.maps.LatLngBounds();
 
-      for (const coordinate of coordinates) {
+      for (const placeCoordinate of placeCoordinates) {
         const marker = new AdvancedMarkerElement({
           map,
-          position: { lat: coordinate.latitude, lng: coordinate.longitude },
+          position: {
+            lat: placeCoordinate.location.latitude,
+            lng: placeCoordinate.location.longitude,
+          },
         });
 
         bounds.extend(marker.position);
@@ -90,7 +90,7 @@ export const Map = ({ coordinates, routePolyLines }: MapProps) => {
     };
 
     addToMap();
-  }, [map, coordinates, routePolyLines]);
+  }, [map, placeCoordinates, routePolyLines]);
 
   return (
     <div className="h-full w-full" ref={mapRef}>

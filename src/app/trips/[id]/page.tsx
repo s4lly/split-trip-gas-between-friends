@@ -2,7 +2,12 @@ import Link from "next/link";
 import { getTripRoutes } from "@/app/actions";
 import { Map } from "@/components/map";
 import RouteList from "@/components/route/route-list";
-import { getCoordinates, getRoutePolyLines, getTripProfiles } from "./actions";
+import {
+  getPlaceCoordinates,
+  getRoutePolyLines,
+  getTripProfiles,
+} from "./actions";
+import { parsePlacesFromTripRoutes } from "./lib/trip-lib";
 import classes from "./trips.module.css";
 
 export default async function TripPage({
@@ -19,8 +24,9 @@ export default async function TripPage({
 
   const tripProfiles = await getTripProfiles(tripId);
   const tripRoutes = await getTripRoutes(id);
-  const coordinates = await getCoordinates(tripRoutes);
-  const routePolyLines = await getRoutePolyLines(coordinates);
+  const places = parsePlacesFromTripRoutes(tripRoutes);
+  const placeCoordinates = await getPlaceCoordinates(places);
+  const routePolyLines = await getRoutePolyLines(placeCoordinates);
 
   return (
     <div className="mt-2 space-y-4">
@@ -36,7 +42,10 @@ export default async function TripPage({
       </div>
 
       <section className={classes.mapContainer}>
-        <Map coordinates={coordinates} routePolyLines={routePolyLines} />
+        <Map
+          placeCoordinates={placeCoordinates}
+          routePolyLines={routePolyLines}
+        />
       </section>
 
       <section className="space-y-2">
