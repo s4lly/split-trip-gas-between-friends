@@ -1,54 +1,22 @@
-import { StateProvider } from "@/components/Context";
 import Link from "next/link";
-import MyTrips from "@/components/my-trips/my-trips";
+import { redirect } from "next/navigation";
+import { StateProvider } from "@/components/Context";
 import LayoutDrawer from "@/components/layout-drawer";
-
-// import Car from "./Car";
-// import People from "./People";
-// import Search from "./Route";
-// import Stops from "./Route/Stops";
-// import GMap from "./Route/Map";
+import MyTrips from "@/components/my-trips/my-trips";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function Home() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
+    redirect("/login");
+  }
+
   return (
     <StateProvider>
-      <header>
-        <nav className="flex items-center justify-between">
-          <div>
-            <Link href="/">
-              <h1 className="text-4xl font-extrabold">split trip gas</h1>
-            </Link>
-          </div>
-
-          <LayoutDrawer />
-        </nav>
-      </header>
-      <section>
-        <MyTrips />
-
-        {/* <People /> */}
-
-        {/* <Car /> */}
-
-        {/* <div>
-          <h1>route</h1>
-
-          <Search />
-
-          <Stops />
-
-        </div> */}
-
-        {/* <div>
-          <h1>map</h1>
-
-          <GMap />
-        </div> */}
-
-        {/* <div>
-          <h1>calculation</h1>
-        </div> */}
-      </section>
+      <h1>split trip gas between friends</h1>
+      <p>Hello {data.user.email}</p>
     </StateProvider>
   );
 }
