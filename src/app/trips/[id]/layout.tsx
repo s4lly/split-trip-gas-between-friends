@@ -1,7 +1,9 @@
-import LayoutDrawer from "@/components/layout-drawer";
-import { createClient } from "@/utils/supabase/server";
 import { QueryData } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
+import LayoutDrawer from "@/components/layout-drawer";
+import TripsBreadCrumb from "@/components/TripsBreadCrumb";
+import { Separator } from "@/components/ui/separator";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function Layout({
   children,
@@ -44,13 +46,19 @@ export default async function Layout({
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <h1 className="text-2xl font-extrabold">{trip.name}</h1>
+      <div className="bg-gray-100">
+        <div className="flex items-center justify-between px-4 pt-4">
+          <div className="flex items-center gap-1">
+            <h1 className="text-2xl font-extrabold">{trip.name}</h1>
+          </div>
+          <LayoutDrawer />
         </div>
-        <LayoutDrawer />
+        <div className="px-4">
+          <TripsBreadCrumb />
+        </div>
       </div>
-      {children}
+      <Separator />
+      <div className="p-4">{children}</div>
     </div>
   );
 }

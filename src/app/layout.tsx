@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import "@/index.css";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "split trip gas between friends",
@@ -14,9 +14,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="p-4">
-          <div id="root">{children}</div>
-        </div>
+        <div id="root">{children}</div>
       </body>
     </html>
   );

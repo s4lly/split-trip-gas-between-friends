@@ -1,6 +1,5 @@
 import { QueryData } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
-import TripSubPageHeader from "@/components/TripSubPageHeader";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function DetailsPage({
@@ -46,7 +45,6 @@ export default async function DetailsPage({
 
   return (
     <div className="mt-2 space-y-4">
-      <TripSubPageHeader tripId={id} title="Trip Details" />
       <ul className="list-disc pl-5">
         {trip.profile.map((person) => (
           <li key={person.id}>{person.email}</li>

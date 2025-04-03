@@ -2,13 +2,14 @@ import Link from "next/link";
 import { getTripRoutes } from "@/app/actions";
 import { Map } from "@/components/map";
 import RouteList from "@/components/route/route-list";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   getPlaceCoordinates,
   getRoutePolyLines,
   getTripProfiles,
 } from "./actions";
 import { parsePlacesFromTripRoutes } from "./lib/trip-lib";
-import classes from "./trips.module.css";
 
 export default async function TripPage({
   params,
@@ -41,27 +42,27 @@ export default async function TripPage({
         </Link>
       </div>
 
-      <section className={classes.mapContainer}>
-        <Map
-          placeCoordinates={placeCoordinates}
-          routePolyLines={routePolyLines}
-        />
-      </section>
+      <Card className="w-full">
+        <CardContent className="flex h-[200px] items-center justify-center">
+          <Map
+            placeCoordinates={placeCoordinates}
+            routePolyLines={routePolyLines}
+          />
+        </CardContent>
+      </Card>
 
       <section className="space-y-2">
         <div className="flex justify-between gap-2">
-          <Link
-            className="flex grow items-center justify-center rounded-lg bg-blue-100 px-4 py-2 text-center text-sm font-extrabold text-blue-500 outline-2 outline-blue-200"
-            href={`/trips/${id}/routes/new`}
-          >
-            <p className="block">Add Route</p>
-          </Link>
-          <Link
-            className="flex grow items-center justify-center rounded-lg bg-green-100 px-4 py-2 text-center text-sm font-extrabold text-green-500 outline-2 outline-green-200"
-            href={`/trips/${id}/report`}
-          >
-            <p className="block">View Report</p>
-          </Link>
+          <Button className="grow" asChild>
+            <Link href={`/trips/${id}/routes/new`}>
+              <p className="block">Add Route</p>
+            </Link>
+          </Button>
+          <Button className="grow" asChild>
+            <Link href={`/trips/${id}/report`}>
+              <p className="block">View Plan</p>
+            </Link>
+          </Button>
         </div>
         <RouteList tripRoutes={tripRoutes} tripId={tripId} />
       </section>

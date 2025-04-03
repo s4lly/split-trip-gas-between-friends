@@ -1,6 +1,5 @@
 import { getTripRoutes } from "@/app/actions";
 import StaticMap from "@/components/static-map";
-import TripSubPageHeader from "@/components/TripSubPageHeader";
 import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 import { getPlaceCoordinates, getRoutePolyLines } from "../actions";
 import {
@@ -37,23 +36,19 @@ export default async function ReportPage({
   );
 
   return (
-    <>
-      <TripSubPageHeader tripId={id} title="Report" />
-
-      <section className="space-y-4">
-        {destinationDetails.map(({ place, coordinate, route }, index) => {
-          return (
-            <div key={index}>
-              <StaticMap coordinate={coordinate} />
-              <div className="px-3 py-1">
-                <p>place: {place.structuredFormat.mainText.text}</p>
-                <p>Distance: {route.distanceMeters} m</p>
-                <p>Duration: {route.duration} s</p>
-              </div>
+    <section className="space-y-4">
+      {destinationDetails.map(({ place, coordinate, route }, index) => {
+        return (
+          <div key={index}>
+            <StaticMap coordinate={coordinate} />
+            <div className="px-3 py-1">
+              <p>place: {place.structuredFormat.mainText.text}</p>
+              <p>Distance: {route.distanceMeters} m</p>
+              <p>Duration: {route.duration} s</p>
             </div>
-          );
-        })}
-      </section>
-    </>
+          </div>
+        );
+      })}
+    </section>
   );
 }
