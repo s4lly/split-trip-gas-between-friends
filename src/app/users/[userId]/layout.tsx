@@ -1,7 +1,7 @@
-import LayoutDrawer from "@/components/layout-drawer";
-import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
+import LayoutDrawer from "@/components/layout-drawer";
+import { createClient } from "@/utils/supabase/server";
 
 type LayoutProps = {
   children: ReactNode;
@@ -24,13 +24,13 @@ export default async function Layout({ children, params }: LayoutProps) {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
+    <div className="p-4">
+      <header className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <h1 className="text-2xl font-extrabold">{profile?.email}</h1>
         </div>
         <LayoutDrawer />
-      </div>
+      </header>
       {children}
     </div>
   );

@@ -45,7 +45,7 @@ export default async function Layout({
   const trip: ProfilesWithinTripQuery = data;
 
   return (
-    <div>
+    <>
       <div className="bg-gray-100">
         <div className="flex items-center justify-between px-4 pt-4">
           <div className="flex items-center gap-1">
@@ -59,6 +59,6 @@ export default async function Layout({
       </div>
       <Separator />
       <div className="p-4">{children}</div>
-    </div>
+    </>
   );
 }

@@ -13,14 +13,12 @@ import {
 export default function TripsBreadCrumb() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
-  console.log("pathname: ", pathname, "segments: ", segments);
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
         {segments.map((segment, index) => {
           const href = "/" + segments.slice(0, index + 1).join("/");
-          console.log("href: ", href);
           const isLast = index === segments.length - 1;
 
           return (
