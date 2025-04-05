@@ -1,15 +1,10 @@
 import Link from "next/link";
-import { getTripRoutes } from "@/app/actions";
 import { Map } from "@/components/map";
 import RouteList from "@/components/route/route-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  getPlaceCoordinates,
-  getRoutePolyLines,
-  getTripProfiles,
-} from "./actions";
-import { parsePlacesFromTripRoutes } from "./lib/trip-lib";
+import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
+import { getTripProfiles } from "@/features/trip/actions/get-trip-profiles";
 
 export default async function TripPage({
   params,
@@ -18,16 +13,8 @@ export default async function TripPage({
 }) {
   const { id } = await params;
 
-  const tripId = parseInt(id, 10);
-  if (isNaN(tripId)) {
-    return <div>Invalid trip id</div>;
-  }
-
-  const tripProfiles = await getTripProfiles(tripId);
-  const tripRoutes = await getTripRoutes(id);
-  const places = parsePlacesFromTripRoutes(tripRoutes);
-  const placeCoordinates = await getPlaceCoordinates(places);
-  const routePolyLines = await getRoutePolyLines(placeCoordinates);
+  const tripProfiles = await getTripProfiles(id);
+  const tripGraph = await getTripGraph(id);
 
   return (
     <div className="mt-2 space-y-4">
@@ -44,10 +31,7 @@ export default async function TripPage({
 
       <Card className="w-full">
         <CardContent className="flex h-[200px] items-center justify-center">
-          <Map
-            placeCoordinates={placeCoordinates}
-            routePolyLines={routePolyLines}
-          />
+          <Map tripGraph={tripGraph} />
         </CardContent>
       </Card>
 
@@ -64,7 +48,7 @@ export default async function TripPage({
             </Link>
           </Button>
         </div>
-        <RouteList tripRoutes={tripRoutes} tripId={tripId} />
+        <RouteList tripGraph={tripGraph} />
       </section>
     </div>
   );

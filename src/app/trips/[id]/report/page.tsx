@@ -1,11 +1,23 @@
-import { getTripRoutes } from "@/app/actions";
+import { Circle } from "@phosphor-icons/react/dist/ssr";
 import StaticMap from "@/components/static-map";
-import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
-import { getPlaceCoordinates, getRoutePolyLines } from "../actions";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  getDestinationDetails,
-  parsePlacesFromTripRoutes,
-} from "../lib/trip-lib";
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
+import {
+  convertMetersToMiles,
+  convertSecondsToHoursAndMinutes,
+  formatTime,
+  TripGraphNodes,
+} from "@/features/trip/utils";
 
 export default async function ReportPage({
   params,
@@ -14,41 +26,87 @@ export default async function ReportPage({
 }) {
   const { id } = await params;
 
-  const tripRoutes = await getTripRoutes(id);
-  const places = parsePlacesFromTripRoutes(tripRoutes);
-  const placeCoordinates = await getPlaceCoordinates(places);
-  const routePolyLines = await getRoutePolyLines(placeCoordinates);
-
-  const placeIdToPlaceMap = new Map<string, PlacePrediction>(
-    places.map((place) => [place.placeId, place]),
-  );
-  const placeIdToCoordinatesMap = new Map<string, { lat: number; lng: number }>(
-    placeCoordinates.map((place) => [
-      place.placeId,
-      { lat: place.location.latitude, lng: place.location.longitude },
-    ]),
-  );
-
-  const destinationDetails = getDestinationDetails(
-    routePolyLines,
-    placeIdToPlaceMap,
-    placeIdToCoordinatesMap,
-  );
+  const tripGraph = await getTripGraph(id);
 
   return (
-    <section className="space-y-4">
-      {destinationDetails.map(({ place, coordinate, route }, index) => {
-        return (
-          <div key={index}>
-            <StaticMap coordinate={coordinate} />
-            <div className="px-3 py-1">
-              <p>place: {place.structuredFormat.mainText.text}</p>
-              <p>Distance: {route.distanceMeters} m</p>
-              <p>Duration: {route.duration} s</p>
+    <div className="space-y-4">
+      <section>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Person</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead className="text-right">Owed</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium">Person 1</TableCell>
+              <TableCell>
+                <Badge className="bg-green-500">Driver</Badge>
+              </TableCell>
+              <TableCell className="text-right">$250.00</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="font-medium">Person 2</TableCell>
+              <TableCell>
+                <Badge className="bg-yellow-500">Passanger</Badge>
+              </TableCell>
+              <TableCell className="text-right">$30.00</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </section>
+      <section className="space-y-2">
+        {Array.from(TripGraphNodes(tripGraph)).map((tripNode) => {
+          return (
+            <div className="space-y-2" key={tripNode.destination.id}>
+              <div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      {
+                        tripNode.destination.details.structuredFormat.mainText
+                          .text
+                      }
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <StaticMap coordinate={tripNode.coordinates} />
+                  </CardContent>
+                </Card>
+              </div>
+
+              {tripNode?.route && (
+                <div className="flex gap-2">
+                  <div className="flex flex-col">
+                    <Circle className="" />
+                    <div className="ml-1.5 grow border-l-3 border-dotted"></div>
+                    <Circle className="" />
+                  </div>
+                  <div className="grow">
+                    <p>
+                      Distance:{" "}
+                      {convertMetersToMiles(tripNode.route.distanceMeters)}{" "}
+                      miles
+                    </p>
+                    <p>
+                      Duration:{" "}
+                      {formatTime(
+                        convertSecondsToHoursAndMinutes(
+                          tripNode.route.duration,
+                        ),
+                      )}
+                    </p>
+                    <p>Driver: person 0</p>
+                    <p>riders: person 1, person 2, person 3</p>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        );
-      })}
-    </section>
+          );
+        })}
+      </section>
+    </div>
   );
 }

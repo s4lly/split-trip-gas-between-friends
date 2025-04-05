@@ -1,4 +1,4 @@
-import { Route, Trip } from "@/lib/types";
+import { Trip } from "@/lib/types";
 import { createClient } from "@/utils/supabase/server";
 
 export async function getTrips(): Promise<Trip[]> {
@@ -23,40 +23,6 @@ export async function getTrips(): Promise<Trip[]> {
     }
 
     return trips;
-  }
-
-  return [];
-}
-
-export async function getTripRoutes(tripIdParam: string): Promise<Route[]> {
-  const tripId = parseInt(tripIdParam, 10);
-
-  if (isNaN(tripId)) {
-    return [];
-  }
-
-  const supabase = await createClient();
-
-  const { data: auth, error: authError } = await supabase.auth.getUser();
-
-  if (authError) {
-    console.log(authError);
-    return [];
-  }
-
-  if (auth.user) {
-    const { data: route, error: routeError } = await supabase
-      .from("route")
-      .select("*")
-      .eq("trip_id", tripId);
-
-    if (routeError) {
-      console.log(routeError);
-      return [];
-    }
-
-    const sortedPlacePredictions = route.sort((a, b) => a.order - b.order);
-    return sortedPlacePredictions;
   }
 
   return [];

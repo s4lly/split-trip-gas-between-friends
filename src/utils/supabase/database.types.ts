@@ -60,6 +60,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "route_driver_id_fkey1"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "route_trip_id_fkey"
             columns: ["trip_id"]
             isOneToOne: false

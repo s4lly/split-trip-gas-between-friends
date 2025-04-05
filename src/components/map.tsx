@@ -2,14 +2,14 @@
 
 import { Loader } from "@googlemaps/js-api-loader";
 import { useEffect, useRef, useState } from "react";
-import { PlaceCoordinate, RoutePolyLine } from "@/app/trips/[id]/actions";
+import { TripGraph } from "@/features/trip/types";
+import { TripGraphNodes } from "@/features/trip/utils";
 
 type MapProps = {
-  placeCoordinates: PlaceCoordinate[];
-  routePolyLines: RoutePolyLine[];
+  tripGraph: TripGraph;
 };
 
-export const Map = ({ placeCoordinates, routePolyLines }: MapProps) => {
+export const Map = ({ tripGraph }: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -21,12 +21,12 @@ export const Map = ({ placeCoordinates, routePolyLines }: MapProps) => {
       },
       zoom: 8,
       // TODO remove and regenerate if repo public
-      mapId: "6bddb037afab2ce9",
+      mapId: process.env.NEXT_PUBLIC_MAIN_MAP_ID as string,
     };
 
     const loader = new Loader({
       // TODO remove and regenerate if repo public
-      apiKey: "AIzaSyCS_NtCeqwe6chb3HQzXKH63L-o1whkB1U",
+      apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string,
       version: "weekly",
     });
 
@@ -51,46 +51,57 @@ export const Map = ({ placeCoordinates, routePolyLines }: MapProps) => {
         return;
       }
 
-      for (const routePolyLine of routePolyLines) {
-        // @ts-expect-error: maps api types not updated
-        const { encoding } = await google.maps.importLibrary("geometry");
-        const decodedPath = encoding.decodePath(
-          routePolyLine.route.polyline.encodedPolyline,
-        );
-
-        const gRoutePolyLine = new google.maps.Polyline({
-          path: decodedPath,
-          geodesic: true,
-          strokeColor: "#FF0000",
-          strokeOpacity: 1.0,
-          strokeWeight: 3,
-        });
-
-        gRoutePolyLine.setMap(map);
-      }
-
+      // @ts-expect-error: maps api types not updated
+      const { encoding } = await google.maps.importLibrary("geometry");
       // @ts-expect-error: maps api types not updated
       const { AdvancedMarkerElement } =
         await google.maps.importLibrary("marker");
-      const bounds = new google.maps.LatLngBounds();
 
-      for (const placeCoordinate of placeCoordinates) {
+      const markerPositions = [];
+
+      for (const tripNode of TripGraphNodes(tripGraph)) {
+        // add polyline
+        if (tripNode.route) {
+          const decodedPath = encoding.decodePath(
+            tripNode.route.polyline.encodedPolyline,
+          );
+
+          const gRoutePolyLine = new google.maps.Polyline({
+            path: decodedPath,
+            geodesic: true,
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 3,
+          });
+
+          gRoutePolyLine.setMap(map);
+        }
+
+        // add marker
         const marker = new AdvancedMarkerElement({
           map,
           position: {
-            lat: placeCoordinate.location.latitude,
-            lng: placeCoordinate.location.longitude,
+            lat: tripNode.coordinates.latitude,
+            lng: tripNode.coordinates.longitude,
           },
         });
 
-        bounds.extend(marker.position);
+        markerPositions.push(marker.position);
       }
 
-      map.fitBounds(bounds);
+      if (markerPositions.length) {
+        const bounds = new google.maps.LatLngBounds();
+
+        markerPositions.forEach((markerPosition) => {
+          bounds.extend(markerPosition);
+        });
+
+        map.fitBounds(bounds);
+      }
     };
 
     addToMap();
-  }, [map, placeCoordinates, routePolyLines]);
+  }, [map, tripGraph]);
 
   return (
     <div className="h-full w-full" ref={mapRef}>
