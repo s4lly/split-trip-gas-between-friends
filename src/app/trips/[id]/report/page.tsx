@@ -1,17 +1,22 @@
 import { Circle } from "@phosphor-icons/react/dist/ssr";
 import StaticMap from "@/components/static-map";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
+import { RouteNode } from "@/features/trip/types";
 import {
   convertMetersToMiles,
   convertSecondsToHoursAndMinutes,
@@ -28,6 +33,57 @@ export default async function ReportPage({
 
   const tripGraph = await getTripGraph(id);
 
+  // for each route
+  // - driver
+  // - car
+
+  // calculat how much it cost for gas between start and finish
+  // expense: { routeNode: RouteNode, expense: { amount: number, currency: CURRENCY }, driver: uiud }
+
+  type Expense = {
+    routeNode: RouteNode;
+    expense: { amount: number; currency: "USD" };
+    driver: string;
+  };
+  const driverToExpensesMap: Map<string, Expense[]> = new Map();
+  for (const tripNode of TripGraphNodes(tripGraph)) {
+    const { route } = tripNode;
+
+    if (route) {
+      const distanceInMiles = convertMetersToMiles(route.distanceMeters);
+
+      const driverId = tripNode.destination.driver_id;
+      const mpg = tripNode.destination.vehicle?.mpg;
+
+      if (driverId && mpg) {
+        let driverExpenses = driverToExpensesMap.get(driverId);
+
+        if (!driverExpenses) {
+          driverExpenses = [];
+          driverToExpensesMap.set(driverId, driverExpenses);
+        }
+
+        // 40 m/g
+        // 7 d/g
+
+        // 2 m * (1 g/40 m) = 0.05 g
+        // 0.05 g * (7 d/1 g) = .35
+
+        // how much is gas per gallon
+        const GAS_PER_GALLON = 7;
+
+        driverExpenses.push({
+          driver: driverId,
+          routeNode: route,
+          expense: {
+            amount: distanceInMiles * (1 / mpg) * GAS_PER_GALLON,
+            currency: "USD",
+          },
+        });
+      }
+    }
+  }
+
   return (
     <div className="space-y-4">
       <section>
@@ -35,25 +91,27 @@ export default async function ReportPage({
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Person</TableHead>
-              <TableHead>Role</TableHead>
               <TableHead className="text-right">Owed</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">Person 1</TableCell>
-              <TableCell>
-                <Badge className="bg-green-500">Driver</Badge>
-              </TableCell>
-              <TableCell className="text-right">$250.00</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Person 2</TableCell>
-              <TableCell>
-                <Badge className="bg-yellow-500">Passanger</Badge>
-              </TableCell>
-              <TableCell className="text-right">$30.00</TableCell>
-            </TableRow>
+            {Array.from(driverToExpensesMap.entries()).map(
+              ([driverId, expenses]) => {
+                let total = 0;
+                for (const expense of expenses) {
+                  total += expense.expense.amount;
+                }
+
+                return (
+                  <TableRow key={driverId}>
+                    <TableCell className="font-medium">
+                      {driverId.slice(0, 5)}
+                    </TableCell>
+                    <TableCell className="text-right">{`$${total.toFixed(2)}`}</TableCell>
+                  </TableRow>
+                );
+              },
+            )}
           </TableBody>
         </Table>
       </section>
@@ -70,6 +128,9 @@ export default async function ReportPage({
                           .text
                       }
                     </CardTitle>
+                    <CardDescription>
+                      Driver: {tripNode.destination.driver_id?.slice(0, 5)}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <StaticMap coordinate={tripNode.coordinates} />
@@ -84,7 +145,7 @@ export default async function ReportPage({
                     <div className="ml-1.5 grow border-l-3 border-dotted"></div>
                     <Circle className="" />
                   </div>
-                  <div className="grow">
+                  <div className="grow py-4">
                     <p>
                       Distance:{" "}
                       {convertMetersToMiles(tripNode.route.distanceMeters)}{" "}
@@ -98,7 +159,6 @@ export default async function ReportPage({
                         ),
                       )}
                     </p>
-                    <p>Driver: person 0</p>
                     <p>riders: person 1, person 2, person 3</p>
                   </div>
                 </div>
