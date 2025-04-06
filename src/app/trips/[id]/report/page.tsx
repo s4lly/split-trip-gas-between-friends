@@ -43,7 +43,8 @@ export default async function ReportPage({
   type Expense = {
     routeNode: RouteNode;
     expense: { amount: number; currency: "USD" };
-    driver: string;
+    username: string;
+    id: string;
   };
   const driverToExpensesMap: Map<string, Expense[]> = new Map();
   for (const tripNode of TripGraphNodes(tripGraph)) {
@@ -53,9 +54,10 @@ export default async function ReportPage({
       const distanceInMiles = convertMetersToMiles(route.distanceMeters);
 
       const driverId = tripNode.destination.driver_id;
+      const driverUsername = tripNode.destination.profile?.username;
       const mpg = tripNode.destination.vehicle?.mpg;
 
-      if (driverId && mpg) {
+      if (driverId && driverUsername && mpg) {
         let driverExpenses = driverToExpensesMap.get(driverId);
 
         if (!driverExpenses) {
@@ -73,7 +75,8 @@ export default async function ReportPage({
         const GAS_PER_GALLON = 7;
 
         driverExpenses.push({
-          driver: driverId,
+          id: driverId,
+          username: driverUsername,
           routeNode: route,
           expense: {
             amount: distanceInMiles * (1 / mpg) * GAS_PER_GALLON,
@@ -98,15 +101,15 @@ export default async function ReportPage({
             {Array.from(driverToExpensesMap.entries()).map(
               ([driverId, expenses]) => {
                 let total = 0;
+                let username = "";
                 for (const expense of expenses) {
+                  username = expense.username;
                   total += expense.expense.amount;
                 }
 
                 return (
                   <TableRow key={driverId}>
-                    <TableCell className="font-medium">
-                      {driverId.slice(0, 5)}
-                    </TableCell>
+                    <TableCell className="font-medium">{username}</TableCell>
                     <TableCell className="text-right">{`$${total.toFixed(2)}`}</TableCell>
                   </TableRow>
                 );
