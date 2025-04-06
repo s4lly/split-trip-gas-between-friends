@@ -5,6 +5,46 @@ import { redirect } from "next/navigation";
 import { phone } from "phone";
 import { createClient } from "@/utils/supabase/server";
 
+export async function signupEmail(formData: FormData) {
+  const supabase = await createClient();
+
+  const data = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  };
+
+  const { error } = await supabase.auth.signUp(data);
+
+  if (error) {
+    console.error("error: ", error);
+    redirect("/error");
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/");
+}
+
+export async function loginEmail(formData: FormData) {
+  const supabase = await createClient();
+
+  const data = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  };
+
+  const { error } = await supabase.auth.signInWithPassword(data);
+
+  if (error) {
+    console.error("error: ", error);
+    redirect("/error");
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/");
+}
+
+// ----
+
 // phone - sign in
 export async function signin(formData: FormData) {
   const supabase = await createClient();
