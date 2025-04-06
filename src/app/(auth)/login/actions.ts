@@ -2,41 +2,53 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { phone } from "phone";
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(formData: FormData) {
+// phone - sign in
+export async function signin(formData: FormData) {
   const supabase = await createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
+  const phoneString = formData.get("phone") as string;
+  // TODO support more than one country
+  const parsedPhone = phone(phoneString, { country: "USA" });
+
+  if (!parsedPhone.isValid) {
+    console.error("entered invalid phone: ", phoneString);
+    return;
+  }
+
   const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
+    phone: parsedPhone.phoneNumber,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  // console.log("signup: ", data);
 
+  const { error } = await supabase.auth.signInWithOtp(data);
   if (error) {
+    console.error("error: ", error);
     redirect("/error");
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect(`/auth/verify/${parsedPhone.phoneNumber.replace("+", "")}`);
 }
 
-export async function signup(formData: FormData) {
+// phone - verify
+export async function verify(formData: FormData) {
   const supabase = await createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
+    phone: decodeURI(formData.get("phone") as string),
+    token: formData.get("code") as string,
+    type: "sms" as const,
   };
 
-  const { error } = await supabase.auth.signUp(data);
+  // console.log("verify: ", data);
 
+  const { error } = await supabase.auth.verifyOtp(data);
   if (error) {
+    console.error("verify: ", error);
     redirect("/error");
   }
 

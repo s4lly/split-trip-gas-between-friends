@@ -1,4 +1,5 @@
 import { Label } from "@radix-ui/react-label";
+import { verify } from "@/app/(auth)/login/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,33 +9,42 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { signin } from "./actions";
 
-export default function LoginPage() {
+export default async function VerifyPage({
+  params,
+}: {
+  params: Promise<{ phoneNumber: string }>;
+}) {
+  const { phoneNumber } = await params;
+
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Sign in</CardTitle>
+              <CardTitle className="text-2xl">Verify</CardTitle>
               <CardDescription>
-                Enter your phone number to sign in
+                Enter the six digit code to verify your phone number
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form>
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-2">
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input name="phone" id="phone" type="phone" required />
+                    <Label htmlFor="code">Verify</Label>
+                    <Input name="code" id="code" type="number" required />
                   </div>
-                  <Button
-                    formAction={signin}
-                    variant="secondary"
-                    className="w-full"
-                  >
-                    Sign up
+                  <Input
+                    hidden
+                    readOnly
+                    name="phone"
+                    id="phone"
+                    type="phone"
+                    value={phoneNumber}
+                  />
+                  <Button formAction={verify} className="w-full">
+                    Verify
                   </Button>
                 </div>
               </form>
