@@ -1,5 +1,7 @@
 "use server";
 
+import { House, List, User } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
 import {
   Drawer,
   DrawerClose,
@@ -10,19 +12,10 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { createClient } from "@/utils/supabase/server";
-import { House, List, User } from "@phosphor-icons/react/dist/ssr";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import { getProfile } from "@/features/user/actions/get-profile";
 
 export default async function LayoutDrawer() {
-  const supabase = await createClient();
-
-  const { data: auth, error: authError } = await supabase.auth.getUser();
-  if (authError) {
-    console.log("authError: ", authError);
-    redirect("/error");
-  }
+  const profile = await getProfile();
 
   return (
     <Drawer direction="right">
@@ -33,7 +26,7 @@ export default async function LayoutDrawer() {
         <DrawerHeader>
           <DrawerTitle>
             <div className="flex items-center justify-between">
-              <div>{auth.user.email}</div>
+              <div>{profile.username}</div>
               {/* <div className="rounded-full bg-green-200 p-1.5">
                 <User className="" />
               </div> */}
@@ -49,7 +42,7 @@ export default async function LayoutDrawer() {
             </Link>
             <Link
               className="flex items-center gap-1"
-              href={`/users/${auth.user.id}`}
+              href={`/users/${profile.id}`}
             >
               <User />
               Profile

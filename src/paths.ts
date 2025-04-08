@@ -5,3 +5,4 @@ export const tripNewPath = () => "/trips/new";
 export const errorPath = () => "/error";
 export const loginPath = () => "/login";
 export const setupPath = () => "/users/setup";
+export const homePath = () => "/";
