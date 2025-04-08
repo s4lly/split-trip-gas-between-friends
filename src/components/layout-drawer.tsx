@@ -1,13 +1,12 @@
 "use server";
 
-import { House, List, User } from "@phosphor-icons/react/dist/ssr";
+import { House, List, User, X } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -27,9 +26,9 @@ export default async function LayoutDrawer() {
           <DrawerTitle>
             <div className="flex items-center justify-between">
               <div>{profile.username}</div>
-              {/* <div className="rounded-full bg-green-200 p-1.5">
-                <User className="" />
-              </div> */}
+              <DrawerClose tabIndex={0} asChild>
+                <X />
+              </DrawerClose>
             </div>
           </DrawerTitle>
           <DrawerDescription></DrawerDescription>
@@ -50,9 +49,6 @@ export default async function LayoutDrawer() {
           </div>
           <Link href={"/logout"}>Logout</Link>
         </div>
-        <DrawerFooter>
-          <DrawerClose>Close</DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
