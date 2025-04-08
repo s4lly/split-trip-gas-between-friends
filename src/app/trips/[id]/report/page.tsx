@@ -1,4 +1,5 @@
 import { Circle } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
 import StaticMap from "@/components/static-map";
 import {
   Card,
@@ -23,6 +24,7 @@ import {
   formatTime,
   TripGraphNodes,
 } from "@/features/trip/utils";
+import { routePath } from "@/paths";
 
 export default async function ReportPage({
   params,
@@ -126,13 +128,20 @@ export default async function ReportPage({
                 <Card>
                   <CardHeader>
                     <CardTitle>
-                      {
-                        tripNode.destination.details.structuredFormat.mainText
-                          .text
-                      }
+                      <Link
+                        href={routePath(
+                          tripNode.destination.trip_id,
+                          tripNode.destination.id,
+                        )}
+                      >
+                        {
+                          tripNode.destination.details.structuredFormat.mainText
+                            .text
+                        }
+                      </Link>
                     </CardTitle>
                     <CardDescription>
-                      Driver: {tripNode.destination.driver_id?.slice(0, 5)}
+                      Driver: {tripNode.destination.profile?.username}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
