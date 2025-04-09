@@ -4,38 +4,35 @@ import { redirect } from "next/navigation";
 import { errorPath } from "@/paths";
 import { createClient } from "@/utils/supabase/server";
 
-export const getTripProfiles = async (tripIdString: string) => {
+export const getTripWithUsers = async (tripIdString: string) => {
   const tripId = parseInt(tripIdString, 10);
 
   if (isNaN(tripId)) {
     // TODO o11y
-    console.error(`getTripProfiles: tripId is invalid ${tripIdString}`);
-
+    console.error(`getTripWithUsers: tripId is invalid ${tripIdString}`);
     redirect(errorPath());
   }
 
   const supabase = await createClient();
 
-  const profilesWithinTripQuery = supabase
+  const tripWithUsersQuery = supabase
     .from("trip")
     .select(
       `
-      name,
-      profile (
-        id,
-        email
+      *,
+      users:profile (
+        *
       )
     `,
     )
     .eq("id", tripId)
     .single();
 
-  const { data, error } = await profilesWithinTripQuery;
+  const { data, error } = await tripWithUsersQuery;
 
   if (error) {
     // TODO o11y
     console.error(error);
-
     redirect(errorPath());
   }
 

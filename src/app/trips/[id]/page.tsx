@@ -4,7 +4,7 @@ import RouteList from "@/components/route/route-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
-import { getTripProfiles } from "@/features/trip/actions/get-trip-profiles";
+import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
 
 export default async function TripPage({
   params,
@@ -13,7 +13,7 @@ export default async function TripPage({
 }) {
   const { id } = await params;
 
-  const tripProfiles = await getTripProfiles(id);
+  const tripWithUsers = await getTripWithUsers(id);
   const tripGraph = await getTripGraph(id);
 
   return (
@@ -24,7 +24,7 @@ export default async function TripPage({
           className="flex items-center rounded-md border px-1 py-1.5"
         >
           <p>
-            People: <span>{tripProfiles.profile.length}</span> Cars: 1
+            People: <span>{tripWithUsers.users.length}</span> Cars: 1
           </p>
         </Link>
       </div>
