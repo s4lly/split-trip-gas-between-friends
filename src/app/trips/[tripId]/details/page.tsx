@@ -1,5 +1,11 @@
 import { QueryData } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
+import TripsBreadCrumb from "@/components/TripsBreadCrumb";
+import {
+  BreadcrumbItem,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function DetailsPage({
@@ -44,12 +50,21 @@ export default async function DetailsPage({
   }
 
   return (
-    <div className="mt-2 space-y-4">
-      <ul className="list-disc pl-5">
-        {trip.profile.map((person) => (
-          <li key={person.id}>{person.email}</li>
-        ))}
-      </ul>
+    <div className="space-y-2">
+      <TripsBreadCrumb tripId={tripId}>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>Details</BreadcrumbPage>
+        </BreadcrumbItem>
+      </TripsBreadCrumb>
+
+      <div className="mt-2 space-y-4">
+        <ul className="list-disc pl-5">
+          {trip.profile.map((person) => (
+            <li key={person.id}>{person.email}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

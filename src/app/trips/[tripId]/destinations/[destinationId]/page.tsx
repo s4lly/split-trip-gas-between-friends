@@ -1,6 +1,12 @@
 import { QueryData } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { parse } from "valibot";
+import TripsBreadCrumb from "@/components/TripsBreadCrumb";
+import {
+  BreadcrumbItem,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import UpdateDriverForm from "@/components/update-driver-form";
 import UpdateVehicleForm from "@/components/update-vehicle-form";
 import { createClient } from "@/utils/supabase/server";
@@ -99,26 +105,32 @@ export default async function RoutePage({
 
   return (
     <div className="space-y-2">
-      <div>
-        <p>
-          <strong>Destination:</strong> {place.structuredFormat.mainText.text}
-        </p>
-      </div>
-      <div>
-        <UpdateDriverForm
-          tripId={destinationIdNum}
-          destinationId={destinationIdNum}
-          selectedId={route.driver_id ?? ""}
-          profiles={tripProfiles.profile}
-        />
-      </div>
-      <div>
-        <UpdateVehicleForm
-          tripId={destinationIdNum}
-          destinationId={destinationIdNum}
-          selectedId={route.vehicle_id}
-          vehicles={vehicles}
-        />
+      <TripsBreadCrumb tripId={tripId}>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>
+            {place.structuredFormat.mainText.text}
+          </BreadcrumbPage>
+        </BreadcrumbItem>
+      </TripsBreadCrumb>
+
+      <div className="space-y-2">
+        <div>
+          <UpdateDriverForm
+            tripId={destinationIdNum}
+            destinationId={destinationIdNum}
+            selectedId={route.driver_id ?? ""}
+            profiles={tripProfiles.profile}
+          />
+        </div>
+        <div>
+          <UpdateVehicleForm
+            tripId={destinationIdNum}
+            destinationId={destinationIdNum}
+            selectedId={route.vehicle_id}
+            vehicles={vehicles}
+          />
+        </div>
       </div>
     </div>
   );

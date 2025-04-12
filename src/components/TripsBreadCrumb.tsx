@@ -1,37 +1,34 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-import { Fragment } from "react";
+import { ReactNode } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbSeparator,
+  BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
+import { tripPath } from "@/paths";
 
-export default function TripsBreadCrumb() {
-  const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
-
+export default function TripsBreadCrumb({
+  tripId,
+  children,
+}: {
+  tripId: string;
+  children?: ReactNode;
+}) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {segments.map((segment, index) => {
-          const href = "/" + segments.slice(0, index + 1).join("/");
-          const isLast = index === segments.length - 1;
+        {/* home */}
+        <BreadcrumbItem>
+          {children ? (
+            <BreadcrumbLink href={tripPath(tripId)}>trip</BreadcrumbLink>
+          ) : (
+            <BreadcrumbPage>trip</BreadcrumbPage>
+          )}
+        </BreadcrumbItem>
 
-          return (
-            <Fragment key={href}>
-              <BreadcrumbItem suppressHydrationWarning={true}>
-                <BreadcrumbLink href={href}>
-                  {decodeURIComponent(segment)}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {!isLast && <BreadcrumbSeparator />}
-            </Fragment>
-          );
-        })}
+        {/* rest */}
+        {children}
       </BreadcrumbList>
     </Breadcrumb>
   );

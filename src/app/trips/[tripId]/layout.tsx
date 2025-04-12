@@ -1,7 +1,6 @@
 import { QueryData } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { Header } from "@/components/header";
-import TripsBreadCrumb from "@/components/TripsBreadCrumb";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function Layout({
@@ -48,10 +47,7 @@ export default async function Layout({
       <div className="bg-gray-100">
         <Header>{trip.name}</Header>
       </div>
-      <div className="px-4">
-        <TripsBreadCrumb />
-      </div>
-      <div className="p-4">{children}</div>
+      <div className="px-4 pt-2 pb-4">{children}</div>
     </>
   );
 }

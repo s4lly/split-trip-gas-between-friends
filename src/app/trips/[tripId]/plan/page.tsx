@@ -1,6 +1,12 @@
 import { Circle } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import StaticMap from "@/components/static-map";
+import TripsBreadCrumb from "@/components/TripsBreadCrumb";
+import {
+  BreadcrumbItem,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import {
   Card,
   CardContent,
@@ -90,95 +96,104 @@ export default async function PlanPage({
   }
 
   return (
-    <div className="space-y-4">
-      <section>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Person</TableHead>
-              <TableHead className="text-right">Owed</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {Array.from(driverToExpensesMap.entries()).map(
-              ([driverId, expenses]) => {
-                let total = 0;
-                let username = "";
-                for (const expense of expenses) {
-                  username = expense.username;
-                  total += expense.expense.amount;
-                }
+    <div className="space-y-2">
+      <TripsBreadCrumb tripId={tripId}>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>Plan</BreadcrumbPage>
+        </BreadcrumbItem>
+      </TripsBreadCrumb>
 
-                return (
-                  <TableRow key={driverId}>
-                    <TableCell className="font-medium">{username}</TableCell>
-                    <TableCell className="text-right">{`$${total.toFixed(2)}`}</TableCell>
-                  </TableRow>
-                );
-              },
-            )}
-          </TableBody>
-        </Table>
-      </section>
-      <section className="space-y-2">
-        {Array.from(TripGraphNodes(tripGraph)).map((tripNode) => {
-          return (
-            <div className="space-y-2" key={tripNode.destination.id}>
-              <div>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>
-                      <Link
-                        href={destinationPath(
-                          tripNode.destination.trip_id,
-                          tripNode.destination.id,
-                        )}
-                      >
-                        {
-                          tripNode.destination.details.structuredFormat.mainText
-                            .text
-                        }
-                      </Link>
-                    </CardTitle>
-                    <CardDescription>
-                      Driver: {tripNode.destination.profile?.username}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <StaticMap coordinate={tripNode.coordinates} />
-                  </CardContent>
-                </Card>
-              </div>
+      <div className="space-y-4">
+        <section>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Person</TableHead>
+                <TableHead className="text-right">Owed</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from(driverToExpensesMap.entries()).map(
+                ([driverId, expenses]) => {
+                  let total = 0;
+                  let username = "";
+                  for (const expense of expenses) {
+                    username = expense.username;
+                    total += expense.expense.amount;
+                  }
 
-              {tripNode?.route && (
-                <div className="flex gap-2">
-                  <div className="flex flex-col">
-                    <Circle className="" />
-                    <div className="ml-1.5 grow border-l-3 border-dotted"></div>
-                    <Circle className="" />
-                  </div>
-                  <div className="grow py-4">
-                    <p>
-                      Distance:{" "}
-                      {convertMetersToMiles(tripNode.route.distanceMeters)}{" "}
-                      miles
-                    </p>
-                    <p>
-                      Duration:{" "}
-                      {formatTime(
-                        convertSecondsToHoursAndMinutes(
-                          tripNode.route.duration,
-                        ),
-                      )}
-                    </p>
-                    <p>riders: person 1, person 2, person 3</p>
-                  </div>
-                </div>
+                  return (
+                    <TableRow key={driverId}>
+                      <TableCell className="font-medium">{username}</TableCell>
+                      <TableCell className="text-right">{`$${total.toFixed(2)}`}</TableCell>
+                    </TableRow>
+                  );
+                },
               )}
-            </div>
-          );
-        })}
-      </section>
+            </TableBody>
+          </Table>
+        </section>
+        <section className="space-y-2">
+          {Array.from(TripGraphNodes(tripGraph)).map((tripNode) => {
+            return (
+              <div className="space-y-2" key={tripNode.destination.id}>
+                <div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>
+                        <Link
+                          href={destinationPath(
+                            tripNode.destination.trip_id,
+                            tripNode.destination.id,
+                          )}
+                        >
+                          {
+                            tripNode.destination.details.structuredFormat
+                              .mainText.text
+                          }
+                        </Link>
+                      </CardTitle>
+                      <CardDescription>
+                        Driver: {tripNode.destination.profile?.username}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <StaticMap coordinate={tripNode.coordinates} />
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {tripNode?.route && (
+                  <div className="flex gap-2">
+                    <div className="flex flex-col">
+                      <Circle className="" />
+                      <div className="ml-1.5 grow border-l-3 border-dotted"></div>
+                      <Circle className="" />
+                    </div>
+                    <div className="grow py-4">
+                      <p>
+                        Distance:{" "}
+                        {convertMetersToMiles(tripNode.route.distanceMeters)}{" "}
+                        miles
+                      </p>
+                      <p>
+                        Duration:{" "}
+                        {formatTime(
+                          convertSecondsToHoursAndMinutes(
+                            tripNode.route.duration,
+                          ),
+                        )}
+                      </p>
+                      <p>riders: person 1, person 2, person 3</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </section>
+      </div>
     </div>
   );
 }
