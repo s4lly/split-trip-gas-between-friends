@@ -5,12 +5,12 @@ import { createClient } from "@/utils/supabase/server";
 export default async function DetailsPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ tripId: string }>;
 }) {
-  const { id } = await params;
+  const { tripId } = await params;
 
-  const tripId = parseInt(id, 10);
-  if (isNaN(tripId)) {
+  const tripIdNum = parseInt(tripId, 10);
+  if (isNaN(tripIdNum)) {
     return <div>Invalid trip id</div>;
   }
 
@@ -27,7 +27,7 @@ export default async function DetailsPage({
         )
         `,
     )
-    .eq("id", tripId)
+    .eq("id", tripIdNum)
     .single();
 
   const { data, error: tripError } = await profilesWithinTripQuery;

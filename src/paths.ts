@@ -1,5 +1,5 @@
 type SearchParam = string | string[] | undefined;
-type Params = string;
+type Param = string;
 
 export const tripNewPath = () => "/trips/new";
 export const errorPath = () => "/error";
@@ -22,5 +22,7 @@ export const destinationPath = (tripId: number | null, destinationId: number) =>
 
 export const planPath = (tripId: SearchParam) => `${tripPath(tripId)}/plan`;
 
-export const newDestinationPath = (tripId: Params) =>
+export const newDestinationPath = (tripId: Param) =>
   `${tripPath(tripId)}/destinations/new`;
+
+export const detailsPath = (tripId: Param) => `${tripPath(tripId)}/details`;

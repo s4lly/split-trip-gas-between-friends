@@ -9,9 +9,9 @@ import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-sche
 export default async function RoutePage({
   params,
 }: {
-  params: Promise<{ destinationId: string; id: string }>;
+  params: Promise<{ destinationId: string; tripId: string }>;
 }) {
-  const { destinationId, id } = await params;
+  const { destinationId, tripId } = await params;
 
   const destinationIdNum = parseInt(destinationId, 10);
   if (isNaN(destinationIdNum)) {
@@ -46,7 +46,7 @@ export default async function RoutePage({
   )
   `,
     )
-    .eq("id", parseInt(id, 10))
+    .eq("id", parseInt(tripId, 10))
     .single();
 
   const { data: tripProfilesData, error: tripProfilesDataError } =

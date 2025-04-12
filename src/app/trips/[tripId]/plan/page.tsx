@@ -29,11 +29,11 @@ import { destinationPath } from "@/paths";
 export default async function PlanPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ tripId: string }>;
 }) {
-  const { id } = await params;
+  const { tripId } = await params;
 
-  const tripGraph = await getTripGraph(id);
+  const tripGraph = await getTripGraph(tripId);
 
   // for each route
   // - driver

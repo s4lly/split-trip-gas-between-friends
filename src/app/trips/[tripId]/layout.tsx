@@ -9,15 +9,15 @@ export default async function Layout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ id: string }>;
+  params: Promise<{ tripId: string }>;
 }) {
-  const { id } = await params;
+  const { tripId } = await params;
 
   const supabase = await createClient();
 
-  const tripId = parseInt(id, 10);
-  if (isNaN(tripId)) {
-    console.log("tripId is not a number: ", id);
+  const tripIdNum = parseInt(tripId, 10);
+  if (isNaN(tripIdNum)) {
+    console.log("tripIdNum is not a number: ", tripId);
     redirect("/error");
   }
 
@@ -31,7 +31,7 @@ export default async function Layout({
           )
           `,
     )
-    .eq("id", tripId)
+    .eq("id", tripIdNum)
     .single();
 
   const { data, error: tripError } = await profilesWithinTripQuery;
