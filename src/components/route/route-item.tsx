@@ -1,8 +1,12 @@
 "use client";
 
-import { DotsSixVertical } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { FC } from "react";
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { TripNode } from "@/features/trip/types";
 
 type RouteCardProps = {
@@ -11,18 +15,20 @@ type RouteCardProps = {
 
 const RouteItem: FC<RouteCardProps> = ({ tripNode }) => {
   return (
-    <li className="flex cursor-pointer gap-2 border-gray-200 p-2 hover:bg-gray-100 hover:text-blue-700">
-      <div className="flex shrink-0 items-center justify-center">
-        <DotsSixVertical />
+    <AccordionItem value={`${tripNode.destination.id}`}>
+      <div className="flex items-center gap-2">
+        <div className="grow">
+          <Link
+            className="inline-block size-full py-4"
+            href={`/trips/${tripNode.destination.trip_id}/routes/${tripNode.destination.id}`}
+          >
+            {tripNode.destination.details.structuredFormat.mainText.text}
+          </Link>
+        </div>
+        <AccordionTrigger className="w-10 justify-center" />
       </div>
-
-      <Link
-        className="grow-1"
-        href={`/trips/${tripNode.destination.trip_id}/routes/${tripNode.destination.id}`}
-      >
-        {tripNode.destination.details.structuredFormat.mainText.text}
-      </Link>
-    </li>
+      <AccordionContent>foo</AccordionContent>
+    </AccordionItem>
   );
 };
 
