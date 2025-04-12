@@ -3,36 +3,37 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Route } from "@/lib/types";
+import { errorPath, tripPath } from "@/paths";
 import { createClient } from "@/utils/supabase/server";
 
-export const updateRoute = async (
+export const updateDestination = async (
   tripId: number,
-  routeId: number,
+  destinationId: number,
   updates: Partial<Route>,
 ): Promise<Route> => {
   const supabase = await createClient();
 
-  // console.log("tripId: ", tripId, "routeId: ", routeId, "updates: ", updates);
+  // console.log("tripId: ", tripId, "destinationId: ", destinationId, "updates: ", updates);
 
   const { data, error } = await supabase
     .from("route")
     .update(updates)
-    .eq("id", routeId)
+    .eq("id", destinationId)
     .select()
     .single();
 
   if (error) {
-    console.log(error);
-    redirect("/error");
+    console.error(error);
+    redirect(errorPath());
   }
 
   if (!data || !data.driver_id) {
-    console.log("error, no data udpated: ", data);
-    redirect("/error");
+    console.error("error, no data udpated: ", data);
+    redirect(errorPath());
   }
 
-  console.log("updated route data: ", data);
-  revalidatePath(`/trips/${tripId}`);
+  console.log("updated destination data: ", data);
+  revalidatePath(tripPath(tripId));
 
   return data;
 };

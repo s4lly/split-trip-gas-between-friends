@@ -1,16 +1,16 @@
 "use client";
 
 import { FC } from "react";
-import RouteItem from "@/components/route/route-item";
 import { Accordion } from "@/components/ui/accordion";
+import DestinationItem from "@/features/trip/components/destination/destination-item";
 import { TripGraph } from "@/features/trip/types";
 import { TripGraphNodes } from "@/features/trip/utils";
 
-type RouteListProps = {
+type DestinationListProps = {
   tripGraph: TripGraph;
 };
 
-const RouteList: FC<RouteListProps> = ({ tripGraph }) => {
+const DestinationList: FC<DestinationListProps> = ({ tripGraph }) => {
   const tripNodes = Array.from(TripGraphNodes(tripGraph));
 
   return (
@@ -18,7 +18,10 @@ const RouteList: FC<RouteListProps> = ({ tripGraph }) => {
       {tripNodes.length > 0 && (
         <Accordion type="single" collapsible>
           {tripNodes.map((tripNode) => (
-            <RouteItem key={tripNode.destination.id} tripNode={tripNode} />
+            <DestinationItem
+              key={tripNode.destination.id}
+              tripNode={tripNode}
+            />
           ))}
         </Accordion>
       )}
@@ -26,4 +29,4 @@ const RouteList: FC<RouteListProps> = ({ tripGraph }) => {
   );
 };
 
-export default RouteList;
+export default DestinationList;

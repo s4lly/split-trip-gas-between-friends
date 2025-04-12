@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Map } from "@/components/map";
-import RouteList from "@/components/route/route-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
 import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
-import { newTripPath, planPath } from "@/paths";
+import DestinationList from "@/features/trip/components/destination/destination-list";
+import { newDestinationPath, planPath } from "@/paths";
 
 export default async function TripPage({
   params,
@@ -39,8 +39,8 @@ export default async function TripPage({
       <section className="space-y-2">
         <div className="flex justify-between gap-2">
           <Button className="grow" asChild>
-            <Link href={newTripPath(id)}>
-              <p className="block">Add Route</p>
+            <Link href={newDestinationPath(id)}>
+              <p className="block">Add Destination</p>
             </Link>
           </Button>
           <Button className="grow" asChild>
@@ -49,7 +49,7 @@ export default async function TripPage({
             </Link>
           </Button>
         </div>
-        <RouteList tripGraph={tripGraph} />
+        <DestinationList tripGraph={tripGraph} />
       </section>
     </div>
   );

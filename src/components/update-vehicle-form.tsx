@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { updateRoute } from "@/app/trips/[id]/routes/[routeId]/actions";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -12,18 +11,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { updateDestination } from "@/features/trip/actions/update-destination";
 import { Vehicle } from "@/lib/types";
 
 type UpdateVehicleFormProps = {
   tripId: number;
-  routeId: number;
+  destinationId: number;
   selectedId: number | null;
   vehicles: Vehicle[];
 };
 
 const UpdateVehicleForm = ({
   tripId,
-  routeId,
+  destinationId,
   selectedId,
   vehicles,
 }: UpdateVehicleFormProps) => {
@@ -32,7 +32,7 @@ const UpdateVehicleForm = ({
   });
 
   const onVehicleChange = async (vehicleId: string) => {
-    const updatedRoute = await updateRoute(tripId, routeId, {
+    const updatedRoute = await updateDestination(tripId, destinationId, {
       vehicle_id: parseInt(vehicleId, 10),
     });
 

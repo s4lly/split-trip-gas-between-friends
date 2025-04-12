@@ -1,21 +1,21 @@
 import { QueryData } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { parse } from "valibot";
-import UpdateVehicleForm from "@/components/udpate-vehicle-form/update-vehicle-form";
-import UpdateDriverForm from "@/components/update-driver-form/update-driver-form";
+import UpdateDriverForm from "@/components/update-driver-form";
+import UpdateVehicleForm from "@/components/update-vehicle-form";
 import { createClient } from "@/utils/supabase/server";
 import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 
 export default async function RoutePage({
   params,
 }: {
-  params: Promise<{ routeId: string; id: string }>;
+  params: Promise<{ destinationId: string; id: string }>;
 }) {
-  const { routeId, id } = await params;
+  const { destinationId, id } = await params;
 
-  const routeIdNum = parseInt(routeId, 10);
-  if (isNaN(routeIdNum)) {
-    console.log("routeId param is not a number: ", routeId);
+  const destinationIdNum = parseInt(destinationId, 10);
+  if (isNaN(destinationIdNum)) {
+    console.log("destinationId param is not a number: ", destinationId);
     redirect("/error");
   }
 
@@ -24,7 +24,7 @@ export default async function RoutePage({
   const { data: route, error } = await supabase
     .from("route")
     .select("*")
-    .eq("id", routeIdNum)
+    .eq("id", destinationIdNum)
     .single();
 
   if (error) {
@@ -106,16 +106,16 @@ export default async function RoutePage({
       </div>
       <div>
         <UpdateDriverForm
-          tripId={routeIdNum}
-          routeId={routeIdNum}
+          tripId={destinationIdNum}
+          destinationId={destinationIdNum}
           selectedId={route.driver_id ?? ""}
           profiles={tripProfiles.profile}
         />
       </div>
       <div>
         <UpdateVehicleForm
-          tripId={routeIdNum}
-          routeId={routeIdNum}
+          tripId={destinationIdNum}
+          destinationId={destinationIdNum}
           selectedId={route.vehicle_id}
           vehicles={vehicles}
         />

@@ -24,7 +24,7 @@ import {
   formatTime,
   TripGraphNodes,
 } from "@/features/trip/utils";
-import { routePath } from "@/paths";
+import { destinationPath } from "@/paths";
 
 export default async function PlanPage({
   params,
@@ -129,7 +129,7 @@ export default async function PlanPage({
                   <CardHeader>
                     <CardTitle>
                       <Link
-                        href={routePath(
+                        href={destinationPath(
                           tripNode.destination.trip_id,
                           tripNode.destination.id,
                         )}

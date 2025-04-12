@@ -17,9 +17,10 @@ export const tripPath = (tripId: SearchParam | number | null) => {
   return `/trips/${tripId}`;
 };
 
-export const routePath = (tripId: number | null, routeId: number) =>
-  `${tripPath(tripId)}/routes/${routeId}`;
+export const destinationPath = (tripId: number | null, destinationId: number) =>
+  `${tripPath(tripId)}/destinations/${destinationId}`;
 
 export const planPath = (tripId: SearchParam) => `${tripPath(tripId)}/plan`;
 
-export const newTripPath = (tripId: Params) => `${tripPath(tripId)}/routes/new`;
+export const newDestinationPath = (tripId: Params) =>
+  `${tripPath(tripId)}/destinations/new`;

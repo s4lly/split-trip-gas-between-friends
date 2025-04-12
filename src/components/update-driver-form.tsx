@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { updateRoute } from "@/app/trips/[id]/routes/[routeId]/actions";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -12,25 +11,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { updateDestination } from "@/features/trip/actions/update-destination";
 import { Profile } from "@/lib/types";
 
 type UpdateDriverFormProps = {
   tripId: number;
-  routeId: number;
+  destinationId: number;
   selectedId: string;
   profiles: Pick<Profile, "email" | "id">[];
 };
 
 const UpdateDriverForm = ({
   tripId,
-  routeId,
+  destinationId,
   selectedId,
   profiles,
 }: UpdateDriverFormProps) => {
   const [selectedDriverId, setSelectedDriverId] = useState<string>(selectedId);
 
   const onDriverChange = async (profileId: string) => {
-    const updatedRoute = await updateRoute(tripId, routeId, {
+    const updatedRoute = await updateDestination(tripId, destinationId, {
       driver_id: profileId,
     });
 

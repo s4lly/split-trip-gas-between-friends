@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { parse } from "valibot";
-import { searchPlaces } from "@/app/trips/[id]/routes/new/actions";
+import { getPlaceSuggestions } from "@/features/trip/actions/get-place-suggestions";
 import { createFormTitle, isBlank } from "@/utils/shared";
 import {
   PlacePrediction,
@@ -17,12 +17,12 @@ import {
   PlaceSuggestionsSchema,
 } from "@/utils/valibot/places-auto-complete-schema";
 
-type AutoCompleteInputProps = {
+type PlaceSuggestionInputProps = {
   children: string;
   setPlacePrediction: Dispatch<SetStateAction<PlacePrediction | undefined>>;
 };
 
-export const AutoCompleteInput: FC<AutoCompleteInputProps> = ({
+export const PlaceSuggestionInput: FC<PlaceSuggestionInputProps> = ({
   children,
   setPlacePrediction,
 }) => {
@@ -32,16 +32,17 @@ export const AutoCompleteInput: FC<AutoCompleteInputProps> = ({
   const [placeSuggestion, setPlaceSuggestion] = useState<PlaceSuggestions>();
   const isValueSelected = useRef(false);
 
-  const getPlaceSuggestions = async (
+  const fetchPlaceSuggestions = async (
     query: string,
   ): Promise<PlaceSuggestions> => {
     if (isBlank(query)) {
       return { suggestions: [] };
     }
 
-    const data = await searchPlaces(query);
+    const data = await getPlaceSuggestions(query);
 
     try {
+      // TODO move to backend
       const placeSuggestion = parse(PlaceSuggestionsSchema, data);
       return placeSuggestion;
     } catch (error) {
@@ -66,7 +67,7 @@ export const AutoCompleteInput: FC<AutoCompleteInputProps> = ({
     }
 
     const timeoutId = setTimeout(async () => {
-      const placeSuggestions = await getPlaceSuggestions(value);
+      const placeSuggestions = await fetchPlaceSuggestions(value);
       setPlaceSuggestion(placeSuggestions);
     }, 700);
 

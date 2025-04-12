@@ -8,19 +8,23 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { TripNode } from "@/features/trip/types";
+import { destinationPath } from "@/paths";
 
 type RouteCardProps = {
   tripNode: TripNode;
 };
 
-const RouteItem: FC<RouteCardProps> = ({ tripNode }) => {
+const DestinationItem: FC<RouteCardProps> = ({ tripNode }) => {
   return (
     <AccordionItem value={`${tripNode.destination.id}`}>
       <div className="flex items-center gap-2">
         <div className="grow">
           <Link
             className="inline-block size-full py-4"
-            href={`/trips/${tripNode.destination.trip_id}/routes/${tripNode.destination.id}`}
+            href={destinationPath(
+              tripNode.destination.trip_id,
+              tripNode.destination.id,
+            )}
           >
             {tripNode.destination.details.structuredFormat.mainText.text}
           </Link>
@@ -32,4 +36,4 @@ const RouteItem: FC<RouteCardProps> = ({ tripNode }) => {
   );
 };
 
-export default RouteItem;
+export default DestinationItem;

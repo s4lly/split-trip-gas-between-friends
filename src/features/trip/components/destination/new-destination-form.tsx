@@ -2,15 +2,15 @@
 
 import { FC, useCallback, useState } from "react";
 import { Form } from "@/components/form/form";
-import { AutoCompleteInput } from "@/components/auto-complete-input/auto-complete-input";
-import { createTripRoute } from "@/app/trips/[id]/routes/new/actions";
+import { PlaceSuggestionInput } from "@/components/place-suggestion-input";
+import { createTripDestination } from "@/features/trip/actions/create-trip-destination";
 import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 
-type NewRouteFormProps = {
+type NewDestinationFormProps = {
   tripId: number;
 };
 
-const NewRouteForm: FC<NewRouteFormProps> = ({ tripId }) => {
+const NewDestinationForm: FC<NewDestinationFormProps> = ({ tripId }) => {
   const [placePrediction, setPlacePrediction] = useState<PlacePrediction>();
 
   const handleFormSubmit = useCallback(() => {
@@ -19,14 +19,14 @@ const NewRouteForm: FC<NewRouteFormProps> = ({ tripId }) => {
       return;
     }
 
-    createTripRoute(tripId, placePrediction);
-  }, [placePrediction]);
+    createTripDestination(tripId, placePrediction);
+  }, [tripId, placePrediction]);
 
   return (
     <Form>
-      <AutoCompleteInput setPlacePrediction={setPlacePrediction}>
+      <PlaceSuggestionInput setPlacePrediction={setPlacePrediction}>
         Place
-      </AutoCompleteInput>
+      </PlaceSuggestionInput>
 
       <button
         className="w-full rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none"
@@ -39,4 +39,4 @@ const NewRouteForm: FC<NewRouteFormProps> = ({ tripId }) => {
   );
 };
 
-export default NewRouteForm;
+export default NewDestinationForm;

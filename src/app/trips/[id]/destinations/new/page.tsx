@@ -1,5 +1,5 @@
 import { use } from "react";
-import NewRouteForm from "@/components/new-route-form/new-route-form";
+import NewDestinationForm from "@/features/trip/components/destination/new-destination-form";
 
 type NewRoutePageProps = {
   params: Promise<{ id: string }>;
@@ -15,7 +15,7 @@ export default function NewRoutePage({ params }: NewRoutePageProps) {
 
   return (
     <>
-      <NewRouteForm tripId={tripId} />
+      <NewDestinationForm tripId={tripId} />
     </>
   );
 }
