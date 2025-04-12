@@ -51,8 +51,6 @@ export const getTripGraph = async (tripId: string): Promise<TripGraph> => {
       pNode.route = routeNode;
     }
 
-    // end
-
     tripGraph.end = cNode;
     pNode = cNode;
   }

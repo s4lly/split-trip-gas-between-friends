@@ -26,7 +26,7 @@ import {
 } from "@/features/trip/utils";
 import { routePath } from "@/paths";
 
-export default async function ReportPage({
+export default async function PlanPage({
   params,
 }: {
   params: Promise<{ id: string }>;
