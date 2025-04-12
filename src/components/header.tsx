@@ -13,6 +13,7 @@ export const Header = ({ children }: { children: ReactNode }) => {
           <Link href={homePath()}>
             <Car size={32} weight="duotone" />
           </Link>
+          <span>/</span>
           <h1 className="text-2xl font-extrabold">{children}</h1>
         </div>
         <LayoutDrawer />
