@@ -7,6 +7,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { updateDestination } from "@/features/trip/actions/update-destination";
 import { TripNode } from "@/features/trip/types";
 import { destinationPath } from "@/paths";
 
@@ -29,7 +31,21 @@ const DestinationItem: FC<RouteCardProps> = ({ tripNode }) => {
         </Link>
         <AccordionTrigger className="size-[36px] items-center justify-center border" />
       </div>
-      <AccordionContent>foo</AccordionContent>
+      <AccordionContent className="p-2">
+        <Button
+          onClick={() =>
+            updateDestination(
+              tripNode.destination.trip_id,
+              tripNode.destination.id,
+              { is_deleted: true },
+            )
+          }
+          className="w-full"
+          variant="destructive"
+        >
+          Delete
+        </Button>
+      </AccordionContent>
     </AccordionItem>
   );
 };

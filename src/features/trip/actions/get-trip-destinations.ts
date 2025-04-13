@@ -26,7 +26,8 @@ export async function getTripDestinations(tripIdString: string) {
       )
     `,
     )
-    .eq("trip_id", tripIdNumber);
+    .eq("trip_id", tripIdNumber)
+    .neq("is_deleted", true);
 
   if (error) {
     // TODO o11y

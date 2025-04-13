@@ -1,17 +1,28 @@
 "use client";
 
 import { Loader } from "@googlemaps/js-api-loader";
+import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { TripGraph } from "@/features/trip/types";
 import { TripGraphNodes } from "@/features/trip/utils";
+import { errorPath } from "@/paths";
 
 type MapProps = {
   tripGraph: TripGraph;
 };
 
+type GeometryLibrary = google.maps.GeometryLibrary;
+type MarkerLibrary = google.maps.MarkerLibrary;
+
+type Polyline = google.maps.Polyline;
+type AdvancedMarkerElement = google.maps.marker.AdvancedMarkerElement;
+
 export const Map = ({ tripGraph }: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+
+  const [polylines, setPolylines] = useState<Polyline[]>([]);
+  const [markers, setMarkers] = useState<AdvancedMarkerElement[]>([]);
 
   useEffect(() => {
     const mapOptions = {
@@ -34,30 +45,36 @@ export const Map = ({ tripGraph }: MapProps) => {
       .importLibrary("maps")
       .then(({ Map }) => {
         if (!mapRef.current) {
-          console.log("cannot find element to attach map");
-          return;
+          console.error("cannot find element to attach map");
+          redirect(errorPath());
         }
 
         setMap(new Map(mapRef.current, mapOptions));
       })
-      .catch((e) => {
-        console.log("error loading maps library: ", e);
+      .catch((error) => {
+        console.error("error loading maps library: ", error);
+        redirect(errorPath());
       });
   }, []);
 
+  // create polylines and markers
   useEffect(() => {
-    const addToMap = async () => {
+    addToMap();
+
+    async function addToMap() {
       if (map == null) {
         return;
       }
 
-      // @ts-expect-error: maps api types not updated
-      const { encoding } = await google.maps.importLibrary("geometry");
-      // @ts-expect-error: maps api types not updated
-      const { AdvancedMarkerElement } =
-        await google.maps.importLibrary("marker");
+      const { encoding } = (await google.maps.importLibrary(
+        "geometry",
+      )) as GeometryLibrary;
+      const { AdvancedMarkerElement } = (await google.maps.importLibrary(
+        "marker",
+      )) as MarkerLibrary;
 
-      const markerPositions = [];
+      const newPolylines: Polyline[] = [];
+      const newMarkers: AdvancedMarkerElement[] = [];
 
       for (const tripNode of TripGraphNodes(tripGraph)) {
         // add polyline
@@ -66,7 +83,7 @@ export const Map = ({ tripGraph }: MapProps) => {
             tripNode.route.polyline.encodedPolyline,
           );
 
-          const gRoutePolyLine = new google.maps.Polyline({
+          const polyline = new google.maps.Polyline({
             path: decodedPath,
             geodesic: true,
             strokeColor: "#FF0000",
@@ -74,7 +91,8 @@ export const Map = ({ tripGraph }: MapProps) => {
             strokeWeight: 3,
           });
 
-          gRoutePolyLine.setMap(map);
+          polyline.setMap(map);
+          newPolylines.push(polyline);
         }
 
         // add marker
@@ -85,23 +103,42 @@ export const Map = ({ tripGraph }: MapProps) => {
             lng: tripNode.coordinates.longitude,
           },
         });
-
-        markerPositions.push(marker.position);
+        newMarkers.push(marker);
       }
 
-      if (markerPositions.length) {
-        const bounds = new google.maps.LatLngBounds();
-
-        markerPositions.forEach((markerPosition) => {
-          bounds.extend(markerPosition);
-        });
-
-        map.fitBounds(bounds);
-      }
-    };
-
-    addToMap();
+      setPolylines(newPolylines);
+      setMarkers(newMarkers);
+    }
   }, [map, tripGraph]);
+
+  useEffect(() => {
+    if (map === null) {
+      return;
+    }
+
+    // fit bounds based on markeres
+    if (markers.length) {
+      const bounds = new google.maps.LatLngBounds();
+
+      markers.forEach((marker) => {
+        if (marker.position) {
+          bounds.extend(marker.position);
+        }
+      });
+
+      map.fitBounds(bounds);
+    }
+
+    return () => {
+      polylines.forEach((polyline) => {
+        polyline.setMap(null);
+      });
+
+      markers.forEach((marker) => {
+        marker.map = null;
+      });
+    };
+  }, [map, polylines, markers]);
 
   return (
     <div className="h-full w-full" ref={mapRef}>

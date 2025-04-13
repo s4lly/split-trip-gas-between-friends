@@ -7,10 +7,15 @@ import { errorPath, tripPath } from "@/paths";
 import { createClient } from "@/utils/supabase/server";
 
 export const updateDestination = async (
-  tripId: number,
+  tripId: number | null,
   destinationId: number,
   updates: Partial<Route>,
 ): Promise<Route> => {
+  if (tripId === null) {
+    console.error("error, tripId is null");
+    redirect(errorPath());
+  }
+
   const supabase = await createClient();
 
   // console.log("tripId: ", tripId, "destinationId: ", destinationId, "updates: ", updates);

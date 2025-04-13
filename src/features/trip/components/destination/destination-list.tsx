@@ -1,5 +1,3 @@
-"use client";
-
 import { FC } from "react";
 import { Accordion } from "@/components/ui/accordion";
 import DestinationItem from "@/features/trip/components/destination/destination-item";
