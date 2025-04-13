@@ -1,3 +1,4 @@
+import { Car, Export, User } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { Map } from "@/components/map";
 import { Button } from "@/components/ui/button";
@@ -18,16 +19,25 @@ export default async function TripPage({
   const tripGraph = await getTripGraph(tripId);
 
   return (
-    <div className="mt-2 space-y-4">
-      <div className="">
-        <Link
-          href={detailsPath(tripId)}
-          className="flex items-center rounded-md border px-1 py-1.5"
-        >
-          <p>
-            People: <span>{tripWithUsers.users.length}</span> Cars: 1
-          </p>
-        </Link>
+    <div className="mt-2 space-y-2">
+      <div className="flex gap-2">
+        <Button className="grow" variant="outline" asChild>
+          <Link href={detailsPath(tripId)}>
+            <div className="flex items-center gap-2">
+              Details:{" "}
+              <div className="flex items-center">
+                <User />
+                {tripWithUsers.users.length}
+              </div>
+              <div className="flex items-center">
+                <Car size={64} />2
+              </div>
+            </div>
+          </Link>
+        </Button>
+        <Button variant="outline" size="icon">
+          <Export />
+        </Button>
       </div>
 
       <Card className="w-full">
