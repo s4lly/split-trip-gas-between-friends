@@ -17,19 +17,17 @@ type RouteCardProps = {
 const DestinationItem: FC<RouteCardProps> = ({ tripNode }) => {
   return (
     <AccordionItem value={`${tripNode.destination.id}`}>
-      <div className="flex items-center gap-2">
-        <div className="grow">
-          <Link
-            className="inline-block size-full py-4"
-            href={destinationPath(
-              tripNode.destination.trip_id,
-              tripNode.destination.id,
-            )}
-          >
-            {tripNode.destination.details.structuredFormat.mainText.text}
-          </Link>
-        </div>
-        <AccordionTrigger className="w-10 justify-center" />
+      <div className="flex items-center gap-2 px-2">
+        <Link
+          className="grow py-4"
+          href={destinationPath(
+            tripNode.destination.trip_id,
+            tripNode.destination.id,
+          )}
+        >
+          {tripNode.destination.details.structuredFormat.mainText.text}
+        </Link>
+        <AccordionTrigger className="size-[36px] items-center justify-center border" />
       </div>
       <AccordionContent>foo</AccordionContent>
     </AccordionItem>

@@ -16,7 +16,7 @@ const DestinationList: FC<DestinationListProps> = ({ tripGraph }) => {
   return (
     <>
       {tripNodes.length > 0 && (
-        <Accordion type="single" collapsible>
+        <Accordion type="single" collapsible className="rounded-md border">
           {tripNodes.map((tripNode) => (
             <DestinationItem
               key={tripNode.destination.id}
