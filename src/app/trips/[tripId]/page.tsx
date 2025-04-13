@@ -2,7 +2,6 @@ import { Car, Export, User } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { Map } from "@/components/map";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
 import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
 import DestinationList from "@/features/trip/components/destination/destination-list";
@@ -40,11 +39,9 @@ export default async function TripPage({
         </Button>
       </div>
 
-      <Card className="w-full">
-        <CardContent className="flex h-[200px] items-center justify-center">
-          <Map tripGraph={tripGraph} />
-        </CardContent>
-      </Card>
+      <div className="-mx-4 h-[200px]">
+        <Map tripGraph={tripGraph} />
+      </div>
 
       <section className="space-y-2">
         <div className="flex justify-between gap-2">

@@ -20,14 +20,12 @@ export const Map = ({ tripGraph }: MapProps) => {
         lng: -122.40505665414587,
       },
       zoom: 8,
-      // TODO remove and regenerate if repo public
       mapId: process.env.NEXT_PUBLIC_MAIN_MAP_ID as string,
       disableDefaultUI: true,
       keyboardShortcuts: true,
     };
 
     const loader = new Loader({
-      // TODO remove and regenerate if repo public
       apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string,
       version: "weekly",
     });

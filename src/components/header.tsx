@@ -18,7 +18,7 @@ export const Header = ({ children }: { children: ReactNode }) => {
         </div>
         <LayoutDrawer />
       </header>
-      <Separator />
+      <Separator className="shadow-sm" />
     </>
   );
 };
