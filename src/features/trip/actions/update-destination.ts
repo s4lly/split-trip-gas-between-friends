@@ -18,8 +18,6 @@ export const updateDestination = async (
 
   const supabase = await createClient();
 
-  // console.log("tripId: ", tripId, "destinationId: ", destinationId, "updates: ", updates);
-
   const { data, error } = await supabase
     .from("route")
     .update(updates)
@@ -32,12 +30,6 @@ export const updateDestination = async (
     redirect(errorPath());
   }
 
-  if (!data || !data.driver_id) {
-    console.error("error, no data udpated: ", data);
-    redirect(errorPath());
-  }
-
-  console.log("updated destination data: ", data);
   revalidatePath(tripPath(tripId));
 
   return data;
