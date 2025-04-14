@@ -5,12 +5,3 @@ export const getStringOrEmpty = (value: string) => {
 export const isBlank = (str: string | undefined | null) => {
   return !str || /^\s*$/.test(str);
 };
-
-export const createFormTitle = (value: string | null | undefined): string => {
-  if (!value || isBlank(value)) return "";
-  return value.trim().toLowerCase().replace(/\s+/g, "-");
-};
-
-export const isParentLink = (parent: string, child: string): boolean => {
-  return child.includes(parent) && !parent.includes(child);
-};

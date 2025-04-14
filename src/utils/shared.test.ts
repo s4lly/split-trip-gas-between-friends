@@ -1,40 +1,45 @@
-import { createFormTitle, isParentLink } from "./shared";
+import { getStringOrEmpty, isBlank } from "./shared";
 
-describe("createFormTitle", () => {
-  it("should return an empty string for null or undefined", () => {
-    expect(createFormTitle(null)).toBe("");
-    expect(createFormTitle(undefined)).toBe("");
+describe("getStringOrEmpty", () => {
+  it("should return the trimmed string if a non-empty string is provided", () => {
+    expect(getStringOrEmpty("  hello  ")).toBe("hello");
   });
 
-  it("should return an empty string for an empty string", () => {
-    expect(createFormTitle("")).toBe("");
+  it("should return an empty string if the input is undefined", () => {
+    expect(getStringOrEmpty(undefined as unknown as string)).toBe("");
   });
 
-  it("should trim leading and trailing spaces", () => {
-    expect(createFormTitle("  hello  ")).toBe("hello");
+  it("should return an empty string if the input is null", () => {
+    expect(getStringOrEmpty(null as unknown as string)).toBe("");
   });
 
-  it("should convert all characters to lowercase", () => {
-    expect(createFormTitle("Hello World")).toBe("hello-world");
-  });
-
-  it("should replace spaces between words with hyphens", () => {
-    expect(createFormTitle("hello world test")).toBe("hello-world-test");
-  });
-
-  it("should handle strings with multiple spaces between words", () => {
-    expect(createFormTitle("hello   world")).toBe("hello-world");
+  it("should return an empty string if the input is an empty string", () => {
+    expect(getStringOrEmpty("")).toBe("");
   });
 });
 
-describe("isParentLink", () => {
-  it("should return true if the parent is substring of the child", () => {
-    expect(isParentLink("/trips", "/trips/1/route/2")).toBeTruthy();
+describe("isBlank", () => {
+  it("should return true for undefined", () => {
+    expect(isBlank(undefined)).toBe(true);
   });
-  it("should return false if the parent is equal to the child", () => {
-    expect(isParentLink("/trips/1/route/2", "/trips/1/route/2")).toBeFalsy();
+
+  it("should return true for null", () => {
+    expect(isBlank(null)).toBe(true);
   });
-  it("should return false if the parent is not a substring of the child", () => {
-    expect(isParentLink("/trips/1/route/2", "/trips")).toBeFalsy();
+
+  it("should return true for an empty string", () => {
+    expect(isBlank("")).toBe(true);
+  });
+
+  it("should return true for a string with only whitespace", () => {
+    expect(isBlank("   ")).toBe(true);
+  });
+
+  it("should return false for a non-empty string", () => {
+    expect(isBlank("hello")).toBe(false);
+  });
+
+  it("should return false for a string with non-whitespace characters and spaces", () => {
+    expect(isBlank("  hello  ")).toBe(false);
   });
 });
