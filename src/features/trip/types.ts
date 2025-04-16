@@ -2,26 +2,36 @@ import { getTripDestinations } from "@/features/trip/actions/get-trip-destinatio
 import { First } from "@/utils/types";
 import { ComputedRoute } from "@/utils/valibot/compute-route-schema";
 import { Location } from "@/utils/valibot/place-details-schema";
+import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 
-export type RouteNode = {
-  start: TripNode;
-  finish: TripNode;
-} & ComputedRoute;
+export type MapGraph = {
+  start: GraphNode | null;
+  end: GraphNode | null;
+};
+
+export type GraphNode = {
+  previous: GraphNode | null;
+  next: GraphNode | null;
+  coordinates: Location;
+} & (TripNode | SuggestionsNode);
 
 export type TripNode = {
-  previous: TripNode | null;
-  next: TripNode | null;
+  type: "trip";
 
   route: RouteNode | null;
-
   destination: TripDestination;
-  coordinates: Location;
 };
 
-export type TripGraph = {
-  start: TripNode | null;
-  end: TripNode | null;
+export type SuggestionsNode = {
+  type: "suggestion";
+
+  placeSuggestion: PlacePrediction;
 };
+
+export type RouteNode = {
+  start: GraphNode;
+  finish: GraphNode;
+} & ComputedRoute;
 
 // ----
 

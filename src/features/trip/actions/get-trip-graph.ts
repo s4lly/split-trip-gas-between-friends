@@ -2,13 +2,13 @@
 
 import { getPlaceCoordinates } from "@/features/trip/actions/get-place-coordinates";
 import { getTripDestinations } from "@/features/trip/actions/get-trip-destinations";
-import { RouteNode, TripGraph, TripNode } from "@/features/trip/types";
+import { GraphNode, MapGraph, RouteNode } from "@/features/trip/types";
 import { getComputedRoute } from "./get-computed-route";
 
-export const getTripGraph = async (tripId: string): Promise<TripGraph> => {
+export const getTripGraph = async (tripId: string): Promise<MapGraph> => {
   const tripDestinations = await getTripDestinations(tripId);
 
-  const tripGraph: TripGraph = {
+  const tripGraph: MapGraph = {
     start: null,
     end: null,
   };
@@ -17,11 +17,12 @@ export const getTripGraph = async (tripId: string): Promise<TripGraph> => {
     return tripGraph;
   }
 
-  let pNode: TripNode | null = null;
+  let pNode: GraphNode | null = null;
   for (let i = 0; i < tripDestinations.length; i++) {
     const tripDestination = tripDestinations[i];
 
-    const cNode: TripNode = {
+    const cNode: GraphNode = {
+      type: "trip",
       previous: pNode,
       next: null,
 

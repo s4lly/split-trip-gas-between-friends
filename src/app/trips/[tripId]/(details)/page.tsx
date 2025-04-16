@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
 import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
 import DestinationList from "@/features/trip/components/destination/destination-list";
-import { detailsPath, newDestinationPath, planPath } from "@/paths";
+import { newDestinationPath, overviewPath, planPath } from "@/paths";
 
 export default async function TripPage({
   params,
@@ -21,9 +21,9 @@ export default async function TripPage({
     <div className="mt-2 space-y-2">
       <div className="flex gap-2">
         <Button className="grow" variant="outline" asChild>
-          <Link href={detailsPath(tripId)}>
+          <Link href={overviewPath(tripId)}>
             <div className="flex items-center gap-2">
-              Details:{" "}
+              Overview:{" "}
               <div className="flex items-center">
                 <User />
                 {tripWithUsers.users.length}
@@ -40,7 +40,7 @@ export default async function TripPage({
       </div>
 
       <div className="-mx-4 h-[200px]">
-        <Map tripGraph={tripGraph} />
+        <Map mapGraph={tripGraph} />
       </div>
 
       <section className="space-y-2">
@@ -56,7 +56,7 @@ export default async function TripPage({
             </Link>
           </Button>
         </div>
-        <DestinationList tripGraph={tripGraph} />
+        <DestinationList mapGraph={tripGraph} />
       </section>
     </div>
   );

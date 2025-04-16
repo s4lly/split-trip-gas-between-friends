@@ -28,7 +28,7 @@ import {
   convertMetersToMiles,
   convertSecondsToHoursAndMinutes,
   formatTime,
-  TripGraphNodes,
+  MapGraphNodes,
 } from "@/features/trip/utils";
 import { destinationPath } from "@/paths";
 
@@ -55,11 +55,11 @@ export default async function PlanPage({
     id: string;
   };
   const driverToExpensesMap: Map<string, Expense[]> = new Map();
-  for (const tripNode of TripGraphNodes(tripGraph)) {
-    const { route } = tripNode;
-
-    if (route) {
-      const distanceInMiles = convertMetersToMiles(route.distanceMeters);
+  for (const tripNode of MapGraphNodes(tripGraph)) {
+    if (tripNode.type === "trip" && tripNode.route) {
+      const distanceInMiles = convertMetersToMiles(
+        tripNode.route.distanceMeters,
+      );
 
       const driverId = tripNode.destination.driver_id;
       const driverUsername = tripNode.destination.profile?.username;
@@ -85,7 +85,7 @@ export default async function PlanPage({
         driverExpenses.push({
           id: driverId,
           username: driverUsername,
-          routeNode: route,
+          routeNode: tripNode.route,
           expense: {
             amount: distanceInMiles * (1 / mpg) * GAS_PER_GALLON,
             currency: "USD",
@@ -135,7 +135,11 @@ export default async function PlanPage({
           </Table>
         </section>
         <section className="space-y-2">
-          {Array.from(TripGraphNodes(tripGraph)).map((tripNode) => {
+          {Array.from(MapGraphNodes(tripGraph)).map((tripNode) => {
+            if (tripNode.type === "suggestion") {
+              return null;
+            }
+
             return (
               <div className="space-y-2" key={tripNode.destination.id}>
                 <div>

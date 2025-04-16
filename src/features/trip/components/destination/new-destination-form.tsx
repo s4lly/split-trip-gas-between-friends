@@ -4,20 +4,21 @@ import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { parse } from "valibot";
+import { Map } from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { createTripDestination } from "@/features/trip/actions/create-trip-destination";
 import { getPlaceSuggestions } from "@/features/trip/actions/get-place-suggestions";
+import { MapGraph } from "@/features/trip/types";
 import { tripPath } from "@/paths";
 import { isBlank } from "@/utils/shared";
 import { parseStringParam } from "@/utils/url";
 import {
   PlacePrediction,
   PlaceSuggestions,
-  PlaceSuggestionsSchema,
 } from "@/utils/valibot/places-auto-complete-schema";
+import { getPlaceSuggestionsGraph } from "../../actions/get-place-suggestions-graph";
 
 export const NewDestinationForm = () => {
   const params = useParams<{ tripId: string }>();
@@ -28,6 +29,8 @@ export const NewDestinationForm = () => {
 
   const [placePrediction, setPlacePrediction] = useState<PlacePrediction>();
   const [placeSuggestions, setPlaceSuggestions] = useState<PlaceSuggestions>();
+  const [placeSuggestionsGraph, setPlaceSuggestionsGraph] =
+    useState<MapGraph | null>(null);
 
   // ----
 
@@ -38,12 +41,17 @@ export const NewDestinationForm = () => {
     }
 
     const timeoutId = setTimeout(async () => {
-      const placeSuggestions = await fetchPlaceSuggestions(value);
+      const placeSuggestions = isBlank(value)
+        ? { suggestions: [] }
+        : await getPlaceSuggestions(value);
       setPlaceSuggestions(placeSuggestions);
+      setPlaceSuggestionsGraph(
+        await getPlaceSuggestionsGraph(placeSuggestions),
+      );
     }, 700);
 
     return () => clearTimeout(timeoutId);
-  }, [value, setPlaceSuggestions]);
+  }, [value, setPlaceSuggestions, setPlaceSuggestionsGraph]);
 
   // ----
 
@@ -54,25 +62,6 @@ export const NewDestinationForm = () => {
     }
 
     createTripDestination(tripId, placePrediction);
-  };
-
-  const fetchPlaceSuggestions = async (
-    query: string,
-  ): Promise<PlaceSuggestions> => {
-    if (isBlank(query)) {
-      return { suggestions: [] };
-    }
-
-    const data = await getPlaceSuggestions(query);
-
-    try {
-      // TODO move to backend
-      const placeSuggestions = parse(PlaceSuggestionsSchema, data);
-      return placeSuggestions;
-    } catch (error) {
-      console.error(error);
-      return { suggestions: [] };
-    }
   };
 
   // ----
@@ -94,6 +83,10 @@ export const NewDestinationForm = () => {
 
   return (
     <div className="space-y-2">
+      <div className="-mx-4 h-[200px]">
+        <Map mapGraph={placeSuggestionsGraph} />
+      </div>
+
       <div className="-mx-3 flex items-center">
         <Button asChild size="icon" variant="ghost">
           <Link href={tripPath(tripId)}>

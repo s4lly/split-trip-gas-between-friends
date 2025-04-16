@@ -3,12 +3,12 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { TripGraph } from "@/features/trip/types";
-import { TripGraphNodes } from "@/features/trip/utils";
+import { MapGraph } from "@/features/trip/types";
+import { MapGraphNodes } from "@/features/trip/utils";
 import { errorPath } from "@/paths";
 
 type MapProps = {
-  tripGraph: TripGraph;
+  mapGraph: MapGraph | null;
 };
 
 type GeometryLibrary = google.maps.GeometryLibrary;
@@ -17,7 +17,7 @@ type MarkerLibrary = google.maps.MarkerLibrary;
 type Polyline = google.maps.Polyline;
 type AdvancedMarkerElement = google.maps.marker.AdvancedMarkerElement;
 
-export const Map = ({ tripGraph }: MapProps) => {
+export const Map = ({ mapGraph }: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +62,7 @@ export const Map = ({ tripGraph }: MapProps) => {
     addToMap();
 
     async function addToMap() {
-      if (map == null) {
+      if (map == null || mapGraph == null) {
         return;
       }
 
@@ -76,9 +76,9 @@ export const Map = ({ tripGraph }: MapProps) => {
       const newPolylines: Polyline[] = [];
       const newMarkers: AdvancedMarkerElement[] = [];
 
-      for (const tripNode of TripGraphNodes(tripGraph)) {
+      for (const tripNode of MapGraphNodes(mapGraph)) {
         // add polyline
-        if (tripNode.route) {
+        if (tripNode.type === "trip" && tripNode.route) {
           const decodedPath = encoding.decodePath(
             tripNode.route.polyline.encodedPolyline,
           );
@@ -109,7 +109,7 @@ export const Map = ({ tripGraph }: MapProps) => {
       setPolylines(newPolylines);
       setMarkers(newMarkers);
     }
-  }, [map, tripGraph]);
+  }, [map, mapGraph]);
 
   useEffect(() => {
     if (map === null) {

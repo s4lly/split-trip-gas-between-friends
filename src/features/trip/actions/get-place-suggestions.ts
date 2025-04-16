@@ -1,3 +1,10 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { parse } from "valibot";
+import { errorPath } from "@/paths";
+import { PlaceSuggestionsSchema } from "@/utils/valibot/places-auto-complete-schema";
+
 export const getPlaceSuggestions = async (query: string) => {
   const response = await fetch(
     "https://places.googleapis.com/v1/places:autocomplete",
@@ -14,6 +21,13 @@ export const getPlaceSuggestions = async (query: string) => {
   );
 
   const json = await response.json();
+
+  try {
+    return parse(PlaceSuggestionsSchema, json);
+  } catch (error) {
+    console.error("Failed to parse place suggestions response", error);
+    redirect(errorPath());
+  }
 
   return json;
 };

@@ -54,7 +54,7 @@ export default async function DetailsPage({
       <TripsBreadCrumb tripId={tripId}>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Details</BreadcrumbPage>
+          <BreadcrumbPage>Overview</BreadcrumbPage>
         </BreadcrumbItem>
       </TripsBreadCrumb>
 

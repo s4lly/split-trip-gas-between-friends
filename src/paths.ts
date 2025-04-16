@@ -25,4 +25,4 @@ export const planPath = (tripId: SearchParam) => `${tripPath(tripId)}/plan`;
 export const newDestinationPath = (tripId: Param) =>
   `${tripPath(tripId)}/destinations/new`;
 
-export const detailsPath = (tripId: Param) => `${tripPath(tripId)}/details`;
+export const overviewPath = (tripId: Param) => `${tripPath(tripId)}/overview`;
