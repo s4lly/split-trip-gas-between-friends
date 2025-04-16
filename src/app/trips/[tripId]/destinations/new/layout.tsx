@@ -5,9 +5,5 @@ export default function NewDestinationLayout({
 }: {
   children: ReactNode;
 }) {
-  return (
-    <div className="min-h-screen bg-white">
-      <main className="container mx-auto p-4">{children}</main>
-    </div>
-  );
+  return <div className="mx-auto h-screen bg-white px-4 pb-4">{children}</div>;
 }
