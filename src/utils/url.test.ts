@@ -1,12 +1,9 @@
 import { redirect } from "next/navigation";
-import { getSingleSearchParam, parseStringParam } from "./url";
+import { joinPath } from "@/paths";
+import { getJoinUrl, getSingleSearchParam, parseStringParam } from "./url";
 
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
-}));
-
-jest.mock("../paths", () => ({
-  errorPath: jest.fn(() => "/error"),
 }));
 
 describe("getSingleSearchParam", () => {
@@ -55,5 +52,53 @@ describe("parseStringParam", () => {
       "abc",
     );
     expect(redirect).toHaveBeenCalledWith("/error");
+  });
+});
+
+describe("getJoinUrl", () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    jest.resetModules(); // Clear module cache
+    process.env = { ...originalEnv }; // Reset environment variables
+  });
+
+  afterAll(() => {
+    process.env = originalEnv; // Restore original environment
+  });
+
+  it("should return localhost URL in development environment", () => {
+    process.env = { ...process.env, NODE_ENV: "development" };
+    const tripId = "123";
+    const expectedUrl = `http://localhost:3000${joinPath(new URLSearchParams({ tripId }))}`;
+    expect(getJoinUrl(tripId)).toBe(expectedUrl);
+  });
+
+  it("should return localhost URL if VERCEL_URL is not defined", () => {
+    delete process.env.VERCEL_URL;
+    const tripId = "123";
+    const expectedUrl = `http://localhost:3000${joinPath(new URLSearchParams({ tripId }))}`;
+    expect(getJoinUrl(tripId)).toBe(expectedUrl);
+  });
+
+  it("should return production URL if VERCEL_URL is defined", () => {
+    process.env.VERCEL_URL = "example.vercel.app";
+    const tripId = "123";
+    const expectedUrl = `https://example.vercel.app${joinPath(new URLSearchParams({ tripId }))}`;
+    expect(getJoinUrl(tripId)).toBe(expectedUrl);
+  });
+
+  it("should handle tripId with special characters", () => {
+    process.env.VERCEL_URL = "example.vercel.app";
+    const tripId = "abc-123";
+    const expectedUrl = `https://example.vercel.app${joinPath(new URLSearchParams({ tripId }))}`;
+    expect(getJoinUrl(tripId)).toBe(expectedUrl);
+  });
+
+  it("should handle empty tripId gracefully", () => {
+    process.env.VERCEL_URL = "example.vercel.app";
+    const tripId = "";
+    const expectedUrl = `https://example.vercel.app${joinPath(new URLSearchParams({ tripId }))}`;
+    expect(getJoinUrl(tripId)).toBe(expectedUrl);
   });
 });

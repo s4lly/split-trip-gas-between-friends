@@ -7,6 +7,7 @@ export const loginPath = () => "/login";
 export const setupPath = () => "/users/setup";
 export const homePath = () => "/";
 
+export const tripsPath = () => "/trips";
 export const tripPath = (tripId: SearchParam | number | null) => {
   if (Array.isArray(tripId) || tripId === undefined || tripId === null) {
     // TODO o11y
@@ -26,3 +27,7 @@ export const newDestinationPath = (tripId: Param) =>
   `${tripPath(tripId)}/destinations/new`;
 
 export const overviewPath = (tripId: Param) => `${tripPath(tripId)}/overview`;
+
+export const sharePath = (tripId: Param) => `${tripPath(tripId)}/share`;
+export const joinPath = (searchParams: URLSearchParams) =>
+  `${tripsPath()}/join?${searchParams.toString()}`;

@@ -5,13 +5,14 @@ import { Button } from "@/components/ui/button";
 import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
 import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
 import DestinationList from "@/features/trip/components/destination/destination-list";
-import { newDestinationPath, overviewPath, planPath } from "@/paths";
+import { newDestinationPath, overviewPath, planPath, sharePath } from "@/paths";
 
 export default async function TripPage({
   params,
 }: {
   params: Promise<{ tripId: string }>;
 }) {
+  // TODO use use library
   const { tripId } = await params;
 
   const tripWithUsers = await getTripWithUsers(tripId);
@@ -35,7 +36,9 @@ export default async function TripPage({
           </Link>
         </Button>
         <Button variant="outline" size="icon">
-          <Export />
+          <Link href={sharePath(tripId)}>
+            <Export />
+          </Link>
         </Button>
       </div>
 

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { errorPath } from "@/paths";
+import { errorPath, joinPath } from "@/paths";
 
 export function getSingleSearchParam(
   searchParams: { [key: string]: string | string[] | undefined },
@@ -29,4 +29,14 @@ export const parseStringParam = (paramString: string): number => {
   }
 
   return paramNumber;
+};
+
+export const getJoinUrl = (tripId: string): string => {
+  const baseUrl =
+    process.env.NODE_ENV === "development" || !process.env.VERCEL_URL
+      ? "http://localhost:3000"
+      : `https://${process.env.VERCEL_URL}`;
+
+  const searchParams = new URLSearchParams({ tripId });
+  return new URL(joinPath(searchParams), baseUrl).toString();
 };

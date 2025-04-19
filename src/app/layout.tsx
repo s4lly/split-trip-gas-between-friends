@@ -1,5 +1,6 @@
 import "@/index.css";
 import type { Metadata } from "next";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "split trip gas between friends",
@@ -12,9 +13,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="">
       <body>
-        <div>{children}</div>
+        {children}
+        <Toaster />
       </body>
     </html>
   );

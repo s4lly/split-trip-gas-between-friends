@@ -43,11 +43,11 @@ export default async function Layout({
   const trip: ProfilesWithinTripQuery = data;
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <div className="bg-gray-100">
         <Header>{trip.name}</Header>
       </div>
-      <div className="px-4 pt-2 pb-4">{children}</div>
-    </>
+      <div className="grow px-4 pt-2 pb-4">{children}</div>
+    </div>
   );
 }
