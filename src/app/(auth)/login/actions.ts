@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { phone } from "phone";
+import { errorPath, setupPath } from "@/paths";
+import { isBlank } from "@/utils/shared";
 import { createClient } from "@/utils/supabase/server";
 
 export async function signupEmail(formData: FormData) {
@@ -32,11 +34,32 @@ export async function loginEmail(formData: FormData) {
     password: formData.get("password") as string,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { error: authError, data: auth } =
+    await supabase.auth.signInWithPassword(data);
 
-  if (error) {
-    console.error("error: ", error);
+  if (authError) {
+    console.error("error: ", authError);
     redirect("/error");
+  }
+
+  if (authError || !auth?.user) {
+    // if error here then something wrong and we shouldn't try to login again
+    redirect(errorPath());
+  }
+
+  const { error: profileError, data: profile } = await supabase
+    .from("profile")
+    .select("*")
+    .eq("id", auth.user.id)
+    .single();
+
+  if (profileError || !profile) {
+    console.error("no profile: ", profileError);
+    redirect(errorPath());
+  }
+
+  if (isBlank(profile.username)) {
+    redirect(setupPath());
   }
 
   revalidatePath("/", "layout");
@@ -86,10 +109,30 @@ export async function verify(formData: FormData) {
 
   // console.log("verify: ", data);
 
-  const { error } = await supabase.auth.verifyOtp(data);
-  if (error) {
-    console.error("verify: ", error);
+  const { error: authError, data: auth } = await supabase.auth.verifyOtp(data);
+  if (authError) {
+    console.error("verify: ", authError);
     redirect("/error");
+  }
+
+  if (authError || !auth?.user) {
+    // if error here then something wrong and we shouldn't try to login again
+    redirect(errorPath());
+  }
+
+  const { error: profileError, data: profile } = await supabase
+    .from("profile")
+    .select("*")
+    .eq("id", auth.user.id)
+    .single();
+
+  if (profileError || !profile) {
+    console.error("no profile: ", profileError);
+    redirect(errorPath());
+  }
+
+  if (isBlank(profile.username)) {
+    redirect(setupPath());
   }
 
   revalidatePath("/", "layout");

@@ -1,39 +1,13 @@
 import { Car } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { StateProvider } from "@/components/Context";
 import LayoutDrawer from "@/components/layout-drawer";
 import MySharedTrips from "@/components/my-shared-trips";
 import MyTrips from "@/components/my-trips";
 import { Button } from "@/components/ui/button";
-import { errorPath, loginPath, setupPath, tripNewPath } from "@/paths";
-import { isBlank } from "@/utils/shared";
-import { createClient } from "@/utils/supabase/server";
+import { tripNewPath } from "@/paths";
 
 export default async function Home() {
-  const supabase = await createClient();
-
-  const { error: authError, data: auth } = await supabase.auth.getUser();
-
-  if (authError || !auth?.user) {
-    redirect(loginPath());
-  }
-
-  const { error: profileError, data: profile } = await supabase
-    .from("profile")
-    .select("*")
-    .eq("id", auth.user.id)
-    .single();
-
-  if (profileError || !profile) {
-    console.error("no profile: ", profileError);
-    redirect(errorPath());
-  }
-
-  if (isBlank(profile.username)) {
-    redirect(setupPath());
-  }
-
   return (
     <StateProvider>
       <div className="space-y-2 p-4">
@@ -44,6 +18,7 @@ export default async function Home() {
           </div>
           <LayoutDrawer />
         </header>
+
         <section>
           <Button className="w-full" asChild>
             <Link className="text-yellow-300" href={tripNewPath()}>
@@ -51,9 +26,11 @@ export default async function Home() {
             </Link>
           </Button>
         </section>
+
         <section>
           <MySharedTrips />
         </section>
+
         <section>
           <MyTrips />
         </section>
