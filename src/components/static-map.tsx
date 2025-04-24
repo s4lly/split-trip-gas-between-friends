@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { sign } from "@/features/trip/actions/sign-static-maps";
 import { Location } from "@/utils/valibot/place-details-schema";
 
 export const StaticMap = async ({
@@ -20,11 +19,11 @@ export const StaticMap = async ({
     key: process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string,
   });
 
-  const hashedSignature = await sign(
-    `${url.pathname}?${urlSearchParams.toString()}`,
-  );
+  // const hashedSignature = await sign(
+  //   `${url.pathname}?${urlSearchParams.toString()}`,
+  // );
 
-  urlSearchParams.append("signature", hashedSignature);
+  // urlSearchParams.append("signature", hashedSignature);
 
   url.search = urlSearchParams.toString();
   const mapUrl = url.toString();
