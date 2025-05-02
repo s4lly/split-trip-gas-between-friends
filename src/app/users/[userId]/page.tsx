@@ -1,46 +1,15 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { Suspense } from "react";
+import { getMyVehicles } from "@/features/user/actions/get-my-vehicles";
+import { MyVehicles } from "@/features/user/components/my-vehicles";
 
-export default async function UserPage({
-  params,
-}: {
-  params: Promise<{ userId: string }>;
-}) {
-  const { userId } = await params;
-
-  const supabase = await createClient();
-
-  const { data: vehicles, error: vehiclesError } = await supabase
-    .from("vehicle")
-    .select("*")
-    .eq("owner_id", userId);
-
-  if (vehiclesError) {
-    console.log("error: ", vehiclesError);
-    redirect("/error");
-  }
+export default async function UserPage() {
+  const vehiclesPromise = getMyVehicles();
 
   return (
-    <div>
-      <h2>Cars</h2>
-
-      {vehicles.length > 0 ? (
-        <ul>
-          {vehicles.map((vehicle) => (
-            <li key={vehicle.id}>
-              <p>{vehicle.name}</p>
-              <p>{vehicle.mpg}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="flex w-full flex-col items-center justify-center">
-          <p>no cars</p>
-          <button className="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white">
-            create
-          </button>
-        </div>
-      )}
+    <div className="space-y-2 p-4">
+      <Suspense fallback={<p>loading vehicles...</p>}>
+        <MyVehicles vehiclesPromise={vehiclesPromise} />
+      </Suspense>
     </div>
   );
 }
