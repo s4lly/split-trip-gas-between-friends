@@ -17,6 +17,8 @@ type MarkerLibrary = google.maps.MarkerLibrary;
 type Polyline = google.maps.Polyline;
 type AdvancedMarkerElement = google.maps.marker.AdvancedMarkerElement;
 
+// TODO consider passing location through props so can save to trip and use same as current destinations
+
 export const Map = ({ mapGraph }: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -24,11 +26,40 @@ export const Map = ({ mapGraph }: MapProps) => {
   const [polylines, setPolylines] = useState<Polyline[]>([]);
   const [markers, setMarkers] = useState<AdvancedMarkerElement[]>([]);
 
+  const [location, setLocation] = useState<
+    | {
+        isLoaded: false;
+        position: null;
+      }
+    | {
+        isLoaded: true;
+        position: GeolocationPosition;
+      }
+  >({ isLoaded: false, position: null });
+
   useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocation({ isLoaded: true, position: pos });
+      },
+      () => {
+        // TODO
+      },
+      {
+        maximumAge: 5 * 60 * 1_000, // 5 min * 60 sec / min * 1000 msec / sec
+      },
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!location.isLoaded) {
+      return;
+    }
+
     const mapOptions = {
       center: {
-        lat: 37.77816124681277,
-        lng: -122.40505665414587,
+        lat: location.position.coords.latitude,
+        lng: location.position.coords.longitude,
       },
       zoom: 8,
       mapId: process.env.NEXT_PUBLIC_MAIN_MAP_ID as string,
@@ -55,7 +86,7 @@ export const Map = ({ mapGraph }: MapProps) => {
         console.error("error loading maps library: ", error);
         redirect(errorPath());
       });
-  }, []);
+  }, [location]);
 
   // create polylines and markers
   useEffect(() => {
