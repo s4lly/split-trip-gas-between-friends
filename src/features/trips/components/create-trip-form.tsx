@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -48,7 +47,6 @@ export const CreateTripForm = () => {
               <FormControl>
                 <Input placeholder="My trip" {...field} />
               </FormControl>
-              <FormDescription>This is your trip name.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
