@@ -3,7 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export async function createTrip(formData: FormData) {
+export async function createTrip({ name }: { name: string }) {
   const supabase = await createClient();
 
   const { data: authUserData, error: authUserError } =
@@ -18,7 +18,7 @@ export async function createTrip(formData: FormData) {
     .from("trip")
     .insert([
       {
-        name: formData.get("name") as string,
+        name,
         owner_id: authUserData.user?.id,
       },
     ])
@@ -47,4 +47,4 @@ export async function createTrip(formData: FormData) {
   }
 
   redirect("/");
-}
+} 
