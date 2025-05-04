@@ -28,6 +28,4 @@ export const getPlaceSuggestions = async (query: string) => {
     console.error("Failed to parse place suggestions response", error);
     redirect(errorPath());
   }
-
-  return json;
 };

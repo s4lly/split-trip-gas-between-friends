@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -15,20 +15,24 @@ import { tripPath } from "@/paths";
 import { isBlank } from "@/utils/shared";
 import { parseStringParam } from "@/utils/url";
 import {
+  EMPTY_PLACE_SUGGESTIONS,
   PlacePrediction,
   PlaceSuggestions,
 } from "@/utils/valibot/places-auto-complete-schema";
 import { getPlaceSuggestionsGraph } from "../../actions/get-place-suggestions-graph";
+
+const SEARCH_DEBOUNCE_DELAY = 700; // milliseconds
 
 export const NewDestinationForm = () => {
   const params = useParams<{ tripId: string }>();
   const tripId = parseStringParam(params.tripId);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [value, setValue] = useState("");
-  const isValueSelected = useRef(false);
+  const [query, setQuery] = useState("");
+  const isQueryChangedFromSelection = useRef(false);
 
-  const [placePrediction, setPlacePrediction] = useState<PlacePrediction>();
+  const [selectedDestination, setSelectedDestination] =
+    useState<PlacePrediction>();
   const [placeSuggestions, setPlaceSuggestions] = useState<PlaceSuggestions>();
   const [placeSuggestionsGraph, setPlaceSuggestionsGraph] =
     useState<MapGraph | null>(null);
@@ -39,49 +43,74 @@ export const NewDestinationForm = () => {
     inputRef?.current?.focus();
   });
 
+  // run when query changes, update suggestions
+  // all other state should have been set by the time this runs
   useEffect(() => {
-    if (isValueSelected.current) {
-      isValueSelected.current = false;
+    if (isQueryChangedFromSelection.current) {
+      isQueryChangedFromSelection.current = false;
       return;
     }
 
     const timeoutId = setTimeout(async () => {
-      const placeSuggestions = isBlank(value)
-        ? { suggestions: [] }
-        : await getPlaceSuggestions(value);
+      // update suggestions based on query
+      const placeSuggestions = isBlank(query)
+        ? EMPTY_PLACE_SUGGESTIONS
+        : await getPlaceSuggestions(query);
       setPlaceSuggestions(placeSuggestions);
-      setPlaceSuggestionsGraph(
-        await getPlaceSuggestionsGraph(placeSuggestions),
-      );
-    }, 700);
+    }, SEARCH_DEBOUNCE_DELAY);
 
     return () => clearTimeout(timeoutId);
-  }, [value, setPlaceSuggestions, setPlaceSuggestionsGraph]);
+  }, [query, setPlaceSuggestions, setPlaceSuggestionsGraph]);
+
+  // run when suggestions changes, update map graph
+  useEffect(() => {
+    const updateMapGraph = async () => {
+      // either showing suggestions or showing selected
+      let workingPlaceSuggestions = placeSuggestions;
+
+      if (selectedDestination) {
+        workingPlaceSuggestions = {
+          suggestions: [{ placePrediction: selectedDestination }],
+        };
+      }
+
+      setPlaceSuggestionsGraph(
+        await getPlaceSuggestionsGraph(workingPlaceSuggestions),
+      );
+    };
+
+    updateMapGraph();
+  }, [placeSuggestions, selectedDestination]);
 
   // ----
 
   const handleFormSubmit = () => {
-    if (placePrediction == undefined) {
+    if (selectedDestination == undefined) {
       console.error("cannot create 'empty' destination");
       return;
     }
 
-    createTripDestination(tripId, placePrediction);
+    createTripDestination(tripId, selectedDestination);
   };
 
   // ----
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    setQuery(e.target.value);
   };
 
   const handleClickSuggestion = (placePrediction: PlacePrediction) => {
-    isValueSelected.current = true;
+    // signal that the destination is selected
+    isQueryChangedFromSelection.current = true;
 
-    setValue(placePrediction.structuredFormat.mainText.text);
-    setPlaceSuggestions({ suggestions: [] });
+    setPlaceSuggestions(EMPTY_PLACE_SUGGESTIONS);
 
-    setPlacePrediction(placePrediction);
+    setQuery(placePrediction.structuredFormat.mainText.text);
+    setSelectedDestination(placePrediction);
+  };
+
+  const handleClearQuery = () => {
+    setQuery("");
   };
 
   // ----
@@ -90,6 +119,7 @@ export const NewDestinationForm = () => {
     <div className="flex h-full flex-col">
       <div className="flex-grow space-y-1">
         <div className="-mx-4 h-[200px]">
+          {/* suggestions or seleted */}
           <Map mapGraph={placeSuggestionsGraph} />
         </div>
 
@@ -99,13 +129,18 @@ export const NewDestinationForm = () => {
               <ArrowLeft className="size-[24px]" />
             </Link>
           </Button>
+
           <Input
             type="text"
             ref={inputRef}
-            value={value}
+            value={query}
             onChange={handleChange}
             className="border-0 px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
           />
+
+          <Button size="icon" variant="ghost" onClick={handleClearQuery}>
+            <X className="size-[24px]" />
+          </Button>
         </div>
 
         <Separator />

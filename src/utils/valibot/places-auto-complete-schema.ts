@@ -33,3 +33,7 @@ export const PlaceSuggestionsSchema = object({
 
 export type PlaceSuggestions = InferOutput<typeof PlaceSuggestionsSchema>;
 export type PlacePrediction = InferOutput<typeof PlacePredictionSchema>;
+
+export const EMPTY_PLACE_SUGGESTIONS: PlaceSuggestions = {
+  suggestions: [],
+};

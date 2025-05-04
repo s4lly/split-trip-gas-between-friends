@@ -2,17 +2,19 @@ import { GraphNode, MapGraph } from "@/features/trip/types";
 import { PlaceSuggestions } from "@/utils/valibot/places-auto-complete-schema";
 import { getPlaceCoordinates } from "./get-place-coordinates";
 
-export const getPlaceSuggestionsGraph = async ({
-  suggestions,
-}: PlaceSuggestions): Promise<MapGraph> => {
+export const getPlaceSuggestionsGraph = async (
+  placeSuggestions: PlaceSuggestions | undefined,
+): Promise<MapGraph> => {
   const placeSuggestionGraph: MapGraph = {
     end: null,
     start: null,
   };
 
-  if (!suggestions.length) {
+  if (!placeSuggestions || !placeSuggestions.suggestions.length) {
     return placeSuggestionGraph;
   }
+
+  const { suggestions } = placeSuggestions;
 
   let pNode: GraphNode | null = null;
   for (let i = 0; i < suggestions.length; i++) {
