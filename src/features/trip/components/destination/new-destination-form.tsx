@@ -20,6 +20,8 @@ import {
   PlaceSuggestions,
 } from "@/utils/valibot/places-auto-complete-schema";
 import { getPlaceSuggestionsGraph } from "../../actions/get-place-suggestions-graph";
+import { PlaceSuggestionList } from "./place-suggestion-list";
+import { SelectedDestinationDetails } from "./selected-destination-details";
 
 const SEARCH_DEBOUNCE_DELAY = 700; // milliseconds
 
@@ -111,6 +113,7 @@ export const NewDestinationForm = () => {
 
   const handleClearQuery = () => {
     setQuery("");
+    setSelectedDestination(undefined);
   };
 
   // ----
@@ -145,30 +148,15 @@ export const NewDestinationForm = () => {
 
         <Separator />
 
-        {(placeSuggestions?.suggestions?.length ?? 0) > 0 && (
-          <ul>
-            {placeSuggestions?.suggestions.map((suggestion) => (
-              <li key={suggestion.placePrediction.placeId}>
-                <button
-                  key={suggestion.placePrediction.placeId}
-                  className="block w-full px-1 py-2 text-left"
-                  onClick={() =>
-                    handleClickSuggestion(suggestion.placePrediction)
-                  }
-                >
-                  <p className="font-medium">
-                    {suggestion.placePrediction.structuredFormat.mainText.text}
-                  </p>
-                  <p className="text-sm font-light">
-                    {
-                      suggestion.placePrediction.structuredFormat.secondaryText
-                        .text
-                    }
-                  </p>
-                </button>
-              </li>
-            ))}
-          </ul>
+        <PlaceSuggestionList
+          placeSuggestions={placeSuggestions}
+          handleClickSuggestion={handleClickSuggestion}
+        />
+
+        {selectedDestination && (
+          <SelectedDestinationDetails
+            destinationGraph={placeSuggestionsGraph}
+          />
         )}
       </div>
 
