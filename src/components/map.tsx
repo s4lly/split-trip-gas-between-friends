@@ -19,6 +19,19 @@ type AdvancedMarkerElement = google.maps.marker.AdvancedMarkerElement;
 
 // TODO consider passing location through props so can save to trip and use same as current destinations
 
+const getCurrentLocation = (): Promise<GeolocationPosition> => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("Geolocation is not supported by this browser."));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      maximumAge: 5 * 60 * 1_000,
+    });
+  });
+};
+
 export const Map = ({ mapGraph }: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -26,73 +39,48 @@ export const Map = ({ mapGraph }: MapProps) => {
   const [polylines, setPolylines] = useState<Polyline[]>([]);
   const [markers, setMarkers] = useState<AdvancedMarkerElement[]>([]);
 
-  const [location, setLocation] = useState<
-    | {
-        isLoaded: false;
-        position: null;
-      }
-    | {
-        isLoaded: true;
-        position: GeolocationPosition;
-      }
-  >({ isLoaded: false, position: null });
-
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setLocation({ isLoaded: true, position: pos });
-      },
-      () => {
-        // TODO
-      },
-      {
-        maximumAge: 5 * 60 * 1_000, // 5 min * 60 sec / min * 1000 msec / sec
-      },
-    );
-  }, []);
+    const initializeMap = async () => {
+      const position = await getCurrentLocation();
 
-  useEffect(() => {
-    if (!location.isLoaded) {
-      return;
-    }
+      const mapOptions = {
+        center: {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        },
+        zoom: 8,
+        mapId: process.env.NEXT_PUBLIC_MAIN_MAP_ID as string,
+        disableDefaultUI: true,
+        keyboardShortcuts: true,
+      };
 
-    const mapOptions = {
-      center: {
-        lat: location.position.coords.latitude,
-        lng: location.position.coords.longitude,
-      },
-      zoom: 8,
-      mapId: process.env.NEXT_PUBLIC_MAIN_MAP_ID as string,
-      disableDefaultUI: true,
-      keyboardShortcuts: true,
+      const loader = new Loader({
+        apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string,
+        version: "weekly",
+      });
+
+      loader
+        .importLibrary("maps")
+        .then(({ Map }) => {
+          if (!mapRef.current) {
+            console.error("cannot find element to attach map");
+            redirect(errorPath());
+          }
+
+          setMap(new Map(mapRef.current, mapOptions));
+        })
+        .catch((error) => {
+          console.error("error loading maps library: ", error);
+          redirect(errorPath());
+        });
     };
 
-    const loader = new Loader({
-      apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string,
-      version: "weekly",
-    });
-
-    loader
-      .importLibrary("maps")
-      .then(({ Map }) => {
-        if (!mapRef.current) {
-          console.error("cannot find element to attach map");
-          redirect(errorPath());
-        }
-
-        setMap(new Map(mapRef.current, mapOptions));
-      })
-      .catch((error) => {
-        console.error("error loading maps library: ", error);
-        redirect(errorPath());
-      });
-  }, [location]);
+    initializeMap();
+  }, []);
 
   // create polylines and markers
   useEffect(() => {
-    addToMap();
-
-    async function addToMap() {
+    const addItemsToMap = async () => {
       if (map == null || mapGraph == null) {
         return;
       }
@@ -139,7 +127,9 @@ export const Map = ({ mapGraph }: MapProps) => {
 
       setPolylines(newPolylines);
       setMarkers(newMarkers);
-    }
+    };
+
+    addItemsToMap();
   }, [map, mapGraph]);
 
   useEffect(() => {
@@ -147,18 +137,34 @@ export const Map = ({ mapGraph }: MapProps) => {
       return;
     }
 
-    // fit bounds based on markeres
-    if (markers.length) {
-      const bounds = new google.maps.LatLngBounds();
+    const cleanupItemsFromMap = async () => {
+      if (markers.length === 0) {
+        const position = await getCurrentLocation();
 
-      markers.forEach((marker) => {
-        if (marker.position) {
-          bounds.extend(marker.position);
-        }
-      });
+        map.setCenter(
+          new google.maps.LatLng(
+            position.coords.latitude,
+            position.coords.longitude,
+          ),
+        );
+        map.setZoom(8);
+      } else if (markers.length === 1 && markers[0].position) {
+        map.setCenter(markers[0].position);
+        map.setZoom(14);
+      } else if (markers.length > 1) {
+        const bounds = new google.maps.LatLngBounds();
 
-      map.fitBounds(bounds);
-    }
+        markers.forEach((marker) => {
+          if (marker.position) {
+            bounds.extend(marker.position);
+          }
+        });
+
+        map.fitBounds(bounds);
+      }
+    };
+
+    cleanupItemsFromMap();
 
     return () => {
       polylines.forEach((polyline) => {
