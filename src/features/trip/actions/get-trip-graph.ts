@@ -9,6 +9,7 @@ export const getTripGraph = async (tripId: string): Promise<MapGraph> => {
   const tripDestinations = await getTripDestinations(tripId);
 
   const tripGraph: MapGraph = {
+    size: 0,
     start: null,
     end: null,
   };
@@ -53,6 +54,7 @@ export const getTripGraph = async (tripId: string): Promise<MapGraph> => {
     }
 
     tripGraph.end = cNode;
+    tripGraph.size++;
     pNode = cNode;
   }
 

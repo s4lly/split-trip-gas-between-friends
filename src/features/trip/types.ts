@@ -5,6 +5,7 @@ import { Location } from "@/utils/valibot/place-details-schema";
 import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 
 export type MapGraph = {
+  size: number;
   start: GraphNode | null;
   end: GraphNode | null;
 };

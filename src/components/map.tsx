@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { MapGraph } from "@/features/trip/types";
 import { MapGraphNodes } from "@/features/trip/utils";
 import { errorPath } from "@/paths";
+import { getCurrentLocation } from "@/utils/get-current-location";
 
 type MapProps = {
   mapGraph: MapGraph | null;
@@ -19,22 +20,13 @@ type AdvancedMarkerElement = google.maps.marker.AdvancedMarkerElement;
 
 // TODO consider passing location through props so can save to trip and use same as current destinations
 
-const getCurrentLocation = (): Promise<GeolocationPosition> => {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error("Geolocation is not supported by this browser."));
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(resolve, reject, {
-      maximumAge: 5 * 60 * 1_000,
-    });
-  });
-};
-
 export const Map = ({ mapGraph }: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const [state, setState] = useState({
+    isMapLoaded: false,
+    isItemsRenderedOnce: false,
+  });
 
   const [polylines, setPolylines] = useState<Polyline[]>([]);
   const [markers, setMarkers] = useState<AdvancedMarkerElement[]>([]);
@@ -68,6 +60,7 @@ export const Map = ({ mapGraph }: MapProps) => {
           }
 
           setMap(new Map(mapRef.current, mapOptions));
+          setState((prev) => ({ ...prev, isMapLoaded: true }));
         })
         .catch((error) => {
           console.error("error loading maps library: ", error);
@@ -94,6 +87,10 @@ export const Map = ({ mapGraph }: MapProps) => {
 
       const newPolylines: Polyline[] = [];
       const newMarkers: AdvancedMarkerElement[] = [];
+
+      if (mapGraph.size) {
+        setState((prev) => ({ ...prev, isItemsRenderedOnce: true }));
+      }
 
       for (const tripNode of MapGraphNodes(mapGraph)) {
         // add polyline
@@ -133,21 +130,13 @@ export const Map = ({ mapGraph }: MapProps) => {
   }, [map, mapGraph]);
 
   useEffect(() => {
-    if (map === null) {
+    if (map === null || !state.isMapLoaded) {
       return;
     }
 
     const cleanupItemsFromMap = async () => {
       if (markers.length === 0) {
-        const position = await getCurrentLocation();
-
-        map.setCenter(
-          new google.maps.LatLng(
-            position.coords.latitude,
-            position.coords.longitude,
-          ),
-        );
-        map.setZoom(8);
+        map.setZoom(10);
       } else if (markers.length === 1 && markers[0].position) {
         map.setCenter(markers[0].position);
         map.setZoom(14);
@@ -164,7 +153,9 @@ export const Map = ({ mapGraph }: MapProps) => {
       }
     };
 
-    cleanupItemsFromMap();
+    if (state.isItemsRenderedOnce) {
+      cleanupItemsFromMap();
+    }
 
     return () => {
       polylines.forEach((polyline) => {
@@ -175,7 +166,7 @@ export const Map = ({ mapGraph }: MapProps) => {
         marker.map = null;
       });
     };
-  }, [map, polylines, markers]);
+  }, [state, map, polylines, markers]);
 
   return (
     <div className="h-full w-full" ref={mapRef}>

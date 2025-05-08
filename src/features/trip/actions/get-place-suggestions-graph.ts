@@ -6,6 +6,7 @@ export const getPlaceSuggestionsGraph = async (
   placeSuggestions: PlaceSuggestions | undefined,
 ): Promise<MapGraph> => {
   const placeSuggestionGraph: MapGraph = {
+    size: 0,
     end: null,
     start: null,
   };
@@ -38,6 +39,7 @@ export const getPlaceSuggestionsGraph = async (
     }
 
     placeSuggestionGraph.end = cNode;
+    placeSuggestionGraph.size += 1;
     pNode = cNode;
   }
 

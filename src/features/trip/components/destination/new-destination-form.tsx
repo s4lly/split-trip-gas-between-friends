@@ -11,7 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import { createTripDestination } from "@/features/trip/actions/create-trip-destination";
 import { getPlaceSuggestions } from "@/features/trip/actions/get-place-suggestions";
 import { MapGraph } from "@/features/trip/types";
+import { PLACE_AUTOCOMPLETE_RADIUS_METERS } from "@/lib/constants";
 import { tripPath } from "@/paths";
+import { getCurrentLocation } from "@/utils/get-current-location";
 import { isBlank } from "@/utils/shared";
 import { parseStringParam } from "@/utils/url";
 import {
@@ -55,9 +57,18 @@ export const NewDestinationForm = () => {
 
     const timeoutId = setTimeout(async () => {
       // update suggestions based on query
-      const placeSuggestions = isBlank(query)
-        ? EMPTY_PLACE_SUGGESTIONS
-        : await getPlaceSuggestions(query);
+      let placeSuggestions = EMPTY_PLACE_SUGGESTIONS;
+
+      if (!isBlank(query)) {
+        const position = await getCurrentLocation();
+
+        placeSuggestions = await getPlaceSuggestions(query, {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          radius: PLACE_AUTOCOMPLETE_RADIUS_METERS,
+        });
+      }
+
       setPlaceSuggestions(placeSuggestions);
     }, SEARCH_DEBOUNCE_DELAY);
 
