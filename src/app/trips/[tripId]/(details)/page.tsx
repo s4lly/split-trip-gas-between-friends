@@ -4,6 +4,7 @@ import { Map } from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
 import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
+import { getUsersVehicles } from "@/features/trip/actions/get-users-vehicles";
 import DestinationList from "@/features/trip/components/destination/destination-list";
 import { newDestinationPath, overviewPath, planPath, sharePath } from "@/paths";
 
@@ -12,10 +13,10 @@ export default async function TripPage({
 }: {
   params: Promise<{ tripId: string }>;
 }) {
-  // TODO use use library
   const { tripId } = await params;
 
   const tripWithUsers = await getTripWithUsers(tripId);
+  const tripVehicles = await getUsersVehicles(tripWithUsers.users);
   const tripGraph = await getTripGraph(tripId);
 
   return (
@@ -30,7 +31,8 @@ export default async function TripPage({
                 {tripWithUsers.users.length}
               </div>
               <div className="flex items-center">
-                <Car size={64} />2
+                <Car size={64} />
+                {tripVehicles.length}
               </div>
             </div>
           </Link>

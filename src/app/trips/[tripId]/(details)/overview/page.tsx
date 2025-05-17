@@ -1,12 +1,19 @@
-import { QueryData } from "@supabase/supabase-js";
-import { redirect } from "next/navigation";
 import TripsBreadCrumb from "@/components/TripsBreadCrumb";
 import {
   BreadcrumbItem,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { createClient } from "@/utils/supabase/server";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
+import { getUsersVehicles } from "@/features/trip/actions/get-users-vehicles";
 
 export default async function DetailsPage({
   params,
@@ -14,40 +21,8 @@ export default async function DetailsPage({
   params: Promise<{ tripId: string }>;
 }) {
   const { tripId } = await params;
-
-  const tripIdNum = parseInt(tripId, 10);
-  if (isNaN(tripIdNum)) {
-    return <div>Invalid trip id</div>;
-  }
-
-  const supabase = await createClient();
-
-  const profilesWithinTripQuery = supabase
-    .from("trip")
-    .select(
-      `
-        name,
-        profile (
-          id,
-          email
-        )
-        `,
-    )
-    .eq("id", tripIdNum)
-    .single();
-
-  const { data, error: tripError } = await profilesWithinTripQuery;
-  if (tripError) {
-    console.log(tripError);
-    redirect("/error");
-  }
-
-  type ProfilesWithinTripQuery = QueryData<typeof profilesWithinTripQuery>;
-  const trip: ProfilesWithinTripQuery = data;
-
-  if (!trip || !trip.profile) {
-    return <div>No profiles found for this trip</div>;
-  }
+  const tripWithUsers = await getTripWithUsers(tripId);
+  const tripVehicles = await getUsersVehicles(tripWithUsers.users);
 
   return (
     <div className="space-y-2">
@@ -58,12 +33,44 @@ export default async function DetailsPage({
         </BreadcrumbItem>
       </TripsBreadCrumb>
 
-      <div className="mt-2 space-y-4">
-        <ul className="list-disc pl-5">
-          {trip.profile.map((person) => (
-            <li key={person.id}>{person.email}</li>
-          ))}
-        </ul>
+      <div>
+        <h2 className="text-xl font-bold">people</h2>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Username</TableHead>
+              <TableHead className="text-right">Email</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {tripWithUsers.users.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell className="font-medium">{user.username}</TableCell>
+                <TableCell className="text-right">{user.email}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        <h2 className="text-xl font-bold">vehicles</h2>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Vehicle</TableHead>
+              <TableHead className="text-right">MPG</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {tripVehicles.map((vehicle) => (
+              <TableRow key={vehicle.id}>
+                <TableCell className="font-medium">{vehicle.name}</TableCell>
+                <TableCell className="text-right">{vehicle.mpg}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
