@@ -44,7 +44,7 @@ export const NewDestinationForm = () => {
 
   // meant only for backend to keep track of potential new destination details
   // this is not used for the UI.
-  const destinationDetails = useRef<Partial<Route>>({});
+  const newDestinationDetails = useRef<Partial<Route>>({});
 
   // ----
 
@@ -133,10 +133,14 @@ export const NewDestinationForm = () => {
   };
 
   const handleUpdateDestinationDetails = useCallback(
-    (details: Partial<Route>) => {
-      destinationDetails.current = {
-        ...destinationDetails.current,
-        ...details,
+    (destinationDetailUpdates: Partial<Route>) => {
+      newDestinationDetails.current = {
+        ...newDestinationDetails.current,
+        ...Object.fromEntries(
+          Object.entries(destinationDetailUpdates).filter(
+            ([, value]) => value !== undefined,
+          ),
+        ),
       };
     },
     [],

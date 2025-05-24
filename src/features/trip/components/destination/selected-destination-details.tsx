@@ -14,15 +14,8 @@ import { Toggle } from "@/components/ui/toggle";
 import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
 import { getUsersVehicles } from "@/features/trip/actions/get-users-vehicles";
 import { MapGraph } from "@/features/trip/types";
-import { Route } from "@/lib/types";
+import { Profile as TripUser, Route, Vehicle } from "@/lib/types";
 import { createClient } from "@/utils/supabase/client";
-
-type Vehicle = {
-  id: number;
-  name: string | null;
-  mpg: number | null;
-  owner_id: string | null;
-};
 
 export const SelectedDestinationDetails = ({
   destinationGraph,
@@ -36,13 +29,14 @@ export const SelectedDestinationDetails = ({
   const [isUserClicked, setIsUserClicked] = useState(false);
   const [isCarClicked, setIsCarClicked] = useState(false);
 
+  const [isTripDataLoading, startTripDataTransition] = useTransition();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-
-  const [isVehiclesLoading, startVehiclesTransition] = useTransition();
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [users, setUsers] = useState<TripUser[]>([]);
+  const [selectedUser, setSelectedUser] = useState<TripUser>();
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle>();
 
   useEffect(() => {
-    startVehiclesTransition(async () => {
+    startTripDataTransition(async () => {
       try {
         const supabase = createClient();
         const {
@@ -57,24 +51,25 @@ export const SelectedDestinationDetails = ({
         const tripData = await getTripWithUsers(tripId);
         const vehiclesData = await getUsersVehicles(tripData.users);
         setVehicles(vehiclesData);
+        setUsers(tripData.users);
 
         const userVehicle = vehiclesData.find((v) => v.owner_id === user.id);
-
-        if (!userVehicle) {
-          console.error("No user vehicle found");
-          return;
-        }
+        const currentUser = tripData.users.find((u) => u.id === user.id);
 
         // update local state
         setSelectedVehicle(userVehicle);
+        setSelectedUser(currentUser);
 
         // update new destination details
-        updateNewDestinationDetails({ vehicle_id: userVehicle.id });
+        updateNewDestinationDetails({
+          vehicle_id: userVehicle?.id,
+          driver_id: currentUser?.id,
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     });
-  }, [tripId, startVehiclesTransition, updateNewDestinationDetails]);
+  }, [tripId, startTripDataTransition, updateNewDestinationDetails]);
 
   const handleUserToggle = (pressed: boolean) => {
     setIsUserClicked(pressed);
@@ -89,6 +84,10 @@ export const SelectedDestinationDetails = ({
   const handleCarSelect = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
     updateNewDestinationDetails({ vehicle_id: vehicle.id });
+  };
+
+  const handleUserSelect = (user: TripUser) => {
+    setSelectedUser(user);
   };
 
   if (!destinationGraph || destinationGraph.start !== destinationGraph.end) {
@@ -121,7 +120,13 @@ export const SelectedDestinationDetails = ({
             onPressedChange={handleUserToggle}
             variant="outline"
           >
-            user123
+            {isTripDataLoading ? (
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+            ) : (
+              <p className="w-full truncate">
+                {selectedUser?.username ?? "No user selected"}
+              </p>
+            )}
           </Toggle>
         </div>
         <div className="w-1/2">
@@ -131,7 +136,7 @@ export const SelectedDestinationDetails = ({
             onPressedChange={handleCarToggle}
             variant="outline"
           >
-            {isVehiclesLoading ? (
+            {isTripDataLoading ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />
             ) : (
               <p className="w-full truncate">
@@ -141,6 +146,32 @@ export const SelectedDestinationDetails = ({
           </Toggle>
         </div>
       </div>
+
+      {isUserClicked && (
+        <div className="mt-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead></TableHead>
+                <TableHead>User Name</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedUser?.id === user.id}
+                      onCheckedChange={() => handleUserSelect(user)}
+                    />
+                  </TableCell>
+                  <TableCell>{user.username || "Unnamed User"}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       {isCarClicked && (
         <div className="mt-4">
