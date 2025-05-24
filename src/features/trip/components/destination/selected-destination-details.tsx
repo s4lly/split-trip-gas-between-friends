@@ -35,10 +35,11 @@ export const SelectedDestinationDetails = ({
 }) => {
   const [isUserClicked, setIsUserClicked] = useState(false);
   const [isCarClicked, setIsCarClicked] = useState(false);
+
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [selectedCarIndex, setSelectedCarIndex] = useState<number | null>(null);
-  const [selectedVehicleName, setSelectedVehicleName] = useState<string>("");
+
   const [isVehiclesLoading, startVehiclesTransition] = useTransition();
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
 
   useEffect(() => {
     startVehiclesTransition(async () => {
@@ -65,10 +66,7 @@ export const SelectedDestinationDetails = ({
         }
 
         // update local state
-        setSelectedVehicleName(userVehicle.name ?? "");
-        setSelectedCarIndex(
-          vehiclesData.findIndex((v) => v.id === userVehicle.id),
-        );
+        setSelectedVehicle(userVehicle);
 
         // update new destination details
         updateNewDestinationDetails({ vehicle_id: userVehicle.id });
@@ -88,9 +86,9 @@ export const SelectedDestinationDetails = ({
     if (pressed) setIsUserClicked(false);
   };
 
-  const handleCarSelect = (index: number) => {
-    setSelectedCarIndex(index === selectedCarIndex ? null : index);
-    updateNewDestinationDetails({ vehicle_id: vehicles[index].id });
+  const handleCarSelect = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    updateNewDestinationDetails({ vehicle_id: vehicle.id });
   };
 
   if (!destinationGraph || destinationGraph.start !== destinationGraph.end) {
@@ -136,7 +134,9 @@ export const SelectedDestinationDetails = ({
             {isVehiclesLoading ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />
             ) : (
-              <p className="w-full truncate">{selectedVehicleName}</p>
+              <p className="w-full truncate">
+                {selectedVehicle?.name ?? "No vehicle available"}
+              </p>
             )}
           </Toggle>
         </div>
@@ -153,12 +153,12 @@ export const SelectedDestinationDetails = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {vehicles.map((vehicle, index) => (
+              {vehicles.map((vehicle) => (
                 <TableRow key={vehicle.id}>
                   <TableCell>
                     <Checkbox
-                      checked={selectedCarIndex === index}
-                      onCheckedChange={() => handleCarSelect(index)}
+                      checked={selectedVehicle?.id === vehicle.id}
+                      onCheckedChange={() => handleCarSelect(vehicle)}
                     />
                   </TableCell>
                   <TableCell>{vehicle.name || "Unnamed Vehicle"}</TableCell>
