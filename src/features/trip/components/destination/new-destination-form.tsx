@@ -3,7 +3,7 @@
 import { ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Map } from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { createTripDestination } from "@/features/trip/actions/create-trip-desti
 import { getPlaceSuggestions } from "@/features/trip/actions/get-place-suggestions";
 import { MapGraph } from "@/features/trip/types";
 import { PLACE_AUTOCOMPLETE_RADIUS_METERS } from "@/lib/constants";
+import { Route } from "@/lib/types";
 import { tripPath } from "@/paths";
 import { getCurrentLocation } from "@/utils/get-current-location";
 import { isBlank } from "@/utils/shared";
@@ -40,6 +41,10 @@ export const NewDestinationForm = () => {
   const [placeSuggestions, setPlaceSuggestions] = useState<PlaceSuggestions>();
   const [placeSuggestionsGraph, setPlaceSuggestionsGraph] =
     useState<MapGraph | null>(null);
+
+  // meant only for backend to keep track of potential new destination details
+  // this is not used for the UI.
+  const destinationDetails = useRef<Partial<Route>>({});
 
   // ----
 
@@ -127,6 +132,16 @@ export const NewDestinationForm = () => {
     setSelectedDestination(undefined);
   };
 
+  const handleUpdateDestinationDetails = useCallback(
+    (details: Partial<Route>) => {
+      destinationDetails.current = {
+        ...destinationDetails.current,
+        ...details,
+      };
+    },
+    [],
+  );
+
   // ----
 
   return (
@@ -166,7 +181,9 @@ export const NewDestinationForm = () => {
 
         {selectedDestination && (
           <SelectedDestinationDetails
+            tripId={params.tripId}
             destinationGraph={placeSuggestionsGraph}
+            updateNewDestinationDetails={handleUpdateDestinationDetails}
           />
         )}
       </div>

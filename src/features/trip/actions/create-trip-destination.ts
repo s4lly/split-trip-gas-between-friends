@@ -1,12 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { Route } from "@/lib/types";
 import { createClient } from "@/utils/supabase/server";
 import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 
 export const createTripDestination = async (
   tripId: number,
   placePrediction: PlacePrediction,
+  destinationDetails: Partial<Route> = {},
 ) => {
   const supabase = await createClient();
 
@@ -28,6 +30,7 @@ export const createTripDestination = async (
         trip_id: tripId,
         place: placePrediction,
         order: routeCount,
+        ...destinationDetails,
       },
     ])
     .select();

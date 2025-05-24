@@ -15,7 +15,7 @@ export const getTripWithUsers = async (tripIdString: string) => {
 
   const supabase = await createClient();
 
-  const tripWithUsersQuery = supabase
+  const { data, error } = await supabase
     .from("trip")
     .select(
       `
@@ -27,8 +27,6 @@ export const getTripWithUsers = async (tripIdString: string) => {
     )
     .eq("id", tripId)
     .single();
-
-  const { data, error } = await tripWithUsersQuery;
 
   if (error) {
     // TODO o11y

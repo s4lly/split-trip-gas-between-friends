@@ -8,15 +8,13 @@ import { createClient } from "@/utils/supabase/server";
 export const getUsersVehicles = async (users: Profile[]) => {
   const supabase = await createClient();
 
-  const usersVehiclesQuery = supabase
+  const { data, error } = await supabase
     .from("vehicle")
     .select("*")
     .in(
       "owner_id",
       users.map((user) => user.id),
     );
-
-  const { data, error } = await usersVehiclesQuery;
 
   if (error) {
     // TODO o11y
