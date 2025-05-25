@@ -1,4 +1,4 @@
-import { InferOutput, number, object } from "valibot";
+import { array, InferOutput, number, object, string } from "valibot";
 
 // TODO colocate and add info about google api
 // https://places.googleapis.com/v1/places/${placeId}
@@ -14,5 +14,22 @@ export const PlaceDetailsSchema = object({
   location: LocationSchema,
 });
 
+const SinglePlacePhotoSchema = object({
+  name: string(),
+  widthPx: number(),
+  heightPx: number(),
+});
+
+export const PlacePhotoSchema = object({
+  photos: array(SinglePlacePhotoSchema),
+});
+
+export const PlacePhotoContentSchema = object({
+  name: string(),
+  photoUri: string(),
+});
+
 export type Location = InferOutput<typeof LocationSchema>;
 export type PlaceDetails = InferOutput<typeof PlaceDetailsSchema>;
+export type PlacePhoto = InferOutput<typeof SinglePlacePhotoSchema>;
+export type PlacePhotoContent = InferOutput<typeof PlacePhotoContentSchema>;

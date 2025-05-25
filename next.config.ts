@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
         hostname: "maps.googleapis.com",
         pathname: "/maps/api/staticmap/**",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
     ],
   },
 

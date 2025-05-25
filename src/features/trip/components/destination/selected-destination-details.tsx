@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Toggle } from "@/components/ui/toggle";
+import { getPlacePhotos } from "@/features/trip/actions/get-place-photos";
 import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
 import { getUsersVehicles } from "@/features/trip/actions/get-users-vehicles";
 import { MapGraph } from "@/features/trip/types";
@@ -28,12 +29,42 @@ export const SelectedDestinationDetails = ({
 }) => {
   const [isUserClicked, setIsUserClicked] = useState(false);
   const [isCarClicked, setIsCarClicked] = useState(false);
+  const [placePhotoUri, setPlacePhotoUri] = useState<string>(
+    "/images/apartment.jpg",
+  );
 
   const [isTripDataLoading, startTripDataTransition] = useTransition();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [users, setUsers] = useState<TripUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<TripUser>();
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle>();
+
+  // Fetch place photos when destination changes
+  useEffect(() => {
+    const startNode = destinationGraph?.start;
+
+    if (startNode?.type === "suggestion") {
+      const fetchPlacePhotos = async () => {
+        try {
+          const photos = await getPlacePhotos(startNode.placeSuggestion);
+
+          if (photos.length > 0) {
+            // Get a random photo from the list
+            const randomPhoto =
+              photos[Math.floor(Math.random() * photos.length)];
+
+            if (randomPhoto.photoUri) {
+              setPlacePhotoUri(randomPhoto.photoUri);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching place photos:", error);
+        }
+      };
+
+      fetchPlacePhotos();
+    }
+  }, [destinationGraph?.start]);
 
   useEffect(() => {
     startTripDataTransition(async () => {
@@ -100,15 +131,19 @@ export const SelectedDestinationDetails = ({
         <div className="shrink-0 grow-0 basis-1/4">
           <Image
             className="block h-auto w-full"
-            src="/images/apartment.jpg"
-            alt="apartment"
+            src={placePhotoUri}
+            alt="Place photo"
             width={500}
             height={300}
             priority
           />
         </div>
         <div className="grow">
-          <p>180 El Camino Real, San Carlos, CA 94070</p>
+          <p>
+            {destinationGraph.start?.type === "suggestion"
+              ? destinationGraph.start.placeSuggestion.text.text
+              : ""}
+          </p>
         </div>
       </div>
 
