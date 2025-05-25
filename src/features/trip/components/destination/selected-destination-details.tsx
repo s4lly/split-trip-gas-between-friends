@@ -1,16 +1,8 @@
-import { LoaderCircle } from "lucide-react";
+import { CheckCircle2, LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Toggle } from "@/components/ui/toggle";
 import { getPlacePhotos } from "@/features/trip/actions/get-place-photos";
 import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
@@ -173,58 +165,40 @@ export const SelectedDestinationDetails = ({
       </div>
 
       {isUserClicked && (
-        <div className="mt-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead></TableHead>
-                <TableHead>User Name</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedUser?.id === user.id}
-                      onCheckedChange={() => handleUserSelect(user)}
-                    />
-                  </TableCell>
-                  <TableCell>{user.username || "Unnamed User"}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="mt-2 flex flex-col gap-2">
+          {users.map((user) => (
+            <Button
+              key={user.id}
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => handleUserSelect(user)}
+            >
+              {selectedUser?.id === user.id && (
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+              )}
+              <span>{user.username || "Unnamed User"}</span>
+            </Button>
+          ))}
         </div>
       )}
 
       {isCarClicked && (
-        <div className="mt-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead></TableHead>
-                <TableHead>Car Name</TableHead>
-                <TableHead className="text-right">MPG</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {vehicles.map((vehicle) => (
-                <TableRow key={vehicle.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedVehicle?.id === vehicle.id}
-                      onCheckedChange={() => handleCarSelect(vehicle)}
-                    />
-                  </TableCell>
-                  <TableCell>{vehicle.name || "Unnamed Vehicle"}</TableCell>
-                  <TableCell className="text-right">
-                    {vehicle.mpg || "N/A"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="mt-2 flex flex-col gap-2">
+          {vehicles.map((vehicle) => (
+            <Button
+              key={vehicle.id}
+              variant="outline"
+              onClick={() => handleCarSelect(vehicle)}
+            >
+              {selectedVehicle?.id === vehicle.id && (
+                <CheckCircle2 className="h-4 w-4 text-green-500" />
+              )}
+              <span>{vehicle.name || "Unnamed Vehicle"}</span>
+              <span className="text-muted-foreground ml-auto">
+                {vehicle.mpg ? `${vehicle.mpg} MPG` : "N/A"}
+              </span>
+            </Button>
+          ))}
         </div>
       )}
     </div>
