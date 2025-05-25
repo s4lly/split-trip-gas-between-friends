@@ -2,6 +2,7 @@ import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -17,6 +18,7 @@ import { getUsersVehicles } from "@/features/trip/actions/get-users-vehicles";
 import { MapGraph } from "@/features/trip/types";
 import { Profile as TripUser, Route, Vehicle } from "@/lib/types";
 import { createClient } from "@/utils/supabase/client";
+import { PlacePhotoContent } from "@/utils/valibot/place-details-schema";
 
 export const SelectedDestinationDetails = ({
   destinationGraph,
@@ -29,40 +31,23 @@ export const SelectedDestinationDetails = ({
 }) => {
   const [isUserClicked, setIsUserClicked] = useState(false);
   const [isCarClicked, setIsCarClicked] = useState(false);
-  const [placePhotoUri, setPlacePhotoUri] = useState<string>(
-    "/images/apartment.jpg",
-  );
 
+  const [placePhotos, setPlacePhotos] = useState<PlacePhotoContent[]>([]);
   const [isTripDataLoading, startTripDataTransition] = useTransition();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [users, setUsers] = useState<TripUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<TripUser>();
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle>();
 
-  // Fetch place photos when destination changes
   useEffect(() => {
     const startNode = destinationGraph?.start;
 
     if (startNode?.type === "suggestion") {
-      const fetchPlacePhotos = async () => {
-        try {
-          const photos = await getPlacePhotos(startNode.placeSuggestion);
-
-          if (photos.length > 0) {
-            // Get a random photo from the list
-            const randomPhoto =
-              photos[Math.floor(Math.random() * photos.length)];
-
-            if (randomPhoto.photoUri) {
-              setPlacePhotoUri(randomPhoto.photoUri);
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching place photos:", error);
-        }
-      };
-
-      fetchPlacePhotos();
+      getPlacePhotos(startNode.placeSuggestion).then((photos) => {
+        setPlacePhotos(photos);
+      });
+    } else {
+      setPlacePhotos([]);
     }
   }, [destinationGraph?.start]);
 
@@ -81,13 +66,13 @@ export const SelectedDestinationDetails = ({
 
         const tripData = await getTripWithUsers(tripId);
         const vehiclesData = await getUsersVehicles(tripData.users);
+
         setVehicles(vehiclesData);
         setUsers(tripData.users);
 
         const userVehicle = vehiclesData.find((v) => v.owner_id === user.id);
         const currentUser = tripData.users.find((u) => u.id === user.id);
 
-        // update local state
         setSelectedVehicle(userVehicle);
         setSelectedUser(currentUser);
 
@@ -100,7 +85,7 @@ export const SelectedDestinationDetails = ({
         console.error("Error fetching data:", error);
       }
     });
-  }, [tripId, startTripDataTransition, updateNewDestinationDetails]);
+  }, [tripId, updateNewDestinationDetails]);
 
   const handleUserToggle = (pressed: boolean) => {
     setIsUserClicked(pressed);
@@ -129,14 +114,19 @@ export const SelectedDestinationDetails = ({
     <div className="flex flex-col gap-2">
       <div className="mt-2 flex w-full gap-2">
         <div className="shrink-0 grow-0 basis-1/4">
-          <Image
-            className="block h-auto w-full"
-            src={placePhotoUri}
-            alt="Place photo"
-            width={500}
-            height={300}
-            priority
-          />
+          <div className="h-[75px] overflow-hidden rounded-md">
+            {placePhotos.length === 0 ? (
+              <Skeleton className="h-full w-full" />
+            ) : (
+              <Image
+                className="h-full w-full object-cover"
+                src={placePhotos[0].photoUri}
+                alt="Place photo"
+                width={500}
+                height={75}
+              />
+            )}
+          </div>
         </div>
         <div className="grow">
           <p>

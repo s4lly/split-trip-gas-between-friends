@@ -10,12 +10,11 @@ import {
 } from "@/utils/valibot/place-details-schema";
 import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 
-export async function getPlacePhotos({
-  placeId,
-}: PlacePrediction): Promise<PlacePhotoContent[]> {
-  // First, get the photo metadata
+export async function getPlacePhotos(
+  place: PlacePrediction,
+): Promise<PlacePhotoContent[]> {
   const response = await fetch(
-    `https://places.googleapis.com/v1/places/${placeId}`,
+    `https://places.googleapis.com/v1/places/${place.placeId}`,
     {
       headers: {
         "X-Goog-Api-Key": process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string,
@@ -27,7 +26,7 @@ export async function getPlacePhotos({
   if (!response.ok) {
     // TODO o11y
     console.error(
-      `Failed to fetch photos for placeId: ${placeId}. Status: ${response.status}, StatusText: ${response.statusText}`,
+      `Failed to fetch photos for placeId: ${place.placeId}. Status: ${response.status}, StatusText: ${response.statusText}`,
     );
 
     redirect(errorPath());
@@ -76,11 +75,11 @@ export async function getPlacePhotos({
     if (error instanceof ValiError) {
       // TODO o11y
       console.error(
-        `Validation error for placeId: ${placeId}. Error: ${error.message}`,
+        `Validation error for placeId: ${place.placeId}. Error: ${error.message}`,
       );
     } else {
       console.error(
-        `Unexpected error for placeId: ${placeId}. Error: ${error}`,
+        `Unexpected error for placeId: ${place.placeId}. Error: ${error}`,
       );
     }
 
