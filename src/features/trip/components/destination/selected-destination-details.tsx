@@ -2,6 +2,21 @@ import { CheckCircle2, LoaderCircle } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { CarouselContent } from "@/components/ui/carousel";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toggle } from "@/components/ui/toggle";
 import { getPlacePhotos } from "@/features/trip/actions/get-place-photos";
@@ -92,10 +107,12 @@ export const SelectedDestinationDetails = ({
   const handleCarSelect = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
     updateNewDestinationDetails({ vehicle_id: vehicle.id });
+    setIsCarClicked(false);
   };
 
   const handleUserSelect = (user: TripUser) => {
     setSelectedUser(user);
+    setIsUserClicked(false);
   };
 
   if (!destinationGraph || destinationGraph.start !== destinationGraph.end) {
@@ -110,13 +127,40 @@ export const SelectedDestinationDetails = ({
             {placePhotos.length === 0 ? (
               <Skeleton className="h-full w-full" />
             ) : (
-              <Image
-                className="h-full w-full object-cover"
-                src={placePhotos[0].photoUri}
-                alt="Place photo"
-                width={500}
-                height={75}
-              />
+              <Dialog>
+                <DialogTrigger className="h-full w-full">
+                  <Image
+                    src={placePhotos[0].photoUri}
+                    className="h-full w-full object-cover"
+                    alt="Place photo"
+                    width={500}
+                    height={75}
+                  />
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription></DialogDescription>
+                  </DialogHeader>
+                  <Carousel>
+                    <CarouselContent>
+                      {placePhotos.map((photo, index) => (
+                        <CarouselItem key={index}>
+                          <Image
+                            src={photo.photoUri}
+                            alt={`Place photo ${index + 1}`}
+                            width={800}
+                            height={600}
+                            className="h-auto w-full rounded-lg object-cover"
+                          />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
+                </DialogContent>
+              </Dialog>
             )}
           </div>
         </div>

@@ -8,7 +8,6 @@ import { Map } from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { createTripDestination } from "@/features/trip/actions/create-trip-destination";
 import { getPlaceSuggestions } from "@/features/trip/actions/get-place-suggestions";
 import { MapGraph } from "@/features/trip/types";
 import { PLACE_AUTOCOMPLETE_RADIUS_METERS } from "@/lib/constants";
@@ -22,6 +21,7 @@ import {
   PlacePrediction,
   PlaceSuggestions,
 } from "@/utils/valibot/places-auto-complete-schema";
+import { createTripDestination } from "../../actions/create-trip-destination";
 import { getPlaceSuggestionsGraph } from "../../actions/get-place-suggestions-graph";
 import { PlaceSuggestionList } from "./place-suggestion-list";
 import { SelectedDestinationDetails } from "./selected-destination-details";
@@ -108,7 +108,11 @@ export const NewDestinationForm = () => {
       return;
     }
 
-    createTripDestination(tripId, selectedDestination);
+    createTripDestination(
+      tripId,
+      selectedDestination,
+      newDestinationDetails.current,
+    );
   };
 
   // ----
