@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Toggle } from "@/components/ui/toggle";
 import { AddVehicleForm } from "@/features/user/components/add-vehicle-form";
 import { Vehicle } from "@/lib/types";
 
@@ -33,11 +34,15 @@ export const MyVehicles = ({
 
   return (
     <Fragment>
-      <div className="flex justify-between">
+      <div className="flex items-center justify-between">
         <h2>My Cars</h2>
-        <Button variant="outline" onClick={() => setShowForm((prev) => !prev)}>
+        <Toggle
+          pressed={showForm}
+          onPressedChange={setShowForm}
+          variant="outline"
+        >
           Add a Vehicle
-        </Button>
+        </Toggle>
       </div>
 
       {showForm && <AddVehicleForm />}
