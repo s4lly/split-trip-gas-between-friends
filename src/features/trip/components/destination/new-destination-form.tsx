@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft, Loader2, X } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -32,6 +32,7 @@ export const NewDestinationForm = () => {
   const params = useParams<{ tripId: string }>();
   const tripId = parseStringParam(params.tripId);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isMapLoading, setIsMapLoading] = useState(false);
 
   const [query, setQuery] = useState("");
   const isQueryChangedFromSelection = useRef(false);
@@ -82,6 +83,9 @@ export const NewDestinationForm = () => {
 
   // run when suggestions changes, update map graph
   useEffect(() => {
+    let ignore = false;
+    setIsMapLoading(true);
+
     const updateMapGraph = async () => {
       // either showing suggestions or showing selected
       let workingPlaceSuggestions = placeSuggestions;
@@ -92,13 +96,21 @@ export const NewDestinationForm = () => {
         };
       }
 
-      setPlaceSuggestionsGraph(
-        await getPlaceSuggestionsGraph(workingPlaceSuggestions),
-      );
+      const graph = await getPlaceSuggestionsGraph(workingPlaceSuggestions);
+
+      if (!ignore) {
+        setPlaceSuggestionsGraph(graph);
+        setIsMapLoading(false);
+      }
     };
 
     updateMapGraph();
-  }, [placeSuggestions, selectedDestination]);
+
+    return () => {
+      ignore = true;
+      setIsMapLoading(false);
+    };
+  }, [placeSuggestions, selectedDestination, setIsMapLoading]);
 
   // ----
 
@@ -156,9 +168,17 @@ export const NewDestinationForm = () => {
   return (
     <div className="flex h-full flex-col">
       <div className="flex-grow space-y-1">
-        <div className="-mx-4 h-[200px]">
+        <div className="relative -mx-4 h-[200px]">
           {/* suggestions or seleted */}
           <Map mapGraph={placeSuggestionsGraph} />
+
+          {isMapLoading && (
+            <div className="absolute inset-0 bg-black/50">
+              <div className="grid h-full w-full place-items-center">
+                <Loader2 className="size-10 animate-spin text-white" />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="-mx-3 flex items-center space-x-2">
