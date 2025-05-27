@@ -119,6 +119,7 @@ export const NewDestinationForm = () => {
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
+    setSelectedDestination(undefined);
   };
 
   const handleClickSuggestion = (placePrediction: PlacePrediction) => {
