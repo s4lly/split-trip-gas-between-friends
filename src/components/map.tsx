@@ -3,10 +3,11 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import useMapStateContext from "@/features/trip/hooks/useMapStateContext";
 import { MapGraph } from "@/features/trip/types";
 import { MapGraphNodes } from "@/features/trip/utils";
 import { errorPath } from "@/paths";
-import { getCurrentLocation } from "@/utils/get-current-location";
+import { getCurrentLocationAsLatLng } from "@/utils/get-current-location";
 
 type MapProps = {
   mapGraph: MapGraph | null;
@@ -21,6 +22,7 @@ type AdvancedMarkerElement = google.maps.marker.AdvancedMarkerElement;
 // TODO consider passing location through props so can save to trip and use same as current destinations
 
 export const Map = ({ mapGraph }: MapProps) => {
+  const { state: mapState, dispatch: mapStateDispatch } = useMapStateContext();
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState({
@@ -33,13 +35,10 @@ export const Map = ({ mapGraph }: MapProps) => {
 
   useEffect(() => {
     const initializeMap = async () => {
-      const position = await getCurrentLocation();
+      const position = mapState.center ?? (await getCurrentLocationAsLatLng());
 
       const mapOptions = {
-        center: {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        },
+        center: position,
         zoom: 8,
         mapId: process.env.NEXT_PUBLIC_MAIN_MAP_ID as string,
         disableDefaultUI: true,
@@ -59,7 +58,25 @@ export const Map = ({ mapGraph }: MapProps) => {
             redirect(errorPath());
           }
 
-          setMap(new Map(mapRef.current, mapOptions));
+          const map = new Map(mapRef.current, mapOptions);
+
+          map.addListener("center_changed", () => {
+            const center = map.getCenter();
+
+            if (center == null) {
+              return;
+            }
+
+            mapStateDispatch({
+              type: "SET_CENTER",
+              payload: {
+                lat: center.lat(),
+                lng: center.lng(),
+              },
+            });
+          });
+
+          setMap(map);
           setState((prev) => ({ ...prev, isMapLoaded: true }));
         })
         .catch((error) => {
