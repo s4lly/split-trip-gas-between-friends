@@ -1,6 +1,6 @@
-import { CheckCircle2, LoaderCircle } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -20,31 +20,50 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toggle } from "@/components/ui/toggle";
 import { getPlacePhotos } from "@/features/trip/actions/get-place-photos";
-import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
-import { getUsersVehicles } from "@/features/trip/actions/get-users-vehicles";
 import { MapGraph } from "@/features/trip/types";
+import { useUserClient } from "@/hooks/use-user-client";
 import { Profile as TripUser, Route, Vehicle } from "@/lib/types";
-import { createClient } from "@/utils/supabase/client";
 import { PlacePhotoContent } from "@/utils/valibot/place-details-schema";
 
 export const SelectedDestinationDetails = ({
   destinationGraph,
-  tripId,
   updateNewDestinationDetails,
+  vehicles,
+  users,
 }: {
   destinationGraph: MapGraph | null;
-  tripId: string;
   updateNewDestinationDetails: (details: Partial<Route>) => void;
+  vehicles: Vehicle[];
+  users: TripUser[];
 }) => {
+  const user = useUserClient();
+
   const [isUserClicked, setIsUserClicked] = useState(false);
   const [isCarClicked, setIsCarClicked] = useState(false);
-
   const [placePhotos, setPlacePhotos] = useState<PlacePhotoContent[]>([]);
-  const [isTripDataLoading, startTripDataTransition] = useTransition();
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [users, setUsers] = useState<TripUser[]>([]);
-  const [selectedUser, setSelectedUser] = useState<TripUser>();
+
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle>();
+  const [selectedUser, setSelectedUser] = useState<TripUser>();
+
+  useEffect(() => {
+    const userVehicle = vehicles.find((v) => v.owner_id === user?.id);
+    const currentUser = users.find((u) => u.id === user?.id);
+
+    setSelectedVehicle(userVehicle);
+    setSelectedUser(currentUser);
+
+    updateNewDestinationDetails({
+      vehicle_id: userVehicle?.id,
+      driver_id: currentUser?.id,
+    });
+  }, [
+    user,
+    vehicles,
+    users,
+    setSelectedVehicle,
+    setSelectedUser,
+    updateNewDestinationDetails,
+  ]);
 
   useEffect(() => {
     const startNode = destinationGraph?.start;
@@ -58,42 +77,6 @@ export const SelectedDestinationDetails = ({
     }
   }, [destinationGraph?.start]);
 
-  useEffect(() => {
-    startTripDataTransition(async () => {
-      try {
-        const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
-        if (!user) {
-          console.error("No authenticated user found");
-          return;
-        }
-
-        const tripData = await getTripWithUsers(tripId);
-        const vehiclesData = await getUsersVehicles(tripData.users);
-
-        setVehicles(vehiclesData);
-        setUsers(tripData.users);
-
-        const userVehicle = vehiclesData.find((v) => v.owner_id === user.id);
-        const currentUser = tripData.users.find((u) => u.id === user.id);
-
-        setSelectedVehicle(userVehicle);
-        setSelectedUser(currentUser);
-
-        // update new destination details
-        updateNewDestinationDetails({
-          vehicle_id: userVehicle?.id,
-          driver_id: currentUser?.id,
-        });
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    });
-  }, [tripId, updateNewDestinationDetails]);
-
   const handleUserToggle = (pressed: boolean) => {
     setIsUserClicked(pressed);
     if (pressed) setIsCarClicked(false);
@@ -105,14 +88,15 @@ export const SelectedDestinationDetails = ({
   };
 
   const handleCarSelect = (vehicle: Vehicle) => {
+    setIsCarClicked(false);
     setSelectedVehicle(vehicle);
     updateNewDestinationDetails({ vehicle_id: vehicle.id });
-    setIsCarClicked(false);
   };
 
   const handleUserSelect = (user: TripUser) => {
-    setSelectedUser(user);
     setIsUserClicked(false);
+    setSelectedUser(user);
+    updateNewDestinationDetails({ driver_id: user.id });
   };
 
   if (!destinationGraph || destinationGraph.start !== destinationGraph.end) {
@@ -181,13 +165,9 @@ export const SelectedDestinationDetails = ({
             onPressedChange={handleUserToggle}
             variant="outline"
           >
-            {isTripDataLoading ? (
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-            ) : (
-              <p className="w-full truncate">
-                {selectedUser?.username ?? "No user selected"}
-              </p>
-            )}
+            <p className="w-full truncate">
+              {selectedUser?.username ?? "No user selected"}
+            </p>
           </Toggle>
         </div>
         <div className="w-1/2">
@@ -197,13 +177,9 @@ export const SelectedDestinationDetails = ({
             onPressedChange={handleCarToggle}
             variant="outline"
           >
-            {isTripDataLoading ? (
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-            ) : (
-              <p className="w-full truncate">
-                {selectedVehicle?.name ?? "No vehicle available"}
-              </p>
-            )}
+            <p className="w-full truncate">
+              {selectedVehicle?.name ?? "No vehicle available"}
+            </p>
           </Toggle>
         </div>
       </div>

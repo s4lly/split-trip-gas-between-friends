@@ -7,7 +7,7 @@ import { Map } from "@/components/map";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { MapGraph } from "@/features/trip/types";
-import { Route } from "@/lib/types";
+import { Profile as TripUser, Route, Vehicle } from "@/lib/types";
 import { parseStringParam } from "@/utils/url";
 import {
   EMPTY_PLACE_SUGGESTIONS,
@@ -21,7 +21,13 @@ import { NewDestinationInput } from "./new-destination-input";
 import { PlaceSuggestionList } from "./place-suggestion-list";
 import { SelectedDestinationDetails } from "./selected-destination-details";
 
-export const NewDestinationForm = () => {
+export const NewDestinationForm = ({
+  vehicles,
+  users,
+}: {
+  vehicles: Vehicle[];
+  users: TripUser[];
+}) => {
   const params = useParams<{ tripId: string }>();
   const tripId = parseStringParam(params.tripId);
 
@@ -131,9 +137,10 @@ export const NewDestinationForm = () => {
 
           {selectedPlace && placeSuggestionsGraph && (
             <SelectedDestinationDetails
-              tripId={params.tripId}
               destinationGraph={placeSuggestionsGraph}
               updateNewDestinationDetails={handleUpdateDestinationDetails}
+              vehicles={vehicles}
+              users={users}
             />
           )}
         </div>
