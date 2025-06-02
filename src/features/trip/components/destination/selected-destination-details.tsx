@@ -1,29 +1,10 @@
 import { CheckCircle2 } from "lucide-react";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { CarouselContent } from "@/components/ui/carousel";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Toggle } from "@/components/ui/toggle";
-import { getPlacePhotos } from "@/features/trip/actions/get-place-photos";
 import { MapGraph } from "@/features/trip/types";
 import { useUserClient } from "@/hooks/use-user-client";
 import { Profile as TripUser, Route, Vehicle } from "@/lib/types";
-import { PlacePhotoContent } from "@/utils/valibot/place-details-schema";
 
 export const SelectedDestinationDetails = ({
   destinationGraph,
@@ -40,7 +21,6 @@ export const SelectedDestinationDetails = ({
 
   const [isUserClicked, setIsUserClicked] = useState(false);
   const [isCarClicked, setIsCarClicked] = useState(false);
-  const [placePhotos, setPlacePhotos] = useState<PlacePhotoContent[]>([]);
 
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle>();
   const [selectedUser, setSelectedUser] = useState<TripUser>();
@@ -64,18 +44,6 @@ export const SelectedDestinationDetails = ({
     setSelectedUser,
     updateNewDestinationDetails,
   ]);
-
-  useEffect(() => {
-    const startNode = destinationGraph?.start;
-
-    if (startNode?.type === "suggestion") {
-      getPlacePhotos(startNode.placeSuggestion).then((photos) => {
-        setPlacePhotos(photos);
-      });
-    } else {
-      setPlacePhotos([]);
-    }
-  }, [destinationGraph?.start]);
 
   const handleUserToggle = (pressed: boolean) => {
     setIsUserClicked(pressed);
@@ -106,48 +74,6 @@ export const SelectedDestinationDetails = ({
   return (
     <div className="flex flex-col gap-2">
       <div className="mt-2 flex w-full gap-2">
-        <div className="shrink-0 grow-0 basis-1/4">
-          <div className="h-[75px] overflow-hidden rounded-md">
-            {placePhotos.length === 0 ? (
-              <Skeleton className="h-full w-full" />
-            ) : (
-              <Dialog>
-                <DialogTrigger className="h-full w-full">
-                  <Image
-                    src={placePhotos[0].photoUri}
-                    className="h-full w-full object-cover"
-                    alt="Place photo"
-                    width={500}
-                    height={75}
-                  />
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
-                    <DialogDescription></DialogDescription>
-                  </DialogHeader>
-                  <Carousel>
-                    <CarouselContent>
-                      {placePhotos.map((photo, index) => (
-                        <CarouselItem key={index}>
-                          <Image
-                            src={photo.photoUri}
-                            alt={`Place photo ${index + 1}`}
-                            width={800}
-                            height={600}
-                            className="h-auto w-full rounded-lg object-cover"
-                          />
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </Carousel>
-                </DialogContent>
-              </Dialog>
-            )}
-          </div>
-        </div>
         <div className="grow">
           <p>
             {destinationGraph.start?.type === "suggestion"
