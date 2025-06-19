@@ -19,7 +19,6 @@ import { Profile as TripUser, Route, Vehicle } from "@/lib/types";
 import { parseStringParam } from "@/utils/url";
 import { PlacePhotoContent } from "@/utils/valibot/place-details-schema";
 import {
-  EMPTY_PLACE_SUGGESTIONS,
   PlacePrediction,
   PlaceSuggestions,
 } from "@/utils/valibot/places-auto-complete-schema";
@@ -44,6 +43,8 @@ export const NewDestinationForm = ({
   const [isMapLoading, startMapLoadingTransition] = useTransition();
   const [selectedPlace, setSelectedPlace] = useState<PlacePrediction>();
   const [placePhotos, setPlacePhotos] = useState<PlacePhotoContent[]>([]);
+  const [isPlaceSuggestionSelected, setIsPlaceSuggestionSelected] =
+    useState(false);
 
   const [placeSuggestions, setPlaceSuggestions] = useState<PlaceSuggestions>();
   const [placeSuggestionsGraph, setPlaceSuggestionsGraph] =
@@ -63,7 +64,7 @@ export const NewDestinationForm = ({
       // either showing suggestions or showing selected
       let workingPlaceSuggestions = placeSuggestions;
 
-      if (selectedPlace) {
+      if (isPlaceSuggestionSelected && selectedPlace) {
         workingPlaceSuggestions = {
           suggestions: [{ placePrediction: selectedPlace }],
         };
@@ -79,7 +80,7 @@ export const NewDestinationForm = ({
     return () => {
       ignore = true;
     };
-  }, [placeSuggestions, selectedPlace]);
+  }, [placeSuggestions, selectedPlace, isPlaceSuggestionSelected]);
 
   useEffect(() => {
     const startNode = placeSuggestionsGraph?.start;
@@ -107,8 +108,8 @@ export const NewDestinationForm = ({
   // ----
 
   const handleClickSuggestion = (placePrediction: PlacePrediction) => {
-    setPlaceSuggestions(EMPTY_PLACE_SUGGESTIONS);
     setSelectedPlace(placePrediction);
+    setIsPlaceSuggestionSelected(true);
   };
 
   const handleUpdateDestinationDetails = useCallback(
@@ -129,13 +130,14 @@ export const NewDestinationForm = ({
 
   return (
     <MapStateProvider>
-      <div className="flex h-full flex-col">
-        <div className="flex-grow space-y-1">
-          <div className="flex">
+      <div className="flex h-full flex-col gap-2">
+        <div className="flex min-h-0 flex-1 flex-col gap-2">
+          {/* Map and photos */}
+          <div className="flex shrink-0">
             <div
               className={clsx(
-                "relative h-[200px] flex-1",
-                selectedPlace ? "-ml-4" : "-mx-4",
+                "relative -mx-4 h-[200px] flex-1",
+                isPlaceSuggestionSelected && "-ml-4",
               )}
             >
               <Map mapGraph={placeSuggestionsGraph} />
@@ -149,7 +151,7 @@ export const NewDestinationForm = ({
               )}
             </div>
 
-            {selectedPlace && (
+            {isPlaceSuggestionSelected && selectedPlace && (
               <Carousel
                 className="-mr-4 flex-1"
                 plugins={[
@@ -175,36 +177,41 @@ export const NewDestinationForm = ({
             )}
           </div>
 
-          <NewDestinationInput
-            setPlaceSuggestions={setPlaceSuggestions}
-            selectedPlace={selectedPlace}
-            setSelectedPlace={setSelectedPlace}
-          />
+          {!isPlaceSuggestionSelected && (
+            <NewDestinationInput
+              setPlaceSuggestions={setPlaceSuggestions}
+              selectedPlace={selectedPlace}
+              setSelectedPlace={setSelectedPlace}
+            />
+          )}
 
-          <Separator />
+          {!isPlaceSuggestionSelected && <Separator />}
 
-          {placeSuggestions && placeSuggestions.suggestions.length > 0 && (
+          {!isPlaceSuggestionSelected && (
             <PlaceSuggestionList
-              placeSuggestions={placeSuggestions}
+              placeSuggestionsGraph={placeSuggestionsGraph}
               handleClickSuggestion={handleClickSuggestion}
             />
           )}
 
-          {selectedPlace && placeSuggestionsGraph && (
+          {isPlaceSuggestionSelected && placeSuggestionsGraph && (
             <SelectedDestinationDetails
               destinationGraph={placeSuggestionsGraph}
               updateNewDestinationDetails={handleUpdateDestinationDetails}
               vehicles={vehicles}
               users={users}
+              setIsPlaceSuggestionSelected={setIsPlaceSuggestionSelected}
             />
           )}
         </div>
 
-        <div className="mt-auto w-full">
-          <Button className="w-full" onClick={handleFormSubmit}>
-            Submit
-          </Button>
-        </div>
+        {isPlaceSuggestionSelected && (
+          <div className="mb-2 w-full shrink-0">
+            <Button className="w-full" onClick={handleFormSubmit}>
+              Add
+            </Button>
+          </div>
+        )}
       </div>
     </MapStateProvider>
   );

@@ -25,6 +25,7 @@ export type TripNode = {
 
 export type SuggestionsNode = {
   type: "suggestion";
+  label: string;
 
   placeSuggestion: PlacePrediction;
 };

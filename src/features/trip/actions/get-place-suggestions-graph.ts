@@ -23,6 +23,7 @@ export const getPlaceSuggestionsGraph = async (
 
     const cNode: GraphNode = {
       type: "suggestion",
+      label: String.fromCharCode("A".charCodeAt(0) + i),
       previous: pNode,
       next: null,
       coordinates: await getPlaceCoordinates(placeSuggestion.placePrediction),

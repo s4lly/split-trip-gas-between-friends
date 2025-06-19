@@ -1,42 +1,46 @@
-import {
-  PlacePrediction,
-  PlaceSuggestions,
-} from "@/utils/valibot/places-auto-complete-schema";
+import { MapGraph } from "@/features/trip/types";
+import { MapGraphNodes } from "@/features/trip/utils";
+import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 
 export const PlaceSuggestionList = ({
-  placeSuggestions,
   handleClickSuggestion,
+  placeSuggestionsGraph,
 }: {
-  placeSuggestions: PlaceSuggestions | undefined;
   handleClickSuggestion: (placePrediction: PlacePrediction) => void;
+  placeSuggestionsGraph: MapGraph | null;
 }) => {
+  if (!placeSuggestionsGraph || placeSuggestionsGraph.size === 0) return null;
+
+  const suggestionNodes = Array.from(
+    MapGraphNodes(placeSuggestionsGraph),
+  ).filter((node) => node.type === "suggestion");
+
+  if (suggestionNodes.length === 0) return null;
+
   return (
-    <>
-      {(placeSuggestions?.suggestions?.length ?? 0) > 0 && (
-        <ul>
-          {placeSuggestions?.suggestions.map((suggestion) => (
-            <li key={suggestion.placePrediction.placeId}>
-              <button
-                key={suggestion.placePrediction.placeId}
-                className="block w-full px-1 py-2 text-left"
-                onClick={() =>
-                  handleClickSuggestion(suggestion.placePrediction)
-                }
-              >
+    <ul>
+      {suggestionNodes.map((node) => (
+        <li key={node.placeSuggestion.placeId}>
+          <button
+            className="block w-full px-1 py-2 text-left"
+            onClick={() => handleClickSuggestion(node.placeSuggestion)}
+          >
+            <div className="flex items-center gap-2">
+              <div className="flex size-8 items-center justify-center rounded-full bg-blue-200 p-2">
+                {node.label}
+              </div>
+              <div className="flex flex-col">
                 <p className="font-medium">
-                  {suggestion.placePrediction.structuredFormat.mainText.text}
+                  {node.placeSuggestion.structuredFormat.mainText.text}
                 </p>
                 <p className="text-sm font-light">
-                  {
-                    suggestion.placePrediction.structuredFormat.secondaryText
-                      .text
-                  }
+                  {node.placeSuggestion.structuredFormat.secondaryText.text}
                 </p>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
+              </div>
+            </div>
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 };

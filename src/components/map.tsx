@@ -3,6 +3,7 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import ReactDOMServer from "react-dom/server";
 import useMapStateContext from "@/features/trip/hooks/useMapStateContext";
 import { MapGraph } from "@/features/trip/types";
 import { MapGraphNodes } from "@/features/trip/utils";
@@ -18,6 +19,53 @@ type MarkerLibrary = google.maps.MarkerLibrary;
 
 type Polyline = google.maps.Polyline;
 type AdvancedMarkerElement = google.maps.marker.AdvancedMarkerElement;
+
+function buildContent(
+  label: string,
+  options?: { color?: string; background?: string },
+) {
+  const color = options?.color ?? "#4285F4";
+  const background = options?.background ?? "#fff";
+
+  const htmlString = ReactDOMServer.renderToStaticMarkup(
+    <span className="inline-block align-middle">
+      <svg
+        width="40"
+        height="48"
+        viewBox="0 0 40 48"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="drop-shadow"
+      >
+        {/* Pin shape */}
+        <path
+          d="M20 47C20 47 36 31.5 36 20C36 10.6112 28.3888 3 19.9999 3C11.6112 3 4 10.6112 4 20C4 31.5 20 47 20 47Z"
+          fill={background}
+          stroke={color}
+          strokeWidth="2"
+        />
+        {/* Label */}
+        <text
+          x="20"
+          y="20"
+          textAnchor="middle"
+          fontSize="18"
+          fontWeight="bold"
+          fill={color}
+          fontFamily="sans-serif"
+          dominantBaseline="middle"
+        >
+          {label}
+        </text>
+      </svg>
+    </span>,
+  );
+
+  // Need a DOM node for Google Maps, so we create a wrapper div, set innerHTML, and return the first child
+  const wrapper = document.createElement("div");
+  wrapper.innerHTML = htmlString;
+  return wrapper.firstChild as HTMLElement;
+}
 
 // TODO consider passing location through props so can save to trip and use same as current destinations
 
@@ -129,13 +177,20 @@ export const Map = ({ mapGraph }: MapProps) => {
         }
 
         // add marker
-        const marker = new AdvancedMarkerElement({
-          map,
-          position: {
-            lat: tripNode.coordinates.latitude,
-            lng: tripNode.coordinates.longitude,
-          },
-        });
+        const advancedMarkerElementOptions: google.maps.marker.AdvancedMarkerElementOptions =
+          {
+            map,
+            position: {
+              lat: tripNode.coordinates.latitude,
+              lng: tripNode.coordinates.longitude,
+            },
+          };
+
+        if (tripNode.type === "suggestion") {
+          advancedMarkerElementOptions.content = buildContent(tripNode.label);
+        }
+
+        const marker = new AdvancedMarkerElement(advancedMarkerElementOptions);
         newMarkers.push(marker);
       }
 
