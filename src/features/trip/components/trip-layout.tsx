@@ -17,13 +17,13 @@ export default async function TripLayout({
   const supabase = await createClient();
 
   const tripIdNum = parseStringParam(tripId);
-  const profilesWithinTripQuery = supabase
+  const tripQuery = supabase
     .from("trip")
     .select("name")
     .eq("id", tripIdNum)
     .single();
 
-  const { data: trip, error: tripError } = await profilesWithinTripQuery;
+  const { data: trip, error: tripError } = await tripQuery;
   if (tripError) {
     console.log(tripError);
     redirect("/error");
