@@ -1,14 +1,19 @@
 import { CarFront } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { StateProvider } from "@/components/Context";
 import MySharedTrips from "@/components/my-shared-trips";
 import MyTrips from "@/components/my-trips";
 import { Button } from "@/components/ui/button";
 import { getProfile } from "@/features/user/actions/get-profile";
-import { profilePath, tripNewPath } from "@/paths";
+import { errorPath, profilePath, tripNewPath } from "@/paths";
 
 export default async function Home() {
   const profile = await getProfile();
+
+  if (!profile) {
+    redirect(errorPath());
+  }
 
   return (
     <StateProvider>
