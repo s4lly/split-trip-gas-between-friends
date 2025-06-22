@@ -1,12 +1,6 @@
 import Image from "next/image";
 import QRCode from "qrcode";
 import { CopyToClipBoard } from "@/components/copy-to-clipboard";
-import TripsBreadCrumb from "@/components/TripsBreadCrumb";
-import {
-  BreadcrumbItem,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { getJoinUrl } from "@/utils/url";
 
 const generateQR = async (text: string): Promise<string> => {
@@ -28,19 +22,10 @@ export const SharePage = async ({
   const dataURL = await generateQR(shareUrl);
 
   return (
-    <>
-      <TripsBreadCrumb tripId={tripId}>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Share</BreadcrumbPage>
-        </BreadcrumbItem>
-      </TripsBreadCrumb>
-
-      <div className="-mt-10 flex h-full flex-col items-center justify-center">
-        <Image alt="qr code" width="340" height="340" src={dataURL} />
-        <CopyToClipBoard text={shareUrl} />
-      </div>
-    </>
+    <div className="flex h-full flex-col items-center justify-center">
+      <Image alt="qr code" width="340" height="340" src={dataURL} />
+      <CopyToClipBoard text={shareUrl} />
+    </div>
   );
 };
 

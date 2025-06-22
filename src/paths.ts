@@ -6,6 +6,7 @@ export const errorPath = () => "/error";
 export const loginPath = () => "/login";
 export const setupPath = () => "/users/setup";
 export const homePath = () => "/";
+export const profilePath = (profileId: Param) => `/users/${profileId}`;
 
 export const tripsPath = () => "/trips";
 export const tripPath = (tripId: SearchParam | number | null) => {

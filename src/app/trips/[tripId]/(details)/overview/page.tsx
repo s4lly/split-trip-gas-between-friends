@@ -1,9 +1,3 @@
-import TripsBreadCrumb from "@/components/TripsBreadCrumb";
-import {
-  BreadcrumbItem,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import {
   Table,
   TableBody,
@@ -26,13 +20,6 @@ export default async function DetailsPage({
 
   return (
     <div className="space-y-2">
-      <TripsBreadCrumb tripId={tripId}>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Overview</BreadcrumbPage>
-        </BreadcrumbItem>
-      </TripsBreadCrumb>
-
       <div>
         <h2 className="text-xl font-bold">people</h2>
 

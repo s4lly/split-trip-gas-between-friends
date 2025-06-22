@@ -1,12 +1,6 @@
 import { Circle } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import StaticMap from "@/components/static-map";
-import TripsBreadCrumb from "@/components/TripsBreadCrumb";
-import {
-  BreadcrumbItem,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import {
   Card,
   CardContent,
@@ -97,13 +91,6 @@ export default async function PlanPage({
 
   return (
     <div className="space-y-2">
-      <TripsBreadCrumb tripId={tripId}>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Plan</BreadcrumbPage>
-        </BreadcrumbItem>
-      </TripsBreadCrumb>
-
       <div className="space-y-4">
         <section>
           <Table>
