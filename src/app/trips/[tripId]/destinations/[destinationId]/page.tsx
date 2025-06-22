@@ -1,16 +1,8 @@
 import { QueryData } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
-import { parse } from "valibot";
-import TripsBreadCrumb from "@/components/TripsBreadCrumb";
-import {
-  BreadcrumbItem,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import UpdateDriverForm from "@/components/update-driver-form";
 import UpdateVehicleForm from "@/components/update-vehicle-form";
 import { createClient } from "@/utils/supabase/server";
-import { PlacePredictionSchema } from "@/utils/valibot/places-auto-complete-schema";
 
 export default async function RoutePage({
   params,
@@ -101,19 +93,8 @@ export default async function RoutePage({
 
   */
 
-  const place = parse(PlacePredictionSchema, route.place);
-
   return (
     <div className="space-y-2">
-      <TripsBreadCrumb tripId={tripId}>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>
-            {place.structuredFormat.mainText.text}
-          </BreadcrumbPage>
-        </BreadcrumbItem>
-      </TripsBreadCrumb>
-
       <div className="space-y-2">
         <div>
           <UpdateDriverForm
