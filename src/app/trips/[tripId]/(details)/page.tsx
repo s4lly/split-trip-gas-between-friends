@@ -1,6 +1,6 @@
 import { Car, Export, User } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { Map } from "@/components/map";
+import { MapComponent } from "@/components/map-component";
 import { Button } from "@/components/ui/button";
 import { getTripGraph } from "@/features/trip/actions/get-trip-graph";
 import { getTripWithUsers } from "@/features/trip/actions/get-trip-with-users";
@@ -45,7 +45,7 @@ export default async function TripPage({
       </div>
 
       <div className="-mx-4 h-[200px]">
-        <Map mapGraph={tripGraph} />
+        <MapComponent graph={tripGraph} />
       </div>
 
       <section className="space-y-2">

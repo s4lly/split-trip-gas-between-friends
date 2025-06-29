@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { Map } from "@/components/map";
+import { MapComponent } from "@/components/map-component";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -25,6 +25,7 @@ import {
 import { createTripDestination } from "../../actions/create-trip-destination";
 import { getPlacePhotos } from "../../actions/get-place-photos";
 import { getPlaceSuggestionsGraph } from "../../actions/get-place-suggestions-graph";
+import { findSelectedSuggestionNode } from "../../utils";
 import { MapStateProvider } from "./map-state-provider";
 import { NewDestinationInput } from "./new-destination-input";
 import { PlaceSuggestionList } from "./place-suggestion-list";
@@ -41,7 +42,8 @@ export const NewDestinationForm = ({
   const tripId = parseStringParam(params.tripId);
 
   const [isMapLoading, startMapLoadingTransition] = useTransition();
-  const [selectedPlace, setSelectedPlace] = useState<PlacePrediction>();
+  const [placeQuery, setPlaceQuery] = useState("");
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string>();
   const [placePhotos, setPlacePhotos] = useState<PlacePhotoContent[]>([]);
   const [isPlaceSuggestionSelected, setIsPlaceSuggestionSelected] =
     useState(false);
@@ -61,16 +63,8 @@ export const NewDestinationForm = ({
     let ignore = false;
 
     startMapLoadingTransition(async () => {
-      // either showing suggestions or showing selected
-      let workingPlaceSuggestions = placeSuggestions;
-
-      if (isPlaceSuggestionSelected && selectedPlace) {
-        workingPlaceSuggestions = {
-          suggestions: [{ placePrediction: selectedPlace }],
-        };
-      }
-
-      const graph = await getPlaceSuggestionsGraph(workingPlaceSuggestions);
+      // generates marker symbol
+      const graph = await getPlaceSuggestionsGraph(placeSuggestions);
 
       if (!ignore) {
         setPlaceSuggestionsGraph(graph);
@@ -80,35 +74,48 @@ export const NewDestinationForm = ({
     return () => {
       ignore = true;
     };
-  }, [placeSuggestions, selectedPlace, isPlaceSuggestionSelected]);
+  }, [placeSuggestions]);
 
   useEffect(() => {
-    const startNode = placeSuggestionsGraph?.start;
+    const selectedSuggestionNode = findSelectedSuggestionNode(
+      placeSuggestionsGraph,
+      selectedPlaceId,
+    );
 
-    if (startNode?.type === "suggestion") {
-      getPlacePhotos(startNode.placeSuggestion).then((photos) => {
+    if (selectedSuggestionNode) {
+      getPlacePhotos(selectedSuggestionNode.placeSuggestion).then((photos) => {
         setPlacePhotos(photos);
       });
     } else {
       setPlacePhotos([]);
     }
-  }, [placeSuggestionsGraph?.start]);
+  }, [placeSuggestionsGraph, selectedPlaceId]);
 
   // ----
 
+  const selectedSuggestion = placeSuggestions?.suggestions.find(
+    (suggestion) => suggestion.placePrediction.placeId === selectedPlaceId,
+  );
+
   const handleFormSubmit = () => {
-    if (selectedPlace == undefined) {
+    if (selectedPlaceId == undefined) {
       console.error("cannot create 'empty' destination");
       return;
     }
 
-    createTripDestination(tripId, selectedPlace, newDestinationDetails.current);
+    if (selectedSuggestion?.placePrediction) {
+      createTripDestination(
+        tripId,
+        selectedSuggestion?.placePrediction,
+        newDestinationDetails.current,
+      );
+    }
   };
 
   // ----
 
   const handleClickSuggestion = (placePrediction: PlacePrediction) => {
-    setSelectedPlace(placePrediction);
+    setSelectedPlaceId(placePrediction.placeId);
     setIsPlaceSuggestionSelected(true);
   };
 
@@ -125,7 +132,6 @@ export const NewDestinationForm = ({
     },
     [],
   );
-
   // ----
 
   return (
@@ -136,11 +142,15 @@ export const NewDestinationForm = ({
           <div className="flex shrink-0">
             <div
               className={clsx(
-                "relative -mx-4 h-[200px] flex-1",
+                "relative h-[200px] flex-1",
+                !isPlaceSuggestionSelected && "-mx-4",
                 isPlaceSuggestionSelected && "-ml-4",
               )}
             >
-              <Map mapGraph={placeSuggestionsGraph} />
+              <MapComponent
+                graph={placeSuggestionsGraph}
+                selected={selectedPlaceId}
+              />
 
               {isMapLoading && (
                 <div className="absolute inset-0 bg-black/50">
@@ -151,7 +161,7 @@ export const NewDestinationForm = ({
               )}
             </div>
 
-            {isPlaceSuggestionSelected && selectedPlace && (
+            {isPlaceSuggestionSelected && (
               <Carousel
                 className="-mr-4 flex-1"
                 plugins={[
@@ -180,8 +190,9 @@ export const NewDestinationForm = ({
           {!isPlaceSuggestionSelected && (
             <NewDestinationInput
               setPlaceSuggestions={setPlaceSuggestions}
-              selectedPlace={selectedPlace}
-              setSelectedPlace={setSelectedPlace}
+              setSelectedPlaceId={setSelectedPlaceId}
+              placeQuery={placeQuery}
+              setPlaceQuery={setPlaceQuery}
             />
           )}
 
@@ -196,8 +207,10 @@ export const NewDestinationForm = ({
 
           {isPlaceSuggestionSelected && placeSuggestionsGraph && (
             <SelectedDestinationDetails
-              destinationGraph={placeSuggestionsGraph}
+              placeSuggestionsGraph={placeSuggestionsGraph}
               updateNewDestinationDetails={handleUpdateDestinationDetails}
+              selectedPlaceId={selectedPlaceId}
+              setSelectedPlaceId={setSelectedPlaceId}
               vehicles={vehicles}
               users={users}
               setIsPlaceSuggestionSelected={setIsPlaceSuggestionSelected}

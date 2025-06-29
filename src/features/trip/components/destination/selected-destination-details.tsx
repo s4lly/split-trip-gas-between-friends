@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { MapGraph } from "@/features/trip/types";
 import { useUserClient } from "@/hooks/use-user-client";
 import { Profile as TripUser, Route, Vehicle } from "@/lib/types";
+import { findSelectedSuggestionNode } from "../../utils";
 
 enum Buttons {
   Passengers = "passengers",
@@ -14,17 +15,21 @@ enum Buttons {
 }
 
 export const SelectedDestinationDetails = ({
-  destinationGraph,
+  placeSuggestionsGraph,
+  selectedPlaceId,
   updateNewDestinationDetails,
   vehicles,
   users,
   setIsPlaceSuggestionSelected,
+  setSelectedPlaceId,
 }: {
-  destinationGraph: MapGraph | null;
+  placeSuggestionsGraph: MapGraph | null;
+  selectedPlaceId: string | undefined;
   updateNewDestinationDetails: (details: Partial<Route>) => void;
   vehicles: Vehicle[];
   users: TripUser[];
   setIsPlaceSuggestionSelected: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedPlaceId: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) => {
   const user = useUserClient();
 
@@ -62,7 +67,16 @@ export const SelectedDestinationDetails = ({
     updateNewDestinationDetails({ driver_id: user.id });
   };
 
-  if (!destinationGraph || destinationGraph.start !== destinationGraph.end) {
+  const selectedSuggestionNode = findSelectedSuggestionNode(
+    placeSuggestionsGraph,
+    selectedPlaceId,
+  );
+
+  if (!selectedSuggestionNode) {
+    console.error(
+      "Selected node not found for given placeId: ",
+      selectedPlaceId,
+    );
     return null;
   }
 
@@ -70,16 +84,15 @@ export const SelectedDestinationDetails = ({
     <div className="flex min-h-0 flex-col gap-2">
       <div className="mt-2 flex w-full shrink-0 gap-2">
         <div className="grow">
-          <p>
-            {destinationGraph.start?.type === "suggestion"
-              ? destinationGraph.start.placeSuggestion.text.text
-              : ""}
-          </p>
+          <p>{selectedSuggestionNode.placeSuggestion.text.text}</p>
         </div>
         <Button
           size="icon"
           variant="ghost"
-          onClick={() => setIsPlaceSuggestionSelected(false)}
+          onClick={() => {
+            setIsPlaceSuggestionSelected(false);
+            setSelectedPlaceId(undefined);
+          }}
         >
           <X className="size-[24px]" />
         </Button>

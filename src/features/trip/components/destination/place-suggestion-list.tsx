@@ -1,5 +1,5 @@
 import { MapGraph } from "@/features/trip/types";
-import { MapGraphNodes } from "@/features/trip/utils";
+import { mapGraphNodeIterator } from "@/features/trip/utils";
 import { PlacePrediction } from "@/utils/valibot/places-auto-complete-schema";
 
 export const PlaceSuggestionList = ({
@@ -12,7 +12,7 @@ export const PlaceSuggestionList = ({
   if (!placeSuggestionsGraph || placeSuggestionsGraph.size === 0) return null;
 
   const suggestionNodes = Array.from(
-    MapGraphNodes(placeSuggestionsGraph),
+    mapGraphNodeIterator(placeSuggestionsGraph),
   ).filter((node) => node.type === "suggestion");
 
   if (suggestionNodes.length === 0) return null;

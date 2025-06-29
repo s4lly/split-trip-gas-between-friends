@@ -7,17 +7,98 @@ import {
   PlacePredictionSchema,
 } from "@/utils/valibot/places-auto-complete-schema";
 
-export const MapGraphNodes = (mapGraph: MapGraph): Iterable<GraphNode> => {
+/**
+ * Finds the node in the MapGraph with type 'suggestion' and matching placeId.
+ * @param graph The MapGraph to search.
+ * @param placeId The placeId to match.
+ * @returns The matching GraphNode of type 'suggestion', or null if not found.
+ */
+export const findSelectedSuggestionNode = (
+  graph: MapGraph | null,
+  placeId: string | undefined,
+): Extract<GraphNode, { type: "suggestion" }> | null => {
+  if (!graph?.start || !placeId) return null;
+
+  let current: GraphNode | null = graph.start;
+  while (current) {
+    if (
+      current.type === "suggestion" &&
+      current.placeSuggestion.placeId === placeId
+    ) {
+      return current as Extract<GraphNode, { type: "suggestion" }>;
+    }
+    current = current.next;
+  }
+  return null;
+};
+
+/**
+ * Checks if a GraphNode matches a given placeId.
+ * @param node The GraphNode to check.
+ * @param placeId The placeId to match.
+ * @returns True if the node matches the placeId, false otherwise.
+ */
+const matchesPlaceId = (node: GraphNode, placeId: string): boolean => {
+  if (node.type === "suggestion") {
+    return node.placeSuggestion.placeId === placeId;
+  }
+
+  if (node.type === "trip") {
+    const details = node.destination.details;
+    const place = node.destination.place;
+
+    return Boolean(
+      (details &&
+        typeof details === "object" &&
+        "placeId" in details &&
+        details.placeId === placeId) ||
+        (place &&
+          typeof place === "object" &&
+          "placeId" in place &&
+          place.placeId === placeId),
+    );
+  }
+
+  return false;
+};
+
+/**
+ * Returns an iterable for traversing all GraphNode objects in a MapGraph, following the `next` property.
+ *
+ * If a `selected` placeId is provided, only the node matching that placeId is yielded. The match is performed as follows:
+ *   - For nodes with type 'suggestion', the node is yielded if node.placeSuggestion.placeId === selected
+ *   - For nodes with type 'trip', the node is yielded if either:
+ *       - node.destination.details?.placeId === selected
+ *       - node.destination.place?.placeId === selected
+ *
+ * @param mapGraph - The MapGraph to traverse.
+ * @param selected - (Optional) The placeId to select a specific node.
+ * @returns An iterable of GraphNode objects in the MapGraph.
+ */
+export const mapGraphNodeIterator = (
+  mapGraph: MapGraph,
+  selected?: string,
+): Iterable<GraphNode> => {
   return {
     [Symbol.iterator]() {
       let cNode = mapGraph.start;
 
       return {
         next(): IteratorResult<GraphNode> {
+          if (selected) {
+            while (cNode) {
+              if (matchesPlaceId(cNode, selected)) {
+                const res = { done: false, value: cNode };
+                cNode = null;
+                return res;
+              }
+              cNode = cNode.next;
+            }
+          }
+
           if (cNode) {
             const value = cNode;
             cNode = cNode.next;
-
             return { done: false, value };
           } else {
             return { done: true, value: undefined };

@@ -3,7 +3,7 @@
 import { ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef } from "react";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,6 @@ import { isBlank } from "@/utils/shared";
 import { parseStringParam } from "@/utils/url";
 import {
   EMPTY_PLACE_SUGGESTIONS,
-  PlacePrediction,
   PlaceSuggestions,
 } from "@/utils/valibot/places-auto-complete-schema";
 import { getPlaceSuggestions } from "../../actions/get-place-suggestions";
@@ -21,23 +20,24 @@ import { MapStateContext } from "./map-state-provider";
 
 interface NewDestinationInputProps {
   setPlaceSuggestions: (suggestions: PlaceSuggestions) => void;
-  selectedPlace: PlacePrediction | undefined;
-  setSelectedPlace: (place: PlacePrediction | undefined) => void;
+  setSelectedPlaceId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  placeQuery: string;
+  setPlaceQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const SEARCH_DEBOUNCE_DELAY = 700; // milliseconds
 
 export const NewDestinationInput = ({
   setPlaceSuggestions,
-  selectedPlace,
-  setSelectedPlace,
+  setSelectedPlaceId,
+  placeQuery,
+  setPlaceQuery,
 }: NewDestinationInputProps) => {
   const params = useParams<{ tripId: string }>();
   const tripId = parseStringParam(params.tripId);
 
   const { state: mapState } = useContext(MapStateContext);
 
-  const [placeQuery, setPlaceQuery] = useState("");
   const inputElementRef = useRef<HTMLInputElement>(null);
   const queryTimeoutIdRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
@@ -56,7 +56,7 @@ export const NewDestinationInput = ({
   ) => {
     clearTimeout(queryTimeoutIdRef.current);
 
-    setSelectedPlace(undefined);
+    setSelectedPlaceId(undefined);
     setPlaceQuery(e.target.value);
 
     if (isBlank(e.target.value) || mapState.center === null) {
@@ -80,7 +80,7 @@ export const NewDestinationInput = ({
   const handleClearPlaceQuery = () => {
     clearTimeout(queryTimeoutIdRef.current);
     setPlaceSuggestions(EMPTY_PLACE_SUGGESTIONS);
-    setSelectedPlace(undefined);
+    setSelectedPlaceId(undefined);
     setPlaceQuery("");
   };
 
@@ -97,11 +97,7 @@ export const NewDestinationInput = ({
       <Input
         type="text"
         ref={inputElementRef}
-        value={
-          selectedPlace
-            ? selectedPlace.structuredFormat.mainText.text
-            : placeQuery
-        }
+        value={placeQuery}
         onChange={handlePlaceQueryChange}
         className="border-0 px-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
       />
