@@ -65,7 +65,7 @@ function buildContent(
 
 // TODO consider passing location through props so can save to trip and use same as current destinations
 
-export const Map = ({
+export const MapComponent = ({
   graph,
   selected,
 }: {

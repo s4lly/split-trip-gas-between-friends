@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { Map } from "@/components/map";
+import { MapComponent } from "@/components/map-component";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -147,7 +147,10 @@ export const NewDestinationForm = ({
                 isPlaceSuggestionSelected && "-ml-4",
               )}
             >
-              <Map graph={placeSuggestionsGraph} selected={selectedPlaceId} />
+              <MapComponent
+                graph={placeSuggestionsGraph}
+                selected={selectedPlaceId}
+              />
 
               {isMapLoading && (
                 <div className="absolute inset-0 bg-black/50">
