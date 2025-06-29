@@ -6,13 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import ReactDOMServer from "react-dom/server";
 import useMapStateContext from "@/features/trip/hooks/useMapStateContext";
 import { MapGraph } from "@/features/trip/types";
-import { MapGraphNodes } from "@/features/trip/utils";
+import { mapGraphNodeIterator } from "@/features/trip/utils";
 import { errorPath } from "@/paths";
 import { getCurrentLocationAsLatLng } from "@/utils/get-current-location";
-
-type MapProps = {
-  mapGraph: MapGraph | null;
-};
 
 type GeometryLibrary = google.maps.GeometryLibrary;
 type MarkerLibrary = google.maps.MarkerLibrary;
@@ -69,7 +65,13 @@ function buildContent(
 
 // TODO consider passing location through props so can save to trip and use same as current destinations
 
-export const Map = ({ mapGraph }: MapProps) => {
+export const Map = ({
+  graph,
+  selected,
+}: {
+  graph: MapGraph | null;
+  selected?: string | undefined;
+}) => {
   const { state: mapState, dispatch: mapStateDispatch } = useMapStateContext();
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -139,7 +141,7 @@ export const Map = ({ mapGraph }: MapProps) => {
   // create polylines and markers
   useEffect(() => {
     const addItemsToMap = async () => {
-      if (map == null || mapGraph == null) {
+      if (map == null || graph == null) {
         return;
       }
 
@@ -153,11 +155,11 @@ export const Map = ({ mapGraph }: MapProps) => {
       const newPolylines: Polyline[] = [];
       const newMarkers: AdvancedMarkerElement[] = [];
 
-      if (mapGraph.size) {
+      if (graph.size) {
         setState((prev) => ({ ...prev, isItemsRenderedOnce: true }));
       }
 
-      for (const tripNode of MapGraphNodes(mapGraph)) {
+      for (const tripNode of mapGraphNodeIterator(graph, selected)) {
         // add polyline
         if (tripNode.type === "trip" && tripNode.route) {
           const decodedPath = encoding.decodePath(
@@ -199,7 +201,7 @@ export const Map = ({ mapGraph }: MapProps) => {
     };
 
     addItemsToMap();
-  }, [map, mapGraph]);
+  }, [map, graph, selected]);
 
   useEffect(() => {
     if (map === null || !state.isMapLoaded) {

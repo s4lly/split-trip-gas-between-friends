@@ -45,7 +45,7 @@ export default async function TripPage({
       </div>
 
       <div className="-mx-4 h-[200px]">
-        <Map mapGraph={tripGraph} />
+        <Map graph={tripGraph} />
       </div>
 
       <section className="space-y-2">

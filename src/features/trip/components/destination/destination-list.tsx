@@ -2,14 +2,14 @@ import { FC } from "react";
 import { Accordion } from "@/components/ui/accordion";
 import DestinationItem from "@/features/trip/components/destination/destination-item";
 import { MapGraph } from "@/features/trip/types";
-import { MapGraphNodes } from "@/features/trip/utils";
+import { mapGraphNodeIterator } from "@/features/trip/utils";
 
 type DestinationListProps = {
   mapGraph: MapGraph;
 };
 
 const DestinationList: FC<DestinationListProps> = ({ mapGraph }) => {
-  const tripNodes = Array.from(MapGraphNodes(mapGraph));
+  const tripNodes = Array.from(mapGraphNodeIterator(mapGraph));
 
   return (
     <>

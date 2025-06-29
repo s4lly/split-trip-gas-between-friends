@@ -7,17 +7,80 @@ import {
   PlacePredictionSchema,
 } from "@/utils/valibot/places-auto-complete-schema";
 
-export const MapGraphNodes = (mapGraph: MapGraph): Iterable<GraphNode> => {
+/**
+ * Finds the node in the MapGraph with type 'suggestion' and matching placeId.
+ * @param graph The MapGraph to search.
+ * @param placeId The placeId to match.
+ * @returns The matching GraphNode of type 'suggestion', or null if not found.
+ */
+export const findSelectedSuggestionNode = (
+  graph: MapGraph | null,
+  placeId: string | undefined,
+): Extract<GraphNode, { type: "suggestion" }> | null => {
+  if (!graph?.start || !placeId) return null;
+
+  let current: GraphNode | null = graph.start;
+  while (current) {
+    if (
+      current.type === "suggestion" &&
+      current.placeSuggestion.placeId === placeId
+    ) {
+      return current as Extract<GraphNode, { type: "suggestion" }>;
+    }
+    current = current.next;
+  }
+  return null;
+};
+
+/**
+ * Returns an iterable for traversing all GraphNode objects in a MapGraph, following the `next` property.
+ *
+ * If a `selected` placeId is provided, only the node matching that placeId is yielded. The match is performed as follows:
+ *   - For nodes with type 'suggestion', the node is yielded if node.placeSuggestion.placeId === selected
+ *   - For nodes with type 'trip', the node is yielded if either:
+ *       - node.destination.details?.placeId === selected
+ *       - node.destination.place?.placeId === selected
+ *
+ * @param mapGraph - The MapGraph to traverse.
+ * @param selected - (Optional) The placeId to select a specific node.
+ * @returns An iterable of GraphNode objects in the MapGraph.
+ */
+export const mapGraphNodeIterator = (
+  mapGraph: MapGraph,
+  selected?: string,
+): Iterable<GraphNode> => {
   return {
     [Symbol.iterator]() {
       let cNode = mapGraph.start;
 
       return {
         next(): IteratorResult<GraphNode> {
+          if (selected) {
+            while (cNode) {
+              if (
+                (cNode.type === "suggestion" &&
+                  cNode.placeSuggestion.placeId === selected) ||
+                (cNode.type === "trip" &&
+                  ((cNode.destination.details &&
+                    typeof cNode.destination.details === "object" &&
+                    "placeId" in cNode.destination.details &&
+                    cNode.destination.details.placeId === selected) ||
+                    (cNode.destination.place &&
+                      typeof cNode.destination.place === "object" &&
+                      "placeId" in cNode.destination.place &&
+                      cNode.destination.place.placeId === selected)))
+              ) {
+                const res = { done: false, value: cNode };
+                cNode = null;
+                return res;
+              }
+              cNode = cNode.next;
+            }
+          }
+
           if (cNode) {
             const value = cNode;
             cNode = cNode.next;
-
             return { done: false, value };
           } else {
             return { done: true, value: undefined };
