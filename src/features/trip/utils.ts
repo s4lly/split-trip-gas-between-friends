@@ -33,6 +33,36 @@ export const findSelectedSuggestionNode = (
 };
 
 /**
+ * Checks if a GraphNode matches a given placeId.
+ * @param node The GraphNode to check.
+ * @param placeId The placeId to match.
+ * @returns True if the node matches the placeId, false otherwise.
+ */
+const matchesPlaceId = (node: GraphNode, placeId: string): boolean => {
+  if (node.type === "suggestion") {
+    return node.placeSuggestion.placeId === placeId;
+  }
+
+  if (node.type === "trip") {
+    const details = node.destination.details;
+    const place = node.destination.place;
+
+    return Boolean(
+      (details &&
+        typeof details === "object" &&
+        "placeId" in details &&
+        details.placeId === placeId) ||
+        (place &&
+          typeof place === "object" &&
+          "placeId" in place &&
+          place.placeId === placeId),
+    );
+  }
+
+  return false;
+};
+
+/**
  * Returns an iterable for traversing all GraphNode objects in a MapGraph, following the `next` property.
  *
  * If a `selected` placeId is provided, only the node matching that placeId is yielded. The match is performed as follows:
@@ -57,19 +87,7 @@ export const mapGraphNodeIterator = (
         next(): IteratorResult<GraphNode> {
           if (selected) {
             while (cNode) {
-              if (
-                (cNode.type === "suggestion" &&
-                  cNode.placeSuggestion.placeId === selected) ||
-                (cNode.type === "trip" &&
-                  ((cNode.destination.details &&
-                    typeof cNode.destination.details === "object" &&
-                    "placeId" in cNode.destination.details &&
-                    cNode.destination.details.placeId === selected) ||
-                    (cNode.destination.place &&
-                      typeof cNode.destination.place === "object" &&
-                      "placeId" in cNode.destination.place &&
-                      cNode.destination.place.placeId === selected)))
-              ) {
+              if (matchesPlaceId(cNode, selected)) {
                 const res = { done: false, value: cNode };
                 cNode = null;
                 return res;
