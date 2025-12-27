@@ -22,7 +22,7 @@ import {
   convertMetersToMiles,
   convertSecondsToHoursAndMinutes,
   formatTime,
-  MapGraphNodes,
+  mapGraphNodeIterator,
 } from "@/features/trip/utils";
 import { destinationPath } from "@/paths";
 
@@ -49,7 +49,7 @@ export default async function PlanPage({
     id: string;
   };
   const driverToExpensesMap: Map<string, Expense[]> = new Map();
-  for (const tripNode of MapGraphNodes(tripGraph)) {
+  for (const tripNode of mapGraphNodeIterator(tripGraph)) {
     if (tripNode.type === "trip" && tripNode.route) {
       const distanceInMiles = convertMetersToMiles(
         tripNode.route.distanceMeters,
@@ -122,7 +122,7 @@ export default async function PlanPage({
           </Table>
         </section>
         <section className="space-y-2">
-          {Array.from(MapGraphNodes(tripGraph)).map((tripNode) => {
+          {Array.from(mapGraphNodeIterator(tripGraph)).map((tripNode) => {
             if (tripNode.type === "suggestion") {
               return null;
             }
@@ -176,7 +176,6 @@ export default async function PlanPage({
                           ),
                         )}
                       </p>
-                      <p>riders: person 1, person 2, person 3</p>
                     </div>
                   </div>
                 )}
